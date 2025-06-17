@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="#{email.title}">Thông báo từ Hệ thống Xếp lịch Luận văn</title>
+    <style>
+        /* Basic Styles */
+        body { width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; margin: 0; padding: 0; }
+        table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        table td { border-collapse: collapse; }
+        img { outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+
+        /* Custom Styles */
+        .container { padding: 20px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #333333; background-color: #f4f4f4; }
+        .content-wrapper { background-color: #ffffff; padding: 30px; border-radius: 5px; max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eeeeee; }
+        .header h1 { font-size: 24px; color: #0056b3; margin: 0; }
+        .body-content { padding: 20px 0; }
+        .footer { text-align: center; padding-top: 20px; font-size: 12px; color: #777777; border-top: 1px solid #eeeeee; }
+        .button { background-color: #007bff; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; }
+        .styled-table { width: 100%; border-collapse: collapse; }
+        .styled-table th, .styled-table td { border: 1px solid #dddddd; padding: 8px; text-align: left; }
+        .styled-table th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="content-wrapper">
+        <div class="header">
+            <h1>Hệ thống Xếp lịch Luận văn Tốt nghiệp</h1>
+            <p>Khoa Công nghệ Thông tin và Truyền thông - Trường Đại học Cần Thơ</p>
+        </div>
+
+        <div class="body-content">
+            <p>Chào bạn <strong th:text="${studentFullName}">Nguyễn Thị B</strong>,</p>
+            <p>
+                Khoa/Bộ môn thông báo lịch bảo vệ Luận văn Tốt nghiệp của bạn như sau:
+            </p>
+            <ul>
+                <li><strong>Đề tài:</strong> <span th:text="${thesisTitle}">Xây dựng hệ thống A...</span></li>
+                <li><strong>Thời gian:</strong> <strong th:text="${sessionTime} + ' ngày ' + ${#dates.format(sessionDate, 'dd/MM/yyyy')}">09:15 ngày 20/06/2025</strong></li>
+                <li><strong>Địa điểm:</strong> <strong th:text="${locationName}">Phòng H.301</strong></li>
+            </ul>
+            <p><strong>Danh sách Hội đồng chấm luận văn:</strong></p>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Vai trò</th>
+                    <th>Họ và Tên</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member : ${committeeMembers}">
+                    <td th:text="${member.committeeRole.name}">Chủ tịch Hội đồng</td>
+                    <td th:text="${member.lecturer.user.fullname}">PGS.TS. Nguyễn Văn A</td>
+                </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 20px;">
+                Chúc bạn chuẩn bị tốt và có một buổi bảo vệ thành công!
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Đây là email tự động, vui lòng không trả lời. Mọi thắc mắc xin liên hệ với văn phòng Khoa.</p>
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2025</span> Trường Đại học Cần Thơ. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

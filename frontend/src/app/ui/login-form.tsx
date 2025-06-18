@@ -1,6 +1,6 @@
 'use client';
 
-import { inter } from '@/app/ui/fonts';
+import { lexend } from '@/app/ui/fonts';
 import {
   AtSymbolIcon,
   KeyIcon,
@@ -30,7 +30,7 @@ export default function LoginForm() {
         }
 
         if (state?.success) {
-          router.push('/');
+          router.push('/dashboard');
         }
       }
     }
@@ -39,32 +39,32 @@ export default function LoginForm() {
   return (
     <form action={action} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={`${inter.className} mb-3 text-2xl`}>
-          Điền đầy đủ thông tin đăng nhập.
+        <h1 className={`${lexend.className} mb-3 text-2xl`}>
+          Vui lòng điền đầy đủ thông tin đăng nhập.
         </h1>
         <div className="w-full">
           <div>
             <label
               className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="email"
+              htmlFor="emailOrUsername"
             >
               Tên tài khoản / Email
             </label>
             <div className="relative">
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm placeholder:text-gray-500"
-                id="email"
-                type="email"
-                name="email"
+                id="emailOrUsername"
+                type="text"
+                name="emailOrUsername"
                 placeholder="Nhập tên tài khoản hoặc email của bạn"
                 required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
-          {state?.errors?.email && (
+          {state?.errors?.emailOrUsername && (
             <span className="text-left text-xs text-red-500 relative -top-2">
-              {state.errors.email}
+              {state.errors.emailOrUsername}
             </span>
           )}
           <div className="mt-4">

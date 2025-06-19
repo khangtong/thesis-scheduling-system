@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import axios from 'axios';
 
-import { LoginFormSchema } from './definitions';
+import { LoginFormSchema, User } from './definitions';
 
 export async function login(state: any, formData: FormData) {
   // 1. Validate form fields
@@ -31,7 +31,6 @@ export async function login(state: any, formData: FormData) {
   } else {
     input.username = validatedFields.data.emailOrUsername;
   }
-  console.log('input', input);
 
   try {
     const response = await axios.post(
@@ -76,7 +75,7 @@ export async function login(state: any, formData: FormData) {
 }
 
 // Helper function to get user data from cookies
-export async function getUser() {
+export async function getUser(): Promise<User> {
   const cookieStore = await cookies();
   const userCookie = cookieStore.get('user')?.value;
 

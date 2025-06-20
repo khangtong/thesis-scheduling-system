@@ -12,7 +12,7 @@ export type User = {
   username: string;
   email: string;
   password: string;
-  fullName: string;
+  fullname: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -4,6 +4,9 @@ import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/users/table';
 import { Create } from '@/app/ui/buttons';
+import { fetchUsers } from '@/app/lib/data';
+import { cookies } from 'next/headers';
+import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
 
 export const metadata: Metadata = {
   title: 'Người dùng',
@@ -19,7 +22,23 @@ export default async function Page(props: {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
-  const totalPages = 1;
+  const { users, totalPages } = await fetchUsers(
+    (await cookies()).get('session')?.value,
+    query
+  );
+
+  // Paginate users based on ITEMS_PER_PAGE
+  let a = [];
+  let j = 0;
+  for (let i = 0; i < totalPages; i++) {
+    let b = [];
+    while (j < users.length && b.length < ITEMS_PER_PAGE) {
+      b.push(users[j]);
+      j++;
+    }
+    a.push(b);
+  }
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
@@ -29,7 +48,7 @@ export default async function Page(props: {
         <Search placeholder="Tìm kiếm người dùng..." />
         <Create singular="người dùng" path="users" />
       </div>
-      <Table query={query} currentPage={currentPage} />
+      <Table users={a[currentPage - 1]} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

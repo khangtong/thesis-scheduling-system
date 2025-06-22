@@ -63,6 +63,20 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<User> users = userService.searchUsers(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(users);
+            } else {
+                return new SendError<List<User>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<User>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

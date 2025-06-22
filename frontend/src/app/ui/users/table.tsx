@@ -2,20 +2,8 @@ import Image from 'next/image';
 import { Update, Delete } from '../buttons';
 import { User } from '@/app/lib/definitions';
 import Status from '../status';
-import { fetchUsers } from '@/app/lib/data';
-import { cookies } from 'next/headers';
 
-export default async function Table({
-  query,
-  currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
-  const { users, totalPages } = await fetchUsers(
-    (await cookies()).get('session')?.value
-  );
-
+export default function Table({ users = [] }: { users: User[] }) {
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block w-full align-middle">

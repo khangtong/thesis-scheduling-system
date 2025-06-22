@@ -52,6 +52,11 @@ public class UserService {
         return user;
     }
 
+    @Transactional(readOnly = true)
+    public List<User> searchUsers(String query) {
+        return userRepository.searchUsers(query);
+    }
+
     @Transactional
     public User createUser(UserDTO userDTO) {
         User newUser = new User();

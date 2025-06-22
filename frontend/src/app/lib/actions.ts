@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import axios from 'axios';
 
-import { LoginFormSchema, User } from './definitions';
+import { LoginFormSchema, User, UserFormSchema } from './definitions';
 
 export async function login(state: any, formData: FormData) {
   // 1. Validate form fields
@@ -124,5 +124,45 @@ export async function logout() {
   } catch (error) {
     console.error('Logout error:', error);
     return { success: false, error: 'Logout failed' };
+  }
+}
+
+export async function createUser(state: any, formData: FormData) {
+  // 1. Validate form fields
+  const validatedFields = UserFormSchema.safeParse({
+    username: formData.get('username'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    fullname: formData.get('fullname'),
+    roleId: Number(formData.get('roleId')),
+  });
+
+  // If any form fields are invalid, return early
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  // 2. Create user
+  try {
+    const response = await axios.post(
+      `${process.env.API_URL}/users`,
+      JSON.stringify(validatedFields.data),
+      {
+        headers: {
+          Authorization: `Bearer ${(await cookies()).get('session')?.value}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status == 201) {
+      return { ...response.data, success: true };
+    }
+  } catch (error: any) {
+    return {
+      message: error?.response?.data?.message,
+    };
   }
 }

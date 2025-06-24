@@ -55,6 +55,20 @@ public class LecturerController {
         }
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Lecturer> getLecturerByUserId(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                Lecturer lecturer = lecturerService.getLecturerByUserId(id);
+                return ResponseEntity.ok(lecturer);
+            } else {
+                return new SendError<Lecturer>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<Lecturer>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Lecturer> createLecturer(@RequestBody LecturerDTO lecturerDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

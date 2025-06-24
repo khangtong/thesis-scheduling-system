@@ -44,6 +44,17 @@ public class LecturerService {
         return lecturer;
     }
 
+    @Transactional(readOnly = true)
+    public Lecturer getLecturerByUserId(int userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null)
+            throw new Error("Không tìm thấy người dùng");
+        Lecturer lecturer = lecturerRepository.findByUser(user);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
+        return lecturer;
+    }
+
     @Transactional
     public Lecturer createLecturer(LecturerDTO lecturerDTO) {
         Lecturer lecturer = new Lecturer();

@@ -34,6 +34,81 @@ export async function fetchUsers(
   return { users, totalPages };
 }
 
+export async function fetchUserById(token: string | undefined, id: string) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/users/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw new Error('Failed to fetch user.');
+  }
+}
+
+export async function fetchLecturerByUserId(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/lecturers/user/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch lecturer.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching lecturer:', error);
+    throw new Error('Failed to fetch lecturer.');
+  }
+}
+
+export async function fetchStudentByUserId(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/students/user/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch student.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching student:', error);
+    throw new Error('Failed to fetch student.');
+  }
+}
+
 export async function fetchRoles(token: string | undefined) {
   try {
     const response = await fetch(`${process.env.API_URL}/roles`, {
@@ -53,5 +128,49 @@ export async function fetchRoles(token: string | undefined) {
   } catch (error) {
     console.error('Error fetching roles:', error);
     throw new Error('Failed to fetch roles.');
+  }
+}
+
+export async function fetchFaculties(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/faculties`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch faculties.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching faculties:', error);
+    throw new Error('Failed to fetch faculties.');
+  }
+}
+
+export async function fetchDegrees(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/degrees`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch degrees.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching degrees:', error);
+    throw new Error('Failed to fetch degrees.');
   }
 }

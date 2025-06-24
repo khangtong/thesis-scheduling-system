@@ -128,14 +128,26 @@ export async function logout() {
 }
 
 export async function createUser(state: any, formData: FormData) {
-  // 1. Validate form fields
-  const validatedFields = UserFormSchema.safeParse({
+  // 1. Parse form data
+  const formDataObj = {
     username: formData.get('username'),
     email: formData.get('email'),
     password: formData.get('password'),
     fullname: formData.get('fullname'),
     roleId: Number(formData.get('roleId')),
-  });
+    // Lecturer fields
+    lecturerCode: formData.get('lecturerCode') || '',
+    facultyId: formData.get('facultyId')
+      ? Number(formData.get('facultyId'))
+      : NaN,
+    degreeId: formData.get('degreeId') ? Number(formData.get('degreeId')) : NaN,
+    // Student fields
+    studentCode: formData.get('studentCode') || '',
+    studentClass: formData.get('studentClass') || '',
+  };
+
+  // 2. Validate form fields
+  const validatedFields = UserFormSchema.safeParse(formDataObj);
 
   // If any form fields are invalid, return early
   if (!validatedFields.success) {
@@ -144,25 +156,115 @@ export async function createUser(state: any, formData: FormData) {
     };
   }
 
-  // 2. Create user
+  const data = validatedFields.data;
+  console.log('Validated user data:', data);
+
   try {
-    const response = await axios.post(
+    const authToken = (await cookies()).get('session')?.value;
+
+    // 3. Create base user first
+    const baseUserData = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      fullname: data.fullname,
+      roleId: data.roleId,
+    };
+
+    const userResponse = await axios.post(
       `${process.env.API_URL}/users`,
-      JSON.stringify(validatedFields.data),
+      JSON.stringify(baseUserData),
       {
         headers: {
-          Authorization: `Bearer ${(await cookies()).get('session')?.value}`,
+          Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
       }
     );
 
-    if (response.status == 201) {
-      return { ...response.data, success: true };
+    if (userResponse.status !== 201) {
+      throw new Error('Failed to create user');
     }
-  } catch (error: any) {
+
+    const createdUser = userResponse.data;
+    const userId = createdUser.id || createdUser.user?.id;
+
+    if (!userId) {
+      throw new Error('User ID not found in response');
+    }
+
+    // 4. Create additional profile based on role
+    // Assuming roleId 2 is GIANG_VIEN and roleId 3 is SINH_VIEN
+    if (
+      data.roleId === 2 &&
+      data.lecturerCode &&
+      data.facultyId &&
+      data.degreeId
+    ) {
+      // Create lecturer profile
+      const lecturerData = {
+        userId: userId,
+        code: data.lecturerCode,
+        facultyId: data.facultyId,
+        degreeId: data.degreeId,
+      };
+
+      await axios.post(
+        `${process.env.API_URL}/lecturers`,
+        JSON.stringify(lecturerData),
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    } else if (data.roleId === 3 && data.studentCode && data.studentClass) {
+      // Create student profile
+      const studentData = {
+        userId: userId,
+        code: data.studentCode,
+        studentClass: data.studentClass,
+      };
+
+      await axios.post(
+        `${process.env.API_URL}/students`,
+        JSON.stringify(studentData),
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
+
     return {
-      message: error?.response?.data?.message,
+      ...createdUser,
+      success: true,
     };
+  } catch (error: any) {
+    console.error('Create user error:', error);
+
+    // Handle different types of errors
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      return {
+        message:
+          error.response.data?.message || 'Có lỗi xảy ra khi tạo người dùng',
+        errors: error.response.data?.errors || {},
+      };
+    } else if (error.request) {
+      // The request was made but no response was received
+      return {
+        message: 'Không thể kết nối đến server',
+      };
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      return {
+        message: error.message || 'Có lỗi không xác định xảy ra',
+      };
+    }
   }
 }

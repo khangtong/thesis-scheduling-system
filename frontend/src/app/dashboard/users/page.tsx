@@ -44,7 +44,7 @@ export default async function Page(props: {
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lexend.className} text-2xl`}>Quản lý người dùng</h1>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8 max-w-full">
+      <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
         <Search placeholder="Tìm kiếm người dùng..." />
         <Create singular="người dùng" path="users" />
       </div>

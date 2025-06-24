@@ -3,6 +3,7 @@ package com.example.back_end.service;
 import com.example.back_end.dao.StudentRepository;
 import com.example.back_end.dao.UserRepository;
 import com.example.back_end.dto.StudentDTO;
+import com.example.back_end.entity.Lecturer;
 import com.example.back_end.entity.Student;
 import com.example.back_end.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,17 @@ public class StudentService {
     @Transactional(readOnly = true)
     public Student getStudentById(int id) {
         Student student = studentRepository.findById(id).orElse(null);
+        if (student == null)
+            throw new Error("Không tìm thấy sinh viên");
+        return student;
+    }
+
+    @Transactional(readOnly = true)
+    public Student getStudentByUserId(int userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null)
+            throw new Error("Không tìm thấy người dùng");
+        Student student = studentRepository.findByUser(user);
         if (student == null)
             throw new Error("Không tìm thấy sinh viên");
         return student;

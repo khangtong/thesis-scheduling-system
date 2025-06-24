@@ -55,6 +55,20 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Student> getStudentByUserId(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                Student student = studentService.getStudentByUserId(id);
+                return ResponseEntity.ok(student);
+            } else {
+                return new SendError<Student>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<Student>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody StudentDTO studentDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

@@ -8,7 +8,7 @@ export default function Table({ users = [] }: { users: User[] }) {
     <div className="mt-6 flow-root">
       <div className="inline-block w-full align-middle">
         <div className="rounded-lg bg-gray-100 p-2 md:pt-0 overflow-x-auto w-full">
-          <div className="md:hidden">
+          <div className="xl:hidden">
             {users?.map((user) => (
               <div
                 key={user?.id}
@@ -21,7 +21,7 @@ export default function Table({ users = [] }: { users: User[] }) {
                     </div>
                     <p className="text-sm text-gray-500">{user?.email}</p>
                   </div>
-                  <Status status={user?.isActive ? true : false} />
+                  <Status status={user?.active ? true : false} />
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
@@ -52,18 +52,18 @@ export default function Table({ users = [] }: { users: User[] }) {
               </div>
             ))}
           </div>
-          <table className="hidden w-full text-gray-900 md:table">
+          <table className="hidden w-full text-gray-900 xl:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Tên tài khoản
+                  Họ tên
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Email
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Họ tên
-                </th>
+                {/* <th scope="col" className="px-3 py-5 font-medium">
+                  Tên tài khoản
+                </th> */}
                 <th scope="col" className="px-3 py-5 font-medium">
                   Tạo
                 </th>
@@ -87,32 +87,32 @@ export default function Table({ users = [] }: { users: User[] }) {
                   key={user?.id}
                   className="w-full border-b border-gray-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{user?.username}</p>
+                      <p>{user?.fullname}</p>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">{user?.email}</td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {user?.fullname}
+                  <td className="text-nowrap overflow-hidden text-ellipsis max-w-[200px] px-3 py-3">
+                    {user?.email}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  {/* <td className="px-3 py-3">
+                    {user?.username}
+                  </td> */}
+                  <td className="px-3 py-3">
                     {user?.createdAt
                       ? new Date(user.createdAt).toLocaleDateString()
                       : 'N/A'}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="px-3 py-3">
                     {user?.updatedAt
                       ? new Date(user.updatedAt).toLocaleDateString()
                       : 'N/A'}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    <Status status={user?.isActive ? true : false} />
+                  <td className="px-3 py-3">
+                    <Status status={user?.active ? true : false} />
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {user?.role?.name}
-                  </td>
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                  <td className="px-3 py-3">{user?.role?.name}</td>
+                  <td className="py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <Update id={user?.id ? user.id : -1} path="users" />
                       <Delete id={user?.id ? user.id : -1} />

@@ -13,7 +13,7 @@ export type User = {
   email: string;
   password: string;
   fullname: string;
-  isActive: boolean;
+  active: boolean;
   createdAt: Date;
   updatedAt: Date;
   role: Role;
@@ -77,12 +77,13 @@ export const UserFormSchema = z
       .max(255)
       .trim(),
     roleId: z.number({ message: 'Vai trò không hợp lệ.' }).int().positive(),
+    active: z.boolean({ message: 'Trạng thái không hợp lệ.' }).optional(),
 
     // Optional lecturer fields
     lecturerCode: z
       .string()
       .min(1, { message: 'Mã giảng viên không được để trống.' })
-      .max(6)
+      .max(6, { message: 'Mã giảng viên không được quá 6 ký tự.' })
       .trim()
       .optional()
       .or(z.literal('')),
@@ -103,7 +104,7 @@ export const UserFormSchema = z
     studentCode: z
       .string()
       .min(1, { message: 'Mã sinh viên không được để trống.' })
-      .max(8)
+      .max(8, { message: 'Mã sinh viên không được quá 8 ký tự.' })
       .trim()
       .optional()
       .or(z.literal('')),

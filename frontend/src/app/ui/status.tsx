@@ -1,4 +1,4 @@
-import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 export default function Status({ status }: { status: boolean }) {
@@ -7,18 +7,18 @@ export default function Status({ status }: { status: boolean }) {
       className={clsx(
         'inline-flex items-center rounded-full px-2 py-1 text-xs',
         {
-          'bg-gray-100 text-gray-500': status === true,
-          'bg-green-500 text-white': status === false,
+          'bg-gray-100 text-gray-500': status === false,
+          'bg-green-500 text-white': status === true,
         }
       )}
     >
-      {status === true ? (
+      {status === false ? (
         <>
           Không hoạt động
-          <ClockIcon className="ml-1 w-4 text-gray-500" />
+          <NoSymbolIcon className="ml-1 w-4 text-gray-500" />
         </>
       ) : null}
-      {status === false ? (
+      {status === true ? (
         <>
           Hoạt động
           <CheckIcon className="ml-1 w-4 text-white" />

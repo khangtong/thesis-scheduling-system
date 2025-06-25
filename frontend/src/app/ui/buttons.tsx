@@ -1,5 +1,10 @@
+'use client';
+
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { deleteUser } from '../lib/actions';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function Create({ singular, path }: { singular: string; path: string }) {
   return (
@@ -25,9 +30,33 @@ export function Update({ id, path }: { id: number; path: string }) {
 }
 
 export function Delete({ id }: { id: number }) {
+  const deleteUserWithId = deleteUser.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa người dùng này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteUserWithId(), {
+            loading: 'Đang xóa người dùng...',
+            success: 'Xóa người dùng thành công',
+            error: 'Có lỗi xảy ra khi xóa người dùng',
+          });
+          router.push('/dashboard/users');
+        },
+      },
+    });
+  }
+
   return (
-    <form>
-      <button className="rounded-md border border-gray-200 p-2 hover:bg-gray-100">
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
       </button>

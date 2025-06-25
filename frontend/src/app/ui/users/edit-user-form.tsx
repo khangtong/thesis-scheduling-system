@@ -14,16 +14,18 @@ import {
   AcademicCapIcon,
   AtSymbolIcon,
   BookOpenIcon,
+  CheckIcon,
   EnvelopeIcon,
   IdentificationIcon,
   LockClosedIcon,
+  NoSymbolIcon,
   UserCircleIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createUser } from '@/app/lib/actions';
+import { updateUser } from '@/app/lib/actions';
 
 export default function Form({
   user,
@@ -40,7 +42,16 @@ export default function Form({
   lecturer: Lecturer | null;
   student: Student | null;
 }) {
-  const [state, action, isPending] = useActionState(createUser, undefined);
+  const updateUserWithId = updateUser.bind(
+    null,
+    user?.id,
+    lecturer?.id,
+    student?.id
+  );
+  const [state, action, isPending] = useActionState(
+    updateUserWithId,
+    undefined
+  );
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<string>(
     `${user?.role?.id}` || ''
@@ -54,7 +65,7 @@ export default function Form({
       }, 1000);
     } else {
       if (state !== undefined) {
-        if (state?.errors || state?.message) {
+        if (state?.message) {
           toast.error(state.message);
         }
 
@@ -108,7 +119,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.lecturerCode && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.lecturerCode}
               </span>
             )}
@@ -141,7 +152,7 @@ export default function Form({
               <BookOpenIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
             </div>
             {state?.errors?.facultyId && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.facultyId}
               </span>
             )}
@@ -174,7 +185,7 @@ export default function Form({
               <AcademicCapIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
             </div>
             {state?.errors?.degreeId && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.degreeId}
               </span>
             )}
@@ -213,7 +224,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.studentCode && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.studentCode}
               </span>
             )}
@@ -241,7 +252,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.studentClass && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.studentClass}
               </span>
             )}
@@ -276,7 +287,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.username && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.username}
             </span>
           )}
@@ -301,7 +312,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.password && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.password}
             </span>
           )}
@@ -326,7 +337,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.email && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.email}
             </span>
           )}
@@ -351,40 +362,85 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.fullname && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.fullname}
             </span>
           )}
         </div>
-        <label htmlFor="roleId" className="mb-2 block text-sm font-medium">
-          Chọn vai trò
-        </label>
-        <div className="relative">
-          <select
-            id="roleId"
-            name="roleId"
-            className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-            aria-describedby="roleId-error"
-            value={selectedRole}
-            required
-            onChange={handleRoleChange}
-          >
-            <option value="" disabled>
-              Chọn vai trò
-            </option>
-            {roles.map((role) => (
-              <option key={role?.id} value={role?.id}>
-                {role?.name}
+        <div className="mb-4">
+          <label htmlFor="roleId" className="mb-2 block text-sm font-medium">
+            Vai trò
+          </label>
+          <div className="relative">
+            <select
+              id="roleId"
+              name="roleId"
+              className="pointer-events-none opacity-50 peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+              aria-describedby="roleId-error"
+              value={selectedRole}
+              required
+              onChange={handleRoleChange}
+            >
+              <option value="" disabled>
+                Chọn vai trò
               </option>
-            ))}
-          </select>
-          <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+              {roles.map((role) => (
+                <option key={role?.id} value={role?.id}>
+                  {role?.name}
+                </option>
+              ))}
+            </select>
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          {state?.errors?.roleId && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.roleId}
+            </span>
+          )}
         </div>
-        {state?.errors?.roleId && (
-          <span className="text-left text-xs text-red-500 relative -top-2">
-            {state.errors.roleId}
-          </span>
-        )}
+        <fieldset>
+          <legend className="mb-2 block text-sm font-medium">
+            Trạng thái người dùng
+          </legend>
+          <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
+            <div className="flex gap-4">
+              <div className="flex items-center">
+                <input
+                  id="pending"
+                  name="active"
+                  type="radio"
+                  value="false"
+                  defaultChecked={!user?.active}
+                  className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600"
+                  aria-describedby="active-error"
+                />
+                <label
+                  htmlFor="false"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
+                >
+                  Không hoạt động <NoSymbolIcon className="h-4 w-4" />
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  id="paid"
+                  name="active"
+                  type="radio"
+                  value="true"
+                  defaultChecked={user?.active}
+                  className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600"
+                  aria-describedby="active-error"
+                />
+                <label
+                  htmlFor="true"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white"
+                >
+                  Hoạt động <CheckIcon className="h-4 w-4" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
       </div>
 
       {/* Render additional fields based on selected role */}

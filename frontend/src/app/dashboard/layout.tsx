@@ -16,11 +16,11 @@ export default async function Layout({
   }
 
   return (
-    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+    <div className="flex xl:h-screen flex-col md:flex-row md:overflow-hidden">
       <div className="w-full flex-none md:w-64">
         <SideNav user={user} />
       </div>
-      <main className="flex-grow p-3 md:overflow-y-auto">{children}</main>
+      <main className="flex-grow p-3 xl:overflow-y-auto">{children}</main>
     </div>
   );
 }

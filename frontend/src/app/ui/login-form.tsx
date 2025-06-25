@@ -25,7 +25,7 @@ export default function LoginForm() {
       }, 1000);
     } else {
       if (state !== undefined) {
-        if (state?.errors || state?.message) {
+        if (state?.message) {
           toast.error(state.message);
         }
 
@@ -63,7 +63,7 @@ export default function LoginForm() {
             </div>
           </div>
           {state?.errors?.emailOrUsername && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.emailOrUsername}
             </span>
           )}
@@ -88,7 +88,7 @@ export default function LoginForm() {
             </div>
           </div>
           {state?.errors?.password && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.password}
             </span>
           )}

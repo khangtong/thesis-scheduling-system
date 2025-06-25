@@ -40,7 +40,7 @@ export default function Form({
       }, 1000);
     } else {
       if (state !== undefined) {
-        if (state?.errors || state?.message) {
+        if (state?.message) {
           toast.error(state.message);
         }
 
@@ -93,7 +93,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.lecturerCode && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.lecturerCode}
               </span>
             )}
@@ -126,7 +126,7 @@ export default function Form({
               <BookOpenIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
             </div>
             {state?.errors?.facultyId && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.facultyId}
               </span>
             )}
@@ -159,7 +159,7 @@ export default function Form({
               <AcademicCapIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
             </div>
             {state?.errors?.degreeId && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.degreeId}
               </span>
             )}
@@ -197,7 +197,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.studentCode && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.studentCode}
               </span>
             )}
@@ -224,7 +224,7 @@ export default function Form({
               </div>
             </div>
             {state?.errors?.studentClass && (
-              <span className="text-left text-xs text-red-500 relative -top-2">
+              <span className="text-left text-xs text-red-500 relative">
                 {state.errors.studentClass}
               </span>
             )}
@@ -258,7 +258,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.username && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.username}
             </span>
           )}
@@ -282,7 +282,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.password && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.password}
             </span>
           )}
@@ -306,7 +306,7 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.email && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.email}
             </span>
           )}
@@ -330,13 +330,13 @@ export default function Form({
             </div>
           </div>
           {state?.errors?.fullname && (
-            <span className="text-left text-xs text-red-500 relative -top-2">
+            <span className="text-left text-xs text-red-500 relative">
               {state.errors.fullname}
             </span>
           )}
         </div>
         <label htmlFor="roleId" className="mb-2 block text-sm font-medium">
-          Chọn vai trò
+          Vai trò
         </label>
         <div className="relative">
           <select
@@ -360,7 +360,7 @@ export default function Form({
           <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
         </div>
         {state?.errors?.roleId && (
-          <span className="text-left text-xs text-red-500 relative -top-2">
+          <span className="text-left text-xs text-red-500 relative">
             {state.errors.roleId}
           </span>
         )}

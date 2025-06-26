@@ -145,6 +145,7 @@ export async function createUser(state: any, formData: FormData) {
     studentCode: formData.get('studentCode') || '',
     studentClass: formData.get('studentClass') || '',
   };
+  console.log('Form data object:', formDataObj);
 
   // 2. Validate form fields
   const validatedFields = UserFormSchema.safeParse(formDataObj);
@@ -157,7 +158,6 @@ export async function createUser(state: any, formData: FormData) {
   }
 
   const data = validatedFields.data;
-  console.log('Validated user data:', data);
 
   try {
     const authToken = (await cookies()).get('session')?.value;

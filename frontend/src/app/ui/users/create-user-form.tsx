@@ -7,7 +7,6 @@ import {
   EnvelopeIcon,
   LockClosedIcon,
   IdentificationIcon,
-  BuildingOfficeIcon,
   AcademicCapIcon,
   UserGroupIcon,
   BookOpenIcon,

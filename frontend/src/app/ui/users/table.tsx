@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Update, Delete } from '../buttons';
 import { User } from '@/app/lib/definitions';
 import Status from '../status';
@@ -19,25 +18,27 @@ export default function Table({ users = [] }: { users: User[] }) {
                     <div className="mb-2 flex items-center">
                       <p>{user?.username}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
+                    <p className="max-w-[160px] text-xs text-nowrap overflow-hidden text-ellipsis sm:text-sm text-gray-500">
+                      {user?.email}
+                    </p>
                   </div>
                   <Status status={user?.active ? true : false} />
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       {user?.fullname || 'N/A'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       {user?.role?.name || 'N/A'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       Tạo:{' '}
                       {user?.createdAt
                         ? new Date(user.createdAt).toLocaleDateString()
                         : 'N/A'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       Cập nhật:{' '}
                       {user?.updatedAt
                         ? new Date(user.updatedAt).toLocaleDateString()

@@ -44,7 +44,7 @@ export type Student = {
   user: User;
 } | null;
 
-export const ITEMS_PER_PAGE = 8;
+export const ITEMS_PER_PAGE = 7;
 
 export const LoginFormSchema = z.object({
   emailOrUsername: z.union([

@@ -4,6 +4,7 @@ import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/users/table';
 import { Create } from '@/app/ui/buttons';
+import { ImportUsersButton } from '@/app/ui/users/import-users-button';
 import { fetchUsers } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
@@ -28,10 +29,10 @@ export default async function Page(props: {
   );
 
   // Paginate users based on ITEMS_PER_PAGE
-  let a = [];
+  const a = [];
   let j = 0;
   for (let i = 0; i < totalPages; i++) {
-    let b = [];
+    const b = [];
     while (j < users.length && b.length < ITEMS_PER_PAGE) {
       b.push(users[j]);
       j++;
@@ -46,7 +47,10 @@ export default async function Page(props: {
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
         <Search placeholder="Tìm kiếm người dùng..." />
-        <Create singular="người dùng" path="users" />
+        <div className="flex gap-2">
+          <ImportUsersButton />
+          <Create singular="người dùng" path="users" />
+        </div>
       </div>
       <Table users={a[currentPage - 1]} />
       <div className="mt-5 flex w-full justify-center">

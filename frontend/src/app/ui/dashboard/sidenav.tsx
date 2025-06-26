@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import NavLinks from './nav-links';
 import Logo from '../logo';
-import LogoutButton from '../logoutButton';
+import LogoutButton from '../logout-button';
 import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { User } from '@/app/lib/definitions';
 

@@ -149,3 +149,25 @@ export const UserFormSchema = z
       path: [], // This will be a general form error
     }
   );
+
+export const RequestPasswordResetSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+});
+
+export const VerifyResetCodeSchema = z.object({
+  email: z.string().email('Email không hợp lệ'),
+  code: z.string().length(6, 'Mã xác thực phải có 6 chữ số'),
+});
+
+export const ResetPasswordSchema = z
+  .object({
+    token: z.string().min(1, 'Token không hợp lệ'),
+    newPassword: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    confirmPassword: z
+      .string()
+      .min(6, 'Mật khẩu xác nhận phải có ít nhất 6 ký tự'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Mật khẩu xác nhận không khớp',
+    path: ['confirmPassword'],
+  });

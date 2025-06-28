@@ -46,6 +46,21 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
+    public void sendPasswordResetCodeEmail(String to, String fullName, String code) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("fullName", fullName);
+        context.setVariable("resetCode", code);
+        context.setVariable("expiryMinutes", 15); // Code expires in 15 minutes
+
+        String htmlContent = templateEngine.process("password-reset-code", context);
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(to);
+        helper.setSubject("Mã xác thực đặt lại mật khẩu");
+        helper.setText(htmlContent, true);
+        javaMailSender.send(message);
+    }
+
     public void sendRequestAvailabilityEmail(String to, String periodName, Date endDate) throws MessagingException {
         Context context = new Context();
         context.setVariable("periodName", periodName);

@@ -4,7 +4,14 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import axios from 'axios';
 
-import { LoginFormSchema, User, UserFormSchema } from './definitions';
+import {
+  LoginFormSchema,
+  RequestPasswordResetSchema,
+  ResetPasswordSchema,
+  User,
+  UserFormSchema,
+  VerifyResetCodeSchema,
+} from './definitions';
 
 export async function login(state: any, formData: FormData) {
   // 1. Validate form fields
@@ -124,6 +131,153 @@ export async function logout() {
   } catch (error) {
     console.error('Logout error:', error);
     return { success: false, error: 'Logout failed' };
+  }
+}
+
+// Request password reset action
+export async function requestPasswordReset(prevState: any, formData: FormData) {
+  const validatedFields = RequestPasswordResetSchema.safeParse({
+    email: formData.get('email'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Vui lòng kiểm tra lại thông tin.',
+    };
+  }
+
+  const { email } = validatedFields.data;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/auth/forgot-password`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: result.message || 'Có lỗi xảy ra khi gửi mã xác thực.',
+        success: false,
+      };
+    }
+
+    return {
+      message: 'Mã xác thực đã được gửi đến email của bạn.',
+      success: true,
+      email: email,
+    };
+  } catch (error) {
+    return {
+      message: 'Lỗi kết nối. Vui lòng thử lại.',
+      success: false,
+    };
+  }
+}
+
+// Verify reset code action
+export async function verifyResetCode(prevState: any, formData: FormData) {
+  const validatedFields = VerifyResetCodeSchema.safeParse({
+    email: formData.get('email'),
+    code: formData.get('code'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Vui lòng kiểm tra lại thông tin.',
+    };
+  }
+
+  const { email, code } = validatedFields.data;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/auth/verify-reset-code`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: result.message || 'Mã xác thực không hợp lệ.',
+        success: false,
+      };
+    }
+
+    return {
+      message: 'Mã xác thực hợp lệ.',
+      success: true,
+      resetToken: result.resetToken,
+    };
+  } catch (error) {
+    return {
+      message: 'Lỗi kết nối. Vui lòng thử lại.',
+      success: false,
+    };
+  }
+}
+
+// Reset password action
+export async function resetPassword(prevState: any, formData: FormData) {
+  const validatedFields = ResetPasswordSchema.safeParse({
+    token: formData.get('token'),
+    newPassword: formData.get('newPassword'),
+    confirmPassword: formData.get('confirmPassword'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Vui lòng kiểm tra lại thông tin.',
+    };
+  }
+
+  const { token, newPassword } = validatedFields.data;
+
+  try {
+    const response = await fetch(`${process.env.API_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: result.message || 'Có lỗi xảy ra khi đặt lại mật khẩu.',
+        success: false,
+      };
+    }
+
+    return {
+      message:
+        'Mật khẩu đã được đặt lại thành công. Đang chuyển hướng đến trang đăng nhập...',
+      success: true,
+    };
+  } catch (error) {
+    return {
+      message: 'Lỗi kết nối. Vui lòng thử lại.',
+      success: false,
+    };
   }
 }
 

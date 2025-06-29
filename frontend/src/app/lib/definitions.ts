@@ -171,3 +171,11 @@ export const ResetPasswordSchema = z
     message: 'Mật khẩu xác nhận không khớp',
     path: ['confirmPassword'],
   });
+
+export const FacultyFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Tên khoa không được để trống.' })
+    .max(100, { message: 'Tên khoa không được quá 100 ký tự.' })
+    .trim(),
+});

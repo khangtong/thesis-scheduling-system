@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 
 import {
+  FacultyFormSchema,
   LoginFormSchema,
   RequestPasswordResetSchema,
   ResetPasswordSchema,
@@ -72,7 +73,11 @@ export async function login(state: any, formData: FormData) {
         path: '/',
       });
 
-      return { ...response.data, success: true };
+      return {
+        ...response.data,
+        success: true,
+        message: 'Đăng nhập thành công',
+      };
     }
   } catch (error: any) {
     return {
@@ -101,7 +106,6 @@ export async function logout() {
     const cookieStore = await cookies();
 
     // Get current user data for potential API call to backend
-    const userCookie = cookieStore.get('user')?.value;
     const sessionToken = cookieStore.get('session')?.value;
 
     // Optional: Call backend to invalidate token
@@ -337,14 +341,14 @@ export async function createUser(state: any, formData: FormData) {
     );
 
     if (userResponse.status !== 201) {
-      throw new Error('Failed to create user');
+      throw new Error('Không thể tạo người dùng');
     }
 
     const createdUser = userResponse.data;
     const userId = createdUser.id || createdUser.user?.id;
 
     if (!userId) {
-      throw new Error('User ID not found in response');
+      throw new Error('Không tìm thấy ID người dùng trong phản hồi');
     }
 
     // 4. Create additional profile based on role
@@ -460,7 +464,6 @@ export async function updateUser(
   }
 
   const data = validatedFields.data;
-  console.log('Validated user data:', data);
 
   try {
     const authToken = (await cookies()).get('session')?.value;
@@ -486,14 +489,14 @@ export async function updateUser(
     );
 
     if (userResponse.status !== 200) {
-      throw new Error('Failed to update user');
+      throw new Error('Không thể cập nhật người dùng');
     }
 
     const updatedUser = userResponse.data;
     const userId = updatedUser.id || updatedUser.user?.id;
 
     if (!userId) {
-      throw new Error('User ID not found in response');
+      throw new Error('Không tìm thấy ID người dùng trong phản hồi');
     }
 
     // 4. Create additional profile based on role
@@ -585,12 +588,122 @@ export async function deleteUser(id: number) {
     });
 
     if (response.status === 204) {
-      return { success: true, message: 'User deleted successfully' };
+      return { success: true, message: 'Người dùng đã được tạo thành công' };
     } else {
-      return { success: false, message: 'Failed to delete user' };
+      return { success: false, message: 'Không thể xóa người dùng' };
     }
   } catch (error: any) {
     console.error('Delete user error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createFaculty(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = FacultyFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/faculties`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Khoa đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo khoa' };
+    }
+  } catch (error: any) {
+    console.error('Create faculty error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateFaculty(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = FacultyFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/faculties/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, message: 'Khoa đã được cập nhật thành công' };
+    } else {
+      return { success: false, message: 'Không thể cập nhật khoa' };
+    }
+  } catch (error: any) {
+    console.error('Update faculty error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteFaculty(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/faculties/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Khoa đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa khoa' };
+    }
+  } catch (error: any) {
+    console.error('Delete faculty error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

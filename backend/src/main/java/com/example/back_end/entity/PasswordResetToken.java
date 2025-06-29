@@ -16,16 +16,16 @@ public class PasswordResetToken {
     @Column(nullable = false)
     private String code;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "\"resetToken\"")
     private String resetToken;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "\"expiryDate\"")
     private LocalDateTime expiryDate;
 
     @Column(nullable = false)
     private boolean used = false;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "\"createdAt\"")
     private LocalDateTime createdAt;
 
     public PasswordResetToken() {

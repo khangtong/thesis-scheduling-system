@@ -31,6 +31,11 @@ public class FacultyService {
         return faculty;
     }
 
+    @Transactional(readOnly = true)
+    public List<Faculty> searchFaculties(String query) {
+        return facultyRepository.searchFaculties(query);
+    }
+
     @Transactional
     public Faculty createFaculty(String facultyName) {
         if ("".equals(facultyName))

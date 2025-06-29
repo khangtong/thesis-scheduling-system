@@ -52,7 +52,7 @@ public class EmailService {
         context.setVariable("resetCode", code);
         context.setVariable("expiryMinutes", 15); // Code expires in 15 minutes
 
-        String htmlContent = templateEngine.process("password-reset-code", context);
+        String htmlContent = templateEngine.process("emails/password-reset-code", context);
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(to);

@@ -2,7 +2,7 @@
 
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteUser } from '../lib/actions';
+import { deleteFaculty, deleteUser } from '../lib/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -29,7 +29,7 @@ export function Update({ id, path }: { id: number; path: string }) {
   );
 }
 
-export function Delete({ id }: { id: number }) {
+export function DeleteUser({ id }: { id: number }) {
   const deleteUserWithId = deleteUser.bind(null, id);
   const router = useRouter();
 
@@ -46,6 +46,41 @@ export function Delete({ id }: { id: number }) {
             error: 'Có lỗi xảy ra khi xóa người dùng',
           });
           router.push('/dashboard/users');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteFaculty({ id }: { id: number }) {
+  const deleteFacultyWithId = deleteFaculty.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa khoa này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteFacultyWithId(), {
+            loading: 'Đang xóa khoa...',
+            success: 'Xóa khoa thành công',
+            error: 'Có lỗi xảy ra khi xóa khoa',
+          });
+          router.push('/dashboard/faculties');
         },
       },
     });

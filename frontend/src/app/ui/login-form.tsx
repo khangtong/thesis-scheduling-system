@@ -23,11 +23,12 @@ export default function LoginForm() {
     } else {
       if (state !== undefined) {
         if (state?.message) {
-          toast.error(state.message);
-        }
-
-        if (state?.success) {
-          router.push('/dashboard');
+          if (state?.success) {
+            toast.success(state.message);
+            router.push('/dashboard');
+          } else {
+            toast.error(state.message);
+          }
         }
       }
     }

@@ -53,6 +53,20 @@ public class FacultyController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Faculty>> searchFaculties(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Faculty> faculties = facultyService.searchFaculties(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(faculties);
+            } else {
+                return new SendError<List<Faculty>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Faculty>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty, HttpServletResponse response, HttpServletRequest request) {
         try {

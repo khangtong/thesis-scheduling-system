@@ -1,4 +1,4 @@
-import { Update, Delete } from '../buttons';
+import { Update, DeleteUser } from '../buttons';
 import { User } from '@/app/lib/definitions';
 import Status from '../status';
 
@@ -47,7 +47,7 @@ export default function Table({ users = [] }: { users: User[] }) {
                   </div>
                   <div className="flex justify-end gap-2">
                     <Update id={user?.id ? user.id : -1} path="users" />
-                    <Delete id={user?.id ? user.id : -1} />
+                    <DeleteUser id={user?.id ? user.id : -1} />
                   </div>
                 </div>
               </div>
@@ -116,7 +116,7 @@ export default function Table({ users = [] }: { users: User[] }) {
                   <td className="py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <Update id={user?.id ? user.id : -1} path="users" />
-                      <Delete id={user?.id ? user.id : -1} />
+                      <DeleteUser id={user?.id ? user.id : -1} />
                     </div>
                   </td>
                 </tr>

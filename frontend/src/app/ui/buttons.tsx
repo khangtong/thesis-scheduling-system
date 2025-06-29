@@ -2,7 +2,7 @@
 
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteFaculty, deleteUser } from '../lib/actions';
+import { deleteDegree, deleteFaculty, deleteUser } from '../lib/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -81,6 +81,41 @@ export function DeleteFaculty({ id }: { id: number }) {
             error: 'Có lỗi xảy ra khi xóa khoa',
           });
           router.push('/dashboard/faculties');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteDegree({ id }: { id: number }) {
+  const deleteDegreeWithId = deleteDegree.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa học vị này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteDegreeWithId(), {
+            loading: 'Đang xóa học vị...',
+            success: 'Xóa học vị thành công',
+            error: 'Có lỗi xảy ra khi xóa học vị',
+          });
+          router.push('/dashboard/degrees');
         },
       },
     });

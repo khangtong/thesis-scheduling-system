@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 
 import {
+  DegreeFormSchema,
   FacultyFormSchema,
   LoginFormSchema,
   RequestPasswordResetSchema,
@@ -704,6 +705,116 @@ export async function deleteFaculty(id: number) {
     }
   } catch (error: any) {
     console.error('Delete faculty error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createDegree(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = DegreeFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/degrees`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Học vị đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo học vị' };
+    }
+  } catch (error: any) {
+    console.error('Create degree error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateDegree(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = DegreeFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/degrees/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, message: 'Học vị đã được cập nhật thành công' };
+    } else {
+      return { success: false, message: 'Không thể cập nhật học vị' };
+    }
+  } catch (error: any) {
+    console.error('Update degree error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteDegree(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/degrees/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Học vị đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa học vị' };
+    }
+  } catch (error: any) {
+    console.error('Delete degree error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

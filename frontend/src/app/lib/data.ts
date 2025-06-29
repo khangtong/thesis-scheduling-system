@@ -1,4 +1,4 @@
-import { Faculty, User } from './definitions';
+import { Degree, Faculty, User } from './definitions';
 import { ITEMS_PER_PAGE } from './definitions';
 
 export async function fetchUsers(
@@ -228,5 +228,61 @@ export async function fetchDegrees(token: string | undefined) {
   } catch (error) {
     console.error('Error fetching degrees:', error);
     throw new Error('Failed to fetch degrees.');
+  }
+}
+
+export async function fetchDegreesWithQuery(
+  token: string | undefined,
+  query: string
+) {
+  let degrees: Degree[] = [];
+  let totalPages = 1;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/degrees/search?query=${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch degrees with query.');
+    }
+
+    const data = await response.json();
+    degrees = data;
+    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching degrees with query:', error);
+    throw new Error('Failed to fetch degrees with query.');
+  }
+
+  return { degrees, totalPages };
+}
+
+export async function fetchDegreeById(token: string | undefined, id: string) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/degrees/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch degree.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching degree:', error);
+    throw new Error('Failed to fetch degree.');
   }
 }

@@ -2,15 +2,15 @@ import { Metadata } from 'next';
 import { lexend } from '@/app/ui/fonts';
 import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
-import Table from '@/app/ui/faculties/table';
+import Table from '@/app/ui/degrees/table';
 import { Create } from '@/app/ui/buttons';
-import { ImportFacultiesButton } from '@/app/ui/faculties/import-faculties-button';
-import { fetchFacultiesWithQuery } from '@/app/lib/data';
+import { ImportDegreesButton } from '@/app/ui/degrees/import-degrees-button';
+import { fetchDegreesWithQuery } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
 
 export const metadata: Metadata = {
-  title: 'Khoa',
+  title: 'Học vị',
 };
 
 export default async function Page(props: {
@@ -23,18 +23,18 @@ export default async function Page(props: {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
-  const { faculties, totalPages } = await fetchFacultiesWithQuery(
+  const { degrees, totalPages } = await fetchDegreesWithQuery(
     (await cookies()).get('session')?.value,
     query
   );
 
-  // Paginate faculties based on ITEMS_PER_PAGE
+  // Paginate degrees based on ITEMS_PER_PAGE
   const a = [];
   let j = 0;
   for (let i = 0; i < totalPages; i++) {
     const b = [];
-    while (j < faculties.length && b.length < ITEMS_PER_PAGE) {
-      b.push(faculties[j]);
+    while (j < degrees.length && b.length < ITEMS_PER_PAGE) {
+      b.push(degrees[j]);
       j++;
     }
     a.push(b);
@@ -43,16 +43,16 @@ export default async function Page(props: {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lexend.className} text-2xl`}>Quản lý khoa</h1>
+        <h1 className={`${lexend.className} text-2xl`}>Quản lý học vị</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
-        <Search placeholder="Tìm kiếm khoa..." />
+        <Search placeholder="Tìm kiếm học vị..." />
         <div className="flex gap-2">
-          <ImportFacultiesButton />
-          <Create singular="khoa" path="faculties" />
+          <ImportDegreesButton />
+          <Create singular="học vị" path="degrees" />
         </div>
       </div>
-      <Table faculties={a[currentPage - 1]} />
+      <Table degrees={a[currentPage - 1]} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

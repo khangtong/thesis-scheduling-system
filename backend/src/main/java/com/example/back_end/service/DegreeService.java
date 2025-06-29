@@ -31,6 +31,11 @@ public class DegreeService {
         return degree;
     }
 
+    @Transactional(readOnly = true)
+    public List<Degree> searchDegrees(String query) {
+        return degreeRepository.searchDegrees(query);
+    }
+
     @Transactional
     public Degree createDegree(String name) {
         if ("".equals(name))

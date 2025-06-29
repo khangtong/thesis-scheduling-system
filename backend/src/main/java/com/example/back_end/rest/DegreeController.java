@@ -53,6 +53,20 @@ public class DegreeController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Degree>> searchDegrees(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Degree> degrees = degreeService.searchDegrees(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(degrees);
+            } else {
+                return new SendError<List<Degree>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Degree>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Degree> createDegree(@RequestBody Degree degree, HttpServletResponse response, HttpServletRequest request) {
         try {

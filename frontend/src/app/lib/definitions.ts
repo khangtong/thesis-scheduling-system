@@ -179,3 +179,11 @@ export const FacultyFormSchema = z.object({
     .max(100, { message: 'Tên khoa không được quá 100 ký tự.' })
     .trim(),
 });
+
+export const DegreeFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Tên học vị không được để trống.' })
+    .max(100, { message: 'Tên học vị không được quá 100 ký tự.' })
+    .trim(),
+});

@@ -5,11 +5,13 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 
 import {
+  CommitteeRoleFormSchema,
   DegreeFormSchema,
   FacultyFormSchema,
   LoginFormSchema,
   RequestPasswordResetSchema,
   ResetPasswordSchema,
+  RoomFormSchema,
   User,
   UserFormSchema,
   VerifyResetCodeSchema,
@@ -815,6 +817,234 @@ export async function deleteDegree(id: number) {
     }
   } catch (error: any) {
     console.error('Delete degree error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createRoom(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = RoomFormSchema.safeParse({
+    name: formData.get('name'),
+    active: true,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/rooms`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Phòng đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo phòng' };
+    }
+  } catch (error: any) {
+    console.error('Create room error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateRoom(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = RoomFormSchema.safeParse({
+    name: formData.get('name'),
+    active: formData.get('active') === 'true' ? true : false,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/rooms/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, message: 'Phòng đã được cập nhật thành công' };
+    } else {
+      return { success: false, message: 'Không thể cập nhật phòng' };
+    }
+  } catch (error: any) {
+    console.error('Update room error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteRoom(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(`${process.env.API_URL}/rooms/${id}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 204) {
+      return { success: true, message: 'Phòng đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa phòng' };
+    }
+  } catch (error: any) {
+    console.error('Delete room error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createCommitteeRole(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = CommitteeRoleFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/committee-roles`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return {
+        success: true,
+        message: 'Vai trò hội đồng đã được tạo thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể tạo vai trò hội đồng' };
+    }
+  } catch (error: any) {
+    console.error('Create committee role error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateCommitteeRole(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = CommitteeRoleFormSchema.safeParse({
+    name: formData.get('name'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/committee-roles/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Vai trò hội đồng đã được cập nhật thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể cập nhật vai trò hội đồng' };
+    }
+  } catch (error: any) {
+    console.error('Update committee role error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteCommitteeRole(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/committee-roles/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return {
+        success: true,
+        message: 'Vai trò hội đồng đã được xóa thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể xóa vai trò hội đồng' };
+    }
+  } catch (error: any) {
+    console.error('Delete committee role error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

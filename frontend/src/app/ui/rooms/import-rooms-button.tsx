@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
-import { FacultyFormSchema } from '@/app/lib/definitions';
-import { createFaculty } from '@/app/lib/actions';
+import { RoomFormSchema } from '@/app/lib/definitions';
+import { createRoom } from '@/app/lib/actions';
 
-export function ImportFacultiesButton() {
+export function ImportRoomsButton() {
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = async (
@@ -32,13 +32,14 @@ export function ImportFacultiesButton() {
             return reject(new Error('Tập tin không chứa dữ liệu.'));
           }
 
-          const createdFaculties = [];
+          const createdRooms = [];
           const errors: { row: number; error: any }[] = [];
 
           for (let i = 0; i < json.length; i++) {
             const row = json[i];
-            const validatedFields = FacultyFormSchema.safeParse({
+            const validatedFields = RoomFormSchema.safeParse({
               name: row.name,
+              active: true,
             });
             if (validatedFields.success) {
               const formData = new FormData();
@@ -48,9 +49,9 @@ export function ImportFacultiesButton() {
                   (validatedFields.data as Record<string, any>)[key]
                 );
               });
-              const result = await createFaculty(null, formData);
+              const result = await createRoom(null, formData);
               if (result?.success) {
-                createdFaculties.push(validatedFields.data);
+                createdRooms.push(validatedFields.data);
               } else {
                 errors.push({ row: i + 2, error: result?.message });
               }
@@ -74,10 +75,10 @@ export function ImportFacultiesButton() {
               )
               .join('\n');
             reject(
-              new Error(`Một số khoa không thể được tạo: ${errorMessages}\n`)
+              new Error(`Một số phòng không thể được tạo: ${errorMessages}\n`)
             );
           } else {
-            resolve(`Đã tạo thành công ${createdFaculties.length} khoa.`);
+            resolve(`Đã tạo thành công ${createdRooms.length} phòng.`);
           }
         } catch {
           reject(new Error('Không thể xử lý tập tin Excel.'));
@@ -96,13 +97,13 @@ export function ImportFacultiesButton() {
   return (
     <div>
       <label
-        htmlFor="import-faculties"
+        htmlFor="import-rooms"
         className="flex h-10 items-center rounded-lg bg-blue-600 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
-        {loading ? 'Đang tải...' : 'Tải lên khoa'}
+        {loading ? 'Đang tải...' : 'Tải lên phòng'}
       </label>
       <input
-        id="import-faculties"
+        id="import-rooms"
         type="file"
         accept=".xlsx, .xls"
         className="hidden"

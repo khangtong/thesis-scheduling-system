@@ -53,6 +53,20 @@ public class RoomController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Room>> searchRooms(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Room> rooms = roomService.searchRooms(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(rooms);
+            } else {
+                return new SendError<List<Room>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Room>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Room> createRoom(@RequestBody Room room, HttpServletResponse response, HttpServletRequest request) {
         try {

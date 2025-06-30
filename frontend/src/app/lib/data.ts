@@ -1,4 +1,4 @@
-import { Degree, Faculty, User } from './definitions';
+import { Degree, Faculty, User, Room, CommitteeRole } from './definitions';
 import { ITEMS_PER_PAGE } from './definitions';
 
 export async function fetchUsers(
@@ -284,5 +284,167 @@ export async function fetchDegreeById(token: string | undefined, id: string) {
   } catch (error) {
     console.error('Error fetching degree:', error);
     throw new Error('Failed to fetch degree.');
+  }
+}
+
+export async function fetchRooms(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/rooms`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch rooms.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    throw new Error('Failed to fetch rooms.');
+  }
+}
+
+export async function fetchRoomsWithQuery(
+  token: string | undefined,
+  query: string
+) {
+  let rooms: Room[] = [];
+  let totalPages = 1;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/rooms/search?query=${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch rooms with query.');
+    }
+
+    const data = await response.json();
+    rooms = data;
+    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching rooms with query:', error);
+    throw new Error('Failed to fetch rooms with query.');
+  }
+
+  return { rooms, totalPages };
+}
+
+export async function fetchRoomById(token: string | undefined, id: string) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/rooms/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch room.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching room:', error);
+    throw new Error('Failed to fetch room.');
+  }
+}
+
+export async function fetchCommitteeRoles(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/committee-roles`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch committee roles.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching committee roles:', error);
+    throw new Error('Failed to fetch committee roles.');
+  }
+}
+
+export async function fetchCommitteeRolesWithQuery(
+  token: string | undefined,
+  query: string
+) {
+  let committeeRoles: CommitteeRole[] = [];
+  let totalPages = 1;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/committee-roles/search?query=${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch committee roles with query.');
+    }
+
+    const data = await response.json();
+    committeeRoles = data;
+    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching committee roles with query:', error);
+    throw new Error('Failed to fetch committee roles with query.');
+  }
+
+  return { committeeRoles, totalPages };
+}
+
+export async function fetchCommitteeRoleById(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/committee-roles/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch committee role.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching committee role:', error);
+    throw new Error('Failed to fetch committee role.');
   }
 }

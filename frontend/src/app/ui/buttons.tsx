@@ -2,7 +2,13 @@
 
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteDegree, deleteFaculty, deleteUser } from '../lib/actions';
+import {
+  deleteCommitteeRole,
+  deleteDegree,
+  deleteFaculty,
+  deleteRoom,
+  deleteUser,
+} from '../lib/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -116,6 +122,76 @@ export function DeleteDegree({ id }: { id: number }) {
             error: 'Có lỗi xảy ra khi xóa học vị',
           });
           router.push('/dashboard/degrees');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteRoom({ id }: { id: number }) {
+  const deleteRoomWithId = deleteRoom.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa phòng này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteRoomWithId(), {
+            loading: 'Đang xóa phòng...',
+            success: 'Xóa phòng thành công',
+            error: 'Có lỗi xảy ra khi xóa phòng',
+          });
+          router.push('/dashboard/rooms');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteCommitteeRole({ id }: { id: number }) {
+  const deleteCommitteeRoleWithId = deleteCommitteeRole.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa vai trò hội đồng này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteCommitteeRoleWithId(), {
+            loading: 'Đang xóa vai trò hội đồng...',
+            success: 'Xóa vai trò hội đồng thành công',
+            error: 'Có lỗi xảy ra khi xóa vai trò hội đồng',
+          });
+          router.push('/dashboard/committee-roles');
         },
       },
     });

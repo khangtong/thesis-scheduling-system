@@ -31,6 +31,11 @@ public class RoomService {
         return room;
     }
 
+    @Transactional(readOnly = true)
+    public List<Room> searchRooms(String query) {
+        return roomRepository.searchRooms(query);
+    }
+
     @Transactional
     public Room createRoom(Room room) {
         Room newRoom = new Room();

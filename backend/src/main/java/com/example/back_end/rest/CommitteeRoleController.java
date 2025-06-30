@@ -53,6 +53,20 @@ public class CommitteeRoleController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<CommitteeRole>> searchCommitteeRoles(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<CommitteeRole> committeeRoles = committeeRoleService.searchCommitteeRoles(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(committeeRoles);
+            } else {
+                return new SendError<List<CommitteeRole>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<CommitteeRole>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<CommitteeRole> createCommitteeRole(@RequestBody CommitteeRole committeeRole, HttpServletResponse response, HttpServletRequest request) {
         try {

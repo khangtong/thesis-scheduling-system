@@ -31,6 +31,11 @@ public class CommitteeRoleService {
         return committeeRole;
     }
 
+    @Transactional(readOnly = true)
+    public List<CommitteeRole> searchCommitteeRoles(String query) {
+        return committeeRoleRepository.searchCommitteeRoles(query);
+    }
+
     @Transactional
     public CommitteeRole createCommitteeRole(String name) {
         if ("".equals(name))

@@ -44,6 +44,17 @@ export type Student = {
   user: User;
 } | null;
 
+export type Room = {
+  id: number;
+  name: string;
+  active: boolean;
+} | null;
+
+export type CommitteeRole = {
+  id: number;
+  name: string;
+} | null;
+
 export const ITEMS_PER_PAGE = 7;
 
 export const LoginFormSchema = z.object({
@@ -184,6 +195,23 @@ export const DegreeFormSchema = z.object({
   name: z
     .string()
     .min(1, { message: 'Tên học vị không được để trống.' })
-    .max(100, { message: 'Tên học vị không được quá 100 ký tự.' })
+    .max(50, { message: 'Tên học vị không được quá 50 ký tự.' })
+    .trim(),
+});
+
+export const RoomFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Tên phòng không được để trống.' })
+    .max(50, { message: 'Tên phòng không được quá 50 ký tự.' })
+    .trim(),
+  active: z.boolean().optional(),
+});
+
+export const CommitteeRoleFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Tên vai trò không được để trống.' })
+    .max(50, { message: 'Tên vai trò không được quá 50 ký tự.' })
     .trim(),
 });

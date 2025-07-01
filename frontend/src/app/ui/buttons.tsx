@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   deleteCommitteeRole,
   deleteDegree,
+  deleteExpertise,
   deleteFaculty,
   deleteRoom,
   deleteUser,
@@ -192,6 +193,41 @@ export function DeleteCommitteeRole({ id }: { id: number }) {
             error: 'Có lỗi xảy ra khi xóa vai trò hội đồng',
           });
           router.push('/dashboard/committee-roles');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteExpertise({ id }: { id: number }) {
+  const deleteExpertiseWithId = deleteExpertise.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa chuyên môn này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteExpertiseWithId(), {
+            loading: 'Đang xóa chuyên môn...',
+            success: 'Xóa chuyên môn thành công',
+            error: 'Có lỗi xảy ra khi xóa chuyên môn',
+          });
+          router.push('/dashboard/expertises');
         },
       },
     });

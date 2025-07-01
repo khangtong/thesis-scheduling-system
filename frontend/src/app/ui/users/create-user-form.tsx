@@ -1,6 +1,6 @@
 'use client';
 
-import { Degree, Faculty, Role } from '@/app/lib/definitions';
+import { Degree, Expertise, Faculty, Role } from '@/app/lib/definitions';
 import {
   UserCircleIcon,
   AtSymbolIcon,
@@ -10,6 +10,7 @@ import {
   AcademicCapIcon,
   UserGroupIcon,
   BookOpenIcon,
+  CogIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
@@ -22,14 +23,17 @@ export default function Form({
   roles,
   faculties,
   degrees,
+  expertises,
 }: {
   roles: Role[];
   faculties: Faculty[];
   degrees: Degree[];
+  expertises: Expertise[];
 }) {
   const [state, action, isPending] = useActionState(createUser, undefined);
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<string>('');
+  const [selectedExpertises, setSelectedExpertises] = useState<number[]>([]);
 
   useEffect(() => {
     if (isPending) {
@@ -53,6 +57,18 @@ export default function Form({
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRole(e.target.value);
+    // Reset selected expertises when role changes
+    setSelectedExpertises([]);
+  };
+
+  const handleExpertiseChange = (expertiseId: number) => {
+    setSelectedExpertises((prev) => {
+      if (prev.includes(expertiseId)) {
+        return prev.filter((id) => id !== expertiseId);
+      } else {
+        return [...prev, expertiseId];
+      }
+    });
   };
 
   const getRoleName = (roleId: string) => {
@@ -97,6 +113,7 @@ export default function Form({
               </span>
             )}
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="facultyId"
@@ -130,7 +147,8 @@ export default function Form({
               </span>
             )}
           </div>
-          <div className="mb-2">
+
+          <div className="mb-4">
             <label
               htmlFor="degreeId"
               className="mb-2 block text-sm font-medium"
@@ -160,6 +178,52 @@ export default function Form({
             {state?.errors?.degreeId && (
               <span className="text-left text-xs text-red-500 relative">
                 {state.errors.degreeId}
+              </span>
+            )}
+          </div>
+          <div className="mb-2">
+            <label className="mb-2 block text-sm font-medium">Chuyên môn</label>
+            <div className="rounded-md border border-gray-200 bg-white p-3">
+              {expertises.length > 0 ? (
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {expertises.map((expertise) => (
+                    <div key={expertise?.id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`expertise-${expertise?.id}`}
+                        name="expertiseIds"
+                        value={expertise?.id}
+                        checked={selectedExpertises.includes(
+                          expertise?.id || -1
+                        )}
+                        onChange={() =>
+                          handleExpertiseChange(expertise?.id || -1)
+                        }
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <label
+                        htmlFor={`expertise-${expertise?.id}`}
+                        className="ml-2 text-sm text-gray-700 cursor-pointer"
+                      >
+                        {expertise?.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Không có chuyên môn nào</p>
+              )}
+            </div>
+            {selectedExpertises.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs text-blue-600">
+                  Đã chọn {selectedExpertises.length} chuyên môn
+                </p>
+              </div>
+            )}
+            {state?.errors?.expertiseIds && (
+              <span className="text-left text-xs text-red-500 relative">
+                {state.errors.expertiseIds}
               </span>
             )}
           </div>

@@ -31,6 +31,11 @@ public class ExpertiseService {
         return expertise;
     }
 
+    @Transactional(readOnly = true)
+    public List<Expertise> searchExpertises(String query) {
+        return expertiseRepository.searchExpertises(query);
+    }
+
     @Transactional
     public Expertise createExpertise(Expertise expertise) {
         Expertise newExpertise = new Expertise();

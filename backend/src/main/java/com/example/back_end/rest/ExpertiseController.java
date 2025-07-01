@@ -53,6 +53,20 @@ public class ExpertiseController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Expertise>> searchExpertises(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Expertise> expertises = expertiseService.searchExpertises(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(expertises);
+            } else {
+                return new SendError<List<Expertise>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Expertise>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Expertise> createExpertise(@RequestBody Expertise expertise, HttpServletResponse response, HttpServletRequest request) {
         try {

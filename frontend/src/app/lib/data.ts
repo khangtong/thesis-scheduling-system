@@ -1,4 +1,11 @@
-import { Degree, Faculty, User, Room, CommitteeRole } from './definitions';
+import {
+  Degree,
+  Faculty,
+  User,
+  Room,
+  CommitteeRole,
+  Expertise,
+} from './definitions';
 import { ITEMS_PER_PAGE } from './definitions';
 
 export async function fetchUsers(
@@ -446,5 +453,114 @@ export async function fetchCommitteeRoleById(
   } catch (error) {
     console.error('Error fetching committee role:', error);
     throw new Error('Failed to fetch committee role.');
+  }
+}
+
+export async function fetchExpertises(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/expertises`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch expertises.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching expertises:', error);
+    throw new Error('Failed to fetch expertises.');
+  }
+}
+
+export async function fetchExpertisesWithQuery(
+  token: string | undefined,
+  query: string
+) {
+  let expertises: Expertise[] = [];
+  let totalPages = 1;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/expertises/search?query=${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch expertises with query.');
+    }
+
+    const data = await response.json();
+    expertises = data;
+    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching expertises with query:', error);
+    throw new Error('Failed to fetch expertises with query.');
+  }
+
+  return { expertises, totalPages };
+}
+
+export async function fetchExpertiseById(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/expertises/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch expertise.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching expertise:', error);
+    throw new Error('Failed to fetch expertise.');
+  }
+}
+
+export async function fetchExpertisesByLecturerId(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/lecturers-expertises/lecturer/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch expertise.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching expertise:', error);
+    throw new Error('Failed to fetch expertise.');
   }
 }

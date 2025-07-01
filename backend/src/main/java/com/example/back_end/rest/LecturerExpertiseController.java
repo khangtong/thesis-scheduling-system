@@ -55,6 +55,20 @@ public class LecturerExpertiseController {
         }
     }
 
+    @GetMapping("/lecturer/{id}")
+    public ResponseEntity<List<LecturerExpertise>> getLecturerExpertisesByLecturer(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<LecturerExpertise> lecturerExpertises = lecturerExpertiseService.getLecturerExpertisesByLecturer(id);
+                return ResponseEntity.ok(lecturerExpertises);
+            } else {
+                return new SendError<List<LecturerExpertise>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<LecturerExpertise>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<LecturerExpertise> createLecturerExpertise(@RequestBody LecturerExpertiseDTO lecturerExpertiseDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

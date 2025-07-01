@@ -40,6 +40,14 @@ public class LecturerExpertiseService {
         return lecturerExpertise;
     }
 
+    @Transactional(readOnly = true)
+    public List<LecturerExpertise> getLecturerExpertisesByLecturer(int id) {
+        Lecturer lecturer = lecturerRepository.findById(id).orElse(null);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
+        return lecturerExpertiseRepository.getLecturerExpertisesByLecturer(lecturer);
+    }
+
     @Transactional
     public LecturerExpertise createLecturerExpertise(LecturerExpertiseDTO lecturerExpertiseDTO) {
         LecturerExpertise newLecturerExpertise = new LecturerExpertise();

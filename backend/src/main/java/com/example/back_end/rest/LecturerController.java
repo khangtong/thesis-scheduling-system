@@ -3,7 +3,9 @@ package com.example.back_end.rest;
 import com.example.back_end.dto.LecturerDTO;
 import com.example.back_end.dto.StudentDTO;
 import com.example.back_end.entity.Lecturer;
+import com.example.back_end.entity.LecturerExpertise;
 import com.example.back_end.entity.Student;
+import com.example.back_end.service.LecturerExpertiseService;
 import com.example.back_end.service.LecturerService;
 import com.example.back_end.utils.SendError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,11 +22,13 @@ import java.util.List;
 public class LecturerController {
     private LecturerService lecturerService;
     private AuthController authController;
+    private LecturerExpertiseService lecturerExpertiseService;
 
     @Autowired
-    public LecturerController(LecturerService lecturerService, AuthController authController) {
+    public LecturerController(LecturerService lecturerService, AuthController authController, LecturerExpertiseService lecturerExpertiseService) {
         this.lecturerService = lecturerService;
         this.authController = authController;
+        this.lecturerExpertiseService = lecturerExpertiseService;
     }
 
     @GetMapping
@@ -87,6 +91,13 @@ public class LecturerController {
     public ResponseEntity<Lecturer> updateLecturerById(@PathVariable int id, @RequestBody LecturerDTO lecturerDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Integer> expertiseIds = lecturerDTO.getExpertiseIds();
+                if (expertiseIds != null && !expertiseIds.isEmpty()) {
+                    List<LecturerExpertise> lecturerExpertises = lecturerExpertiseService.getLecturerExpertisesByLecturer(id);
+                    for (int i = 0; i < lecturerExpertises.size(); i++) {
+                        lecturerExpertiseService.deleteLecturerExpertiseById(lecturerExpertises.get(i).getId());
+                    }
+                }
                 Lecturer updatedLecturer = lecturerService.updateLecturerById(id, lecturerDTO);
                 return ResponseEntity.ok(updatedLecturer);
             } else {

@@ -2,6 +2,7 @@
 
 import {
   Degree,
+  Expertise,
   Faculty,
   Lecturer,
   Role,
@@ -32,6 +33,7 @@ export default function Form({
   roles,
   faculties,
   degrees,
+  expertises,
   lecturer = null,
   student = null,
 }: {
@@ -39,6 +41,7 @@ export default function Form({
   roles: Role[];
   faculties: Faculty[];
   degrees: Degree[];
+  expertises: Expertise[];
   lecturer: Lecturer | null;
   student: Student | null;
 }) {
@@ -56,6 +59,16 @@ export default function Form({
   const [selectedRole, setSelectedRole] = useState<string>(
     `${user?.role?.id}` || ''
   );
+
+  // Initialize selected expertises from lecturer data
+  const [selectedExpertises, setSelectedExpertises] = useState<number[]>(() => {
+    if (lecturer?.expertises) {
+      return lecturer.expertises
+        .map((exp) => exp?.id || -1)
+        .filter((id) => id !== -1);
+    }
+    return [];
+  });
 
   useEffect(() => {
     if (isPending) {
@@ -79,6 +92,20 @@ export default function Form({
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRole(e.target.value);
+    // Reset selected expertises when role changes
+    if (getRoleName(e.target.value) !== 'GIANG_VIEN') {
+      setSelectedExpertises([]);
+    }
+  };
+
+  const handleExpertiseChange = (expertiseId: number) => {
+    setSelectedExpertises((prev) => {
+      if (prev.includes(expertiseId)) {
+        return prev.filter((id) => id !== expertiseId);
+      } else {
+        return [...prev, expertiseId];
+      }
+    });
   };
 
   const getRoleName = (roleId: string) => {
@@ -124,6 +151,7 @@ export default function Form({
               </span>
             )}
           </div>
+
           <div className="mb-4">
             <label
               htmlFor="facultyId"
@@ -157,7 +185,8 @@ export default function Form({
               </span>
             )}
           </div>
-          <div className="mb-2">
+
+          <div className="mb-4">
             <label
               htmlFor="degreeId"
               className="mb-2 block text-sm font-medium"
@@ -187,6 +216,67 @@ export default function Form({
             {state?.errors?.degreeId && (
               <span className="text-left text-xs text-red-500 relative">
                 {state.errors.degreeId}
+              </span>
+            )}
+          </div>
+          <div className="mb-2">
+            <label className="mb-2 block text-sm font-medium">Chuyên môn</label>
+            <div className="rounded-md border border-gray-200 bg-white p-3">
+              {expertises.length > 0 ? (
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {expertises.map((expertise) => (
+                    <div key={expertise?.id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`expertise-${expertise?.id}`}
+                        name="expertiseIds"
+                        value={expertise?.id}
+                        checked={selectedExpertises.includes(
+                          expertise?.id || -1
+                        )}
+                        onChange={() =>
+                          handleExpertiseChange(expertise?.id || -1)
+                        }
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <label
+                        htmlFor={`expertise-${expertise?.id}`}
+                        className="ml-2 text-sm text-gray-700 cursor-pointer"
+                      >
+                        {expertise?.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Không có chuyên môn nào</p>
+              )}
+            </div>
+            {selectedExpertises.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs text-blue-600">
+                  Đã chọn {selectedExpertises.length} chuyên môn
+                </p>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {selectedExpertises.map((expertiseId) => {
+                    const expertise = expertises.find(
+                      (exp) => exp?.id === expertiseId
+                    );
+                    return expertise ? (
+                      <span
+                        key={expertiseId}
+                        className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800"
+                      >
+                        {expertise.name}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            )}
+            {state?.errors?.expertiseIds && (
+              <span className="text-left text-xs text-red-500 relative">
+                {state.errors.expertiseIds}
               </span>
             )}
           </div>

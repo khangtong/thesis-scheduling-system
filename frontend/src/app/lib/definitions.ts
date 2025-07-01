@@ -35,6 +35,7 @@ export type Lecturer = {
   faculty: Faculty;
   degree: Degree;
   user: User;
+  expertises: Expertise[];
 } | null;
 
 export type Student = {
@@ -53,6 +54,12 @@ export type Room = {
 export type CommitteeRole = {
   id: number;
   name: string;
+} | null;
+
+export type Expertise = {
+  id: number;
+  name: string;
+  description: string;
 } | null;
 
 export const ITEMS_PER_PAGE = 7;
@@ -110,6 +117,16 @@ export const UserFormSchema = z
       .positive()
       .optional()
       .or(z.nan()),
+    expertiseIds: z
+      .array(
+        z
+          .number({
+            message: 'Chuyên môn không hợp lệ.',
+          })
+          .int()
+          .positive()
+      )
+      .optional(),
 
     // Optional student fields
     studentCode: z
@@ -138,7 +155,8 @@ export const UserFormSchema = z
           data.facultyId &&
           !isNaN(data.facultyId) &&
           data.degreeId &&
-          !isNaN(data.degreeId)
+          !isNaN(data.degreeId) &&
+          (data.expertiseIds ? data.expertiseIds.length > 0 : true)
         );
       }
 
@@ -214,4 +232,18 @@ export const CommitteeRoleFormSchema = z.object({
     .min(1, { message: 'Tên vai trò không được để trống.' })
     .max(50, { message: 'Tên vai trò không được quá 50 ký tự.' })
     .trim(),
+});
+
+export const ExpertiseFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Tên chuyên môn không được để trống.' })
+    .max(100, { message: 'Tên chuyên môn không được quá 100 ký tự.' })
+    .trim(),
+  description: z
+    .string()
+    .min(1, { message: 'Mô tả chuyên môn không được để trống.' })
+    .max(500, { message: 'Mô tả chuyên môn không được quá 500 ký tự.' })
+    .optional()
+    .or(z.literal('')),
 });

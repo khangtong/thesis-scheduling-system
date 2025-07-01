@@ -7,6 +7,7 @@ import axios from 'axios';
 import {
   CommitteeRoleFormSchema,
   DegreeFormSchema,
+  ExpertiseFormSchema,
   FacultyFormSchema,
   LoginFormSchema,
   RequestPasswordResetSchema,
@@ -302,6 +303,7 @@ export async function createUser(state: any, formData: FormData) {
       ? Number(formData.get('facultyId'))
       : NaN,
     degreeId: formData.get('degreeId') ? Number(formData.get('degreeId')) : NaN,
+    expertiseIds: formData.getAll('expertiseIds').map((id) => Number(id)),
     // Student fields
     studentCode: formData.get('studentCode') || '',
     studentClass: formData.get('studentClass') || '',
@@ -368,9 +370,10 @@ export async function createUser(state: any, formData: FormData) {
         code: data.lecturerCode,
         facultyId: data.facultyId,
         degreeId: data.degreeId,
+        expertiseIds: data.expertiseIds || [],
       };
 
-      await axios.post(
+      const lecturerResponse = await axios.post(
         `${process.env.API_URL}/lecturers`,
         JSON.stringify(lecturerData),
         {
@@ -380,6 +383,16 @@ export async function createUser(state: any, formData: FormData) {
           },
         }
       );
+
+      if (lecturerResponse.status !== 201) {
+        axios.delete(`${process.env.API_URL}/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        throw new Error('Không thể tạo giảng viên');
+      }
     } else if (data.roleId === 3 && data.studentCode && data.studentClass) {
       // Create student profile
       const studentData = {
@@ -388,7 +401,7 @@ export async function createUser(state: any, formData: FormData) {
         studentClass: data.studentClass,
       };
 
-      await axios.post(
+      const studentResponse = await axios.post(
         `${process.env.API_URL}/students`,
         JSON.stringify(studentData),
         {
@@ -398,6 +411,16 @@ export async function createUser(state: any, formData: FormData) {
           },
         }
       );
+
+      if (studentResponse.status !== 201) {
+        axios.delete(`${process.env.API_URL}/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        throw new Error('Không thể tạo sinh viên');
+      }
     }
 
     return {
@@ -451,6 +474,7 @@ export async function updateUser(
       ? Number(formData.get('facultyId'))
       : NaN,
     degreeId: formData.get('degreeId') ? Number(formData.get('degreeId')) : NaN,
+    expertiseIds: formData.getAll('expertiseIds').map((id) => Number(id)),
     // Student fields
     studentCode: formData.get('studentCode') || '',
     studentClass: formData.get('studentClass') || '',
@@ -516,9 +540,10 @@ export async function updateUser(
         code: data.lecturerCode,
         facultyId: data.facultyId,
         degreeId: data.degreeId,
+        expertiseIds: data.expertiseIds || [],
       };
 
-      await axios.put(
+      const lecturerResponse = await axios.put(
         `${process.env.API_URL}/lecturers/${lecturerId}`,
         JSON.stringify(lecturerData),
         {
@@ -528,6 +553,10 @@ export async function updateUser(
           },
         }
       );
+
+      if (lecturerResponse.status !== 200) {
+        throw new Error('Không thể cập nhật thông tin giảng viên');
+      }
     } else if (data.roleId === 3 && data.studentCode && data.studentClass) {
       // Create student profile
       const studentData = {
@@ -536,7 +565,7 @@ export async function updateUser(
         studentClass: data.studentClass,
       };
 
-      await axios.put(
+      const studentResponse = await axios.put(
         `${process.env.API_URL}/students/${studentId}`,
         JSON.stringify(studentData),
         {
@@ -546,6 +575,10 @@ export async function updateUser(
           },
         }
       );
+
+      if (studentResponse.status !== 200) {
+        throw new Error('Không thể cập nhật thông tin sinh viên');
+      }
     }
 
     return {
@@ -1045,6 +1078,121 @@ export async function deleteCommitteeRole(id: number) {
     }
   } catch (error: any) {
     console.error('Delete committee role error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createExpertise(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = ExpertiseFormSchema.safeParse({
+    name: formData.get('name'),
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/expertises`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Chuyên môn đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo chuyên môn' };
+    }
+  } catch (error: any) {
+    console.error('Create expertise error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateExpertise(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = ExpertiseFormSchema.safeParse({
+    name: formData.get('name'),
+    description: formData.get('description'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/expertises/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Chuyên môn đã được cập nhật thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể cập nhật chuyên môn' };
+    }
+  } catch (error: any) {
+    console.error('Update expertise error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteExpertise(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/expertises/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Chuyên môn đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa chuyên môn' };
+    }
+  } catch (error: any) {
+    console.error('Delete expertise error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

@@ -1,14 +1,8 @@
 package com.example.back_end.service;
 
-import com.example.back_end.dao.DegreeRepository;
-import com.example.back_end.dao.FacultyRepository;
-import com.example.back_end.dao.LecturerRepository;
-import com.example.back_end.dao.UserRepository;
+import com.example.back_end.dao.*;
 import com.example.back_end.dto.LecturerDTO;
-import com.example.back_end.entity.Degree;
-import com.example.back_end.entity.Faculty;
-import com.example.back_end.entity.Lecturer;
-import com.example.back_end.entity.User;
+import com.example.back_end.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +16,17 @@ public class LecturerService {
     private UserRepository userRepository;
     private FacultyRepository facultyRepository;
     private DegreeRepository degreeRepository;
+    private LecturerExpertiseRepository lecturerExpertiseRepository;
+    private ExpertiseRepository expertiseRepository;
 
     @Autowired
-    public LecturerService(LecturerRepository lecturerRepository, UserRepository userRepository, FacultyRepository facultyRepository, DegreeRepository degreeRepository) {
+    public LecturerService(LecturerRepository lecturerRepository, UserRepository userRepository, FacultyRepository facultyRepository, DegreeRepository degreeRepository, LecturerExpertiseRepository lecturerExpertiseRepository, ExpertiseRepository expertiseRepository) {
         this.lecturerRepository = lecturerRepository;
         this.userRepository = userRepository;
         this.facultyRepository = facultyRepository;
         this.degreeRepository = degreeRepository;
+        this.lecturerExpertiseRepository = lecturerExpertiseRepository;
+        this.expertiseRepository = expertiseRepository;
     }
 
     @Transactional(readOnly = true)
@@ -94,10 +92,21 @@ public class LecturerService {
         } else {
             throw new Error("Học vị không được là rỗng");
         }
-
         lecturer.setCreatedAt(LocalDateTime.now());
         lecturer.setUpdatedAt(LocalDateTime.now());
-        return lecturerRepository.save(lecturer);
+        Lecturer dbLecturer = lecturerRepository.save(lecturer);
+        List<Integer> expertiseIds = lecturerDTO.getExpertiseIds();
+
+        if (expertiseIds != null && !expertiseIds.isEmpty()) {
+            for (int i = 0; i < expertiseIds.size(); i++) {
+                Expertise expertise = expertiseRepository.findById(expertiseIds.get(i)).orElse(null);
+                if (expertise == null)
+                    throw new Error("Không tìm thấy chuyên môn");
+                lecturerExpertiseRepository.save(new LecturerExpertise(null, dbLecturer, expertise));
+            }
+        }
+
+        return dbLecturer;
     }
 
     @Transactional
@@ -127,9 +136,20 @@ public class LecturerService {
         } else {
             throw new Error("Học vị không được là rỗng");
         }
-
         lecturer.setUpdatedAt(LocalDateTime.now());
-        return lecturerRepository.save(lecturer);
+        Lecturer dbLecturer = lecturerRepository.save(lecturer);
+        List<Integer> expertiseIds = lecturerDTO.getExpertiseIds();
+
+        if (expertiseIds != null && !expertiseIds.isEmpty()) {
+            for (int i = 0; i < expertiseIds.size(); i++) {
+                Expertise expertise = expertiseRepository.findById(expertiseIds.get(i)).orElse(null);
+                if (expertise == null)
+                    throw new Error("Không tìm thấy chuyên môn");
+                lecturerExpertiseRepository.save(new LecturerExpertise(null, dbLecturer, expertise));
+            }
+        }
+
+        return dbLecturer;
     }
 
     @Transactional

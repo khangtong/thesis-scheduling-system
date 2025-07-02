@@ -4,10 +4,12 @@ import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import {
   deleteCommitteeRole,
+  deleteDefensePeriod,
   deleteDegree,
   deleteExpertise,
   deleteFaculty,
   deleteRoom,
+  deleteTimeSlot,
   deleteUser,
 } from '../lib/actions';
 import { toast } from 'sonner';
@@ -228,6 +230,76 @@ export function DeleteExpertise({ id }: { id: number }) {
             error: 'Có lỗi xảy ra khi xóa chuyên môn',
           });
           router.push('/dashboard/expertises');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteDefensePeriod({ id }: { id: number }) {
+  const deleteDefensePeriodWithId = deleteDefensePeriod.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa đợt bảo vệ này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteDefensePeriodWithId(), {
+            loading: 'Đang xóa đợt bảo vệ...',
+            success: 'Xóa đợt bảo vệ thành công',
+            error: 'Có lỗi xảy ra khi xóa đợt bảo vệ',
+          });
+          router.push('/dashboard/defense-periods');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteTimeSlot({ id }: { id: number }) {
+  const deleteTimeSlotWithId = deleteTimeSlot.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa khung giờ này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteTimeSlotWithId(), {
+            loading: 'Đang xóa khung giờ...',
+            success: 'Xóa khung giờ thành công',
+            error: 'Có lỗi xảy ra khi xóa khung giờ',
+          });
+          router.push('/dashboard/timeslots');
         },
       },
     });

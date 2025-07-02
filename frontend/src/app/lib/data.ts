@@ -5,6 +5,7 @@ import {
   Room,
   CommitteeRole,
   Expertise,
+  DefensePeriod,
 } from './definitions';
 import { ITEMS_PER_PAGE } from './definitions';
 
@@ -562,5 +563,162 @@ export async function fetchExpertisesByLecturerId(
   } catch (error) {
     console.error('Error fetching expertise:', error);
     throw new Error('Failed to fetch expertise.');
+  }
+}
+
+export async function fetchDefensePeriods(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/defense-periods`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense periods.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching defense periods:', error);
+    throw new Error('Failed to fetch defense periods.');
+  }
+}
+
+export async function fetchDefensePeriodById(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/defense-periods/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense period.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching defense period:', error);
+    throw new Error('Failed to fetch defense period.');
+  }
+}
+
+export async function fetchDefensePeriodsWithQuery(
+  token: string | undefined,
+  query: string
+) {
+  let defensePeriods: DefensePeriod[] = [];
+  let totalPages = 1;
+
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/defense-periods/search?query=${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense periods with query.');
+    }
+
+    const data = await response.json();
+    defensePeriods = data;
+    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  } catch (error) {
+    console.error('Error fetching defense periods with query:', error);
+    throw new Error('Failed to fetch defense periods with query.');
+  }
+
+  return { defensePeriods, totalPages };
+}
+
+export async function fetchTimeSlots(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/timeslots`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch time slots.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching time slots:', error);
+    throw new Error('Failed to fetch time slots.');
+  }
+}
+
+export async function fetchTimeSlotById(token: string | undefined, id: string) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/timeslots/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch time slot.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching time slot:', error);
+    throw new Error('Failed to fetch time slot.');
+  }
+}
+
+export async function searchTimeSlots(
+  token: string | undefined,
+  query: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/timeslots/search/${query}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch time slots.');
+    }
+
+    const data = await response.json();
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return { data, totalPages };
+  } catch (error) {
+    console.error('Error fetching time slots:', error);
+    throw new Error('Failed to fetch time slots.');
   }
 }

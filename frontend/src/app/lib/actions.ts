@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import {
   CommitteeRoleFormSchema,
+  DefensePeriodFormSchema,
   DegreeFormSchema,
   ExpertiseFormSchema,
   FacultyFormSchema,
@@ -13,6 +14,7 @@ import {
   RequestPasswordResetSchema,
   ResetPasswordSchema,
   RoomFormSchema,
+  TimeSlotFormSchema,
   User,
   UserFormSchema,
   VerifyResetCodeSchema,
@@ -1193,6 +1195,242 @@ export async function deleteExpertise(id: number) {
     }
   } catch (error: any) {
     console.error('Delete expertise error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createDefensePeriod(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = DefensePeriodFormSchema.safeParse({
+    name: formData.get('name'),
+    start: new Date(formData.get('start') + ''),
+    end: new Date(formData.get('end') + ''),
+    active: true,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/defense-periods`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Đợt bảo vệ đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo đợt bảo vệ' };
+    }
+  } catch (error: any) {
+    console.error('Create defense period error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateDefensePeriod(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = DefensePeriodFormSchema.safeParse({
+    name: formData.get('name'),
+    start: new Date(formData.get('start') + ''),
+    end: new Date(formData.get('end') + ''),
+    active: formData.get('active') === 'true' ? true : false,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/defense-periods/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Đợt bảo vệ đã được cập nhật thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể cập nhật đợt bảo vệ' };
+    }
+  } catch (error: any) {
+    console.error('Update defense period error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteDefensePeriod(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/defense-periods/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Đợt bảo vệ đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa đợt bảo vệ' };
+    }
+  } catch (error: any) {
+    console.error('Delete defense period error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function createTimeSlot(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = TimeSlotFormSchema.safeParse({
+    date: new Date(formData.get('date') + ''),
+    start: formData.get('start'),
+    end: formData.get('end'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/timeslots`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Khung giờ đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo khung giờ' };
+    }
+  } catch (error: any) {
+    console.error('Create time slot error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function updateTimeSlot(
+  id: number | undefined,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = TimeSlotFormSchema.safeParse({
+    date: new Date(formData.get('date') + ''),
+    start: formData.get('start'),
+    end: formData.get('end'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/timeslots/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return {
+        success: true,
+        message: 'Khung giờ đã được cập nhật thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể cập nhật khung giờ' };
+    }
+  } catch (error: any) {
+    console.error('Update time slot error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function deleteTimeSlot(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/timeslots/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Khung giờ đã được xóa thành công' };
+    } else {
+      return { success: false, message: 'Không thể xóa khung giờ' };
+    }
+  } catch (error: any) {
+    console.error('Delete time slot error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

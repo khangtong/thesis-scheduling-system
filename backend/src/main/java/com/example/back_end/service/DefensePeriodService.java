@@ -32,6 +32,11 @@ public class DefensePeriodService {
         return defensePeriod;
     }
 
+    @Transactional(readOnly = true)
+    public List<DefensePeriod> searchDefensePeriods(String query) {
+        return defensePeriodRepository.searchDefensePeriods(query);
+    }
+
     @Transactional
     public DefensePeriod createDefensePeriod(DefensePeriod defensePeriod) {
         DefensePeriod newDefensePeriod = new DefensePeriod();

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 
 export type Role =
   | {
@@ -60,6 +60,21 @@ export type Expertise = {
   id: number;
   name: string;
   description: string;
+} | null;
+
+export type DefensePeriod = {
+  id: number;
+  name: string;
+  start: Date;
+  end: Date;
+  active: boolean;
+} | null;
+
+export type TimeSlot = {
+  id: number;
+  date: Date;
+  start: string;
+  end: string;
 } | null;
 
 export const ITEMS_PER_PAGE = 7;
@@ -247,3 +262,30 @@ export const ExpertiseFormSchema = z.object({
     .optional()
     .or(z.literal('')),
 });
+
+export const DefensePeriodFormSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, { message: 'Tên đợt bảo vệ không được để trống.' })
+      .max(100, { message: 'Tên đợt bảo vệ không được quá 100 ký tự.' })
+      .trim(),
+    start: z.date({ message: 'Ngày bắt đầu không hợp lệ.' }),
+    end: z.date({ message: 'Ngày kết thúc không hợp lệ.' }),
+    active: z.boolean().optional(),
+  })
+  .refine((data) => data.start < data.end, {
+    message: 'Ngày bắt đầu phải trước ngày kết thúc.',
+    path: ['start'],
+  });
+
+export const TimeSlotFormSchema = z
+  .object({
+    date: z.date({ message: 'Ngày không hợp lệ.' }),
+    start: z.string().min(1, { message: 'Giờ bắt đầu không hợp lệ.' }).trim(),
+    end: z.string().min(1, { message: 'Giờ kết thúc không hợp lệ.' }).trim(),
+  })
+  .refine((data) => data.start < data.end, {
+    message: 'Giờ bắt đầu phải trước giờ kết thúc.',
+    path: ['start'],
+  });

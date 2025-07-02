@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -29,6 +31,21 @@ public class TimeSlotService {
         if (timeSlot == null)
             throw new Error("Không tìm thấy khung giờ");
         return timeSlot;
+    }
+
+    @Transactional(readOnly = true)
+    public List<TimeSlot> getTimeSlotsByDate(LocalDate date) {
+        return timeSlotRepository.findByDate(date);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TimeSlot> getTimeSlotsByStart(LocalTime start) {
+        return timeSlotRepository.findByStart(start);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TimeSlot> getTimeSlotsByEnd(LocalTime end) {
+        return timeSlotRepository.findByEnd(end);
     }
 
     @Transactional

@@ -53,6 +53,20 @@ public class DefensePeriodController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<DefensePeriod>> searchDefensePeriods(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<DefensePeriod> defensePeriods = defensePeriodService.searchDefensePeriods(request.getParameterMap().get("query")[0]);
+                return ResponseEntity.ok(defensePeriods);
+            } else {
+                return new SendError<List<DefensePeriod>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<DefensePeriod>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<DefensePeriod> createDefensePeriod(@RequestBody DefensePeriod defensePeriod, HttpServletResponse response, HttpServletRequest request) {
         try {

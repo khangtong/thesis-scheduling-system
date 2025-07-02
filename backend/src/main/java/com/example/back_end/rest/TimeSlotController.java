@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -50,6 +52,51 @@ public class TimeSlotController {
             }
         } catch (Error error) {
             return new SendError<TimeSlot>().sendNotFound(error.getMessage(), response);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TimeSlot>> searchTimeSlots(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request)) || "GIANG_VIEN".equals(authController.authorize(response, request))) {
+                List<TimeSlot> timeSlots = timeSlotService.getAllTimeSlots();
+
+                if (request.getParameterMap().get("date") != null) {
+                    LocalDate date = LocalDate.parse(request.getParameterMap().get("date")[0]);
+                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByDate(date);
+                    for (int i = 0; i < timeSlots.size(); i++) {
+                        TimeSlot timeSlot = timeSlots.get(i);
+                        if (!timeSlots1.contains(timeSlot))
+                            timeSlots.remove(timeSlot);
+                    }
+                }
+
+                if (request.getParameterMap().get("start") != null) {
+                    LocalTime start = LocalTime.parse(request.getParameterMap().get("start")[0]);
+                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByStart(start);
+                    for (int i = 0; i < timeSlots.size(); i++) {
+                        TimeSlot timeSlot = timeSlots.get(i);
+                        if (!timeSlots1.contains(timeSlot))
+                            timeSlots.remove(timeSlot);
+                    }
+                }
+
+                if (request.getParameterMap().get("end") != null) {
+                    LocalTime end = LocalTime.parse(request.getParameterMap().get("end")[0]);
+                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByEnd(end);
+                    for (int i = 0; i < timeSlots.size(); i++) {
+                        TimeSlot timeSlot = timeSlots.get(i);
+                        if (!timeSlots1.contains(timeSlot))
+                            timeSlots.remove(timeSlot);
+                    }
+                }
+
+                return ResponseEntity.ok(timeSlots);
+            } else {
+                return new SendError<List<TimeSlot>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<TimeSlot>>().sendUnauthorized(error.getMessage(), response);
         }
     }
 

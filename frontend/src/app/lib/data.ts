@@ -699,16 +699,36 @@ export async function searchTimeSlots(
   query: string
 ) {
   try {
-    const response = await fetch(
-      `${process.env.API_URL}/timeslots/search/${query}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Parse the query string to extract date, start, and end parameters if present
+    let url = `${process.env.API_URL}/timeslots/search`;
+    const params = new URLSearchParams();
+    
+    // Check if query is a complex query with date, start, and end parameters
+    if (query.includes('date=') || query.includes('start=') || query.includes('end=')) {
+      // Parse the query string
+      const queryParams = new URLSearchParams(query);
+      
+      // Add each parameter to the URL params if it exists
+      if (queryParams.has('date')) params.append('date', queryParams.get('date')!);
+      if (queryParams.has('start')) params.append('start', queryParams.get('start')!);
+      if (queryParams.has('end')) params.append('end', queryParams.get('end')!);
+    } else if (query) {
+      // If it's a simple query string, use it as is
+      params.append('query', query);
+    }
+    
+    // Append the parameters to the URL
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch time slots.');

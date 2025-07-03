@@ -1396,7 +1396,7 @@ export async function updateTimeSlot(
       }
     );
 
-    if (response.status === 201) {
+    if (response.status === 200) {
       return {
         success: true,
         message: 'Khung giờ đã được cập nhật thành công',

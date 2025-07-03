@@ -63,31 +63,29 @@ public class TimeSlotController {
 
                 if (request.getParameterMap().get("date") != null) {
                     LocalDate date = LocalDate.parse(request.getParameterMap().get("date")[0]);
-                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByDate(date);
-                    for (int i = 0; i < timeSlots.size(); i++) {
+                    for (int i = timeSlots.size() - 1; i >= 0; i--) {
                         TimeSlot timeSlot = timeSlots.get(i);
-                        if (!timeSlots1.contains(timeSlot))
-                            timeSlots.remove(timeSlot);
+                        if (!timeSlot.getDate().equals(date))
+                            timeSlots.remove(i);
+
                     }
                 }
 
                 if (request.getParameterMap().get("start") != null) {
                     LocalTime start = LocalTime.parse(request.getParameterMap().get("start")[0]);
-                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByStart(start);
-                    for (int i = 0; i < timeSlots.size(); i++) {
+                    for (int i = timeSlots.size() - 1; i >= 0; i--) {
                         TimeSlot timeSlot = timeSlots.get(i);
-                        if (!timeSlots1.contains(timeSlot))
-                            timeSlots.remove(timeSlot);
+                        if (!timeSlot.getStart().equals(start))
+                            timeSlots.remove(i);
                     }
                 }
 
                 if (request.getParameterMap().get("end") != null) {
                     LocalTime end = LocalTime.parse(request.getParameterMap().get("end")[0]);
-                    List<TimeSlot> timeSlots1 = timeSlotService.getTimeSlotsByEnd(end);
-                    for (int i = 0; i < timeSlots.size(); i++) {
+                    for (int i = timeSlots.size() - 1; i >= 0; i--) {
                         TimeSlot timeSlot = timeSlots.get(i);
-                        if (!timeSlots1.contains(timeSlot))
-                            timeSlots.remove(timeSlot);
+                        if (!timeSlot.getEnd().equals(end))
+                            timeSlots.remove(i);
                     }
                 }
 

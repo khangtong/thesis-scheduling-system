@@ -12,9 +12,4 @@ import java.util.List;
 
 @Repository
 public interface TimeSlotRepository extends JpaRepository<TimeSlot, Integer> {
-    List<TimeSlot> findByDate(LocalDate date);
-
-    List<TimeSlot> findByStart(LocalTime start);
-
-    List<TimeSlot> findByEnd(LocalTime end);
 }

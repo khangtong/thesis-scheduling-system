@@ -33,21 +33,6 @@ public class TimeSlotService {
         return timeSlot;
     }
 
-    @Transactional(readOnly = true)
-    public List<TimeSlot> getTimeSlotsByDate(LocalDate date) {
-        return timeSlotRepository.findByDate(date);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TimeSlot> getTimeSlotsByStart(LocalTime start) {
-        return timeSlotRepository.findByStart(start);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TimeSlot> getTimeSlotsByEnd(LocalTime end) {
-        return timeSlotRepository.findByEnd(end);
-    }
-
     @Transactional
     public TimeSlot createTimeSlot(TimeSlot timeSlot) {
         TimeSlot newTimeSlot = new TimeSlot();

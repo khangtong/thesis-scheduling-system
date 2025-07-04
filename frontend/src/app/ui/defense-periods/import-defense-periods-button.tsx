@@ -107,7 +107,7 @@ export function ImportDefensePeriodsButton() {
   };
 
   return (
-    <div>
+    <div className="max-w-[80px] lg:max-w-full ">
       <label
         htmlFor="import-defense-periods"
         className="flex h-10 items-center rounded-lg bg-blue-600 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"

@@ -289,3 +289,10 @@ export const TimeSlotFormSchema = z
     message: 'Giờ bắt đầu phải trước giờ kết thúc.',
     path: ['start'],
   });
+
+export const AvailabilityRequestSchema = z.object({
+  defensePeriodId: z.number({ message: 'Đợt bảo vệ không hợp lệ.' }).int().positive(),
+  unavailableDates: z.array(
+    z.date({ message: 'Ngày không hợp lệ.' })
+  ).min(1, { message: 'Vui lòng chọn ít nhất một ngày không thể tham gia.' }),
+});

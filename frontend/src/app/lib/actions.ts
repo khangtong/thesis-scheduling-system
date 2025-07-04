@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import axios from 'axios';
 
 import {
+  AvailabilityRequestSchema,
   CommitteeRoleFormSchema,
   DefensePeriodFormSchema,
   DegreeFormSchema,
@@ -1431,6 +1432,63 @@ export async function deleteTimeSlot(id: number) {
     }
   } catch (error: any) {
     console.error('Delete time slot error:', error);
+    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+  }
+}
+
+export async function requestAvailability(
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  // Extract the defense period ID
+  const defensePeriodId = Number(formData.get('defensePeriodId'));
+  
+  // Extract the unavailable dates from the form data
+  // The checkbox values will be in the format 'unavailableDates'
+  const unavailableDatesEntries = Array.from(formData.entries())
+    .filter(([key]) => key.startsWith('unavailableDates'));
+  
+  const unavailableDates = unavailableDatesEntries
+    .map(([_, value]) => new Date(value.toString()))
+    .filter(date => !isNaN(date.getTime()));
+  
+  // Validate the data
+  const validatedFields = AvailabilityRequestSchema.safeParse({
+    defensePeriodId,
+    unavailableDates,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    // Send the request to the backend
+    const response = await axios.post(
+      `${process.env.API_URL}/availability-requests`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Yêu cầu đăng ký lịch bận đã được gửi thành công' };
+    } else {
+      return { success: false, message: 'Không thể gửi yêu cầu đăng ký lịch bận' };
+    }
+  } catch (error: any) {
+    console.error('Request availability error:', error);
     return { success: false, message: error.message || 'Có lỗi xảy ra' };
   }
 }

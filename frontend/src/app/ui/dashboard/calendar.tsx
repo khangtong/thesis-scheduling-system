@@ -4,8 +4,11 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { useRouter } from 'next/navigation';
 
-export default function Calendar() {
+export default function Calendar({ events }: { events: any[] }) {
+  const router = useRouter();
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, listPlugin, timeGridPlugin]}
@@ -16,6 +19,10 @@ export default function Calendar() {
         left: 'prevYear prev today next nextYear',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+      }}
+      events={events}
+      eventClick={(info) => {
+        router.push(`/dashboard/defense-periods/${info.event.id}/edit`);
       }}
     />
   );

@@ -24,7 +24,7 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams?.page) || 1;
-  
+
   // Construct query string from search parameters
   let query = '';
   if (searchParams?.date || searchParams?.start || searchParams?.end) {
@@ -59,7 +59,7 @@ export default async function Page(props: {
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lexend.className} text-2xl`}>Quản lý khung giờ</h1>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 max-w-full">
         <SearchForm />
         <div className="flex gap-2">
           <ImportTimeSlotsButton />

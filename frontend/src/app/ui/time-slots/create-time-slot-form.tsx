@@ -7,8 +7,14 @@ import { TimeSlot } from '@/app/lib/definitions';
 import { createTimeSlot } from '@/app/lib/actions';
 import { Button } from '@/app/ui/button';
 import Link from 'next/link';
+import { DefensePeriod } from '@/app/lib/definitions';
+import { CalendarDateRangeIcon, ClockIcon } from '@heroicons/react/24/outline';
 
-export default function Form() {
+export default function Form({
+  defensePeriods,
+}: {
+  defensePeriods: DefensePeriod[];
+}) {
   const [state, action, isPending] = useActionState(createTimeSlot, undefined);
   const router = useRouter();
 
@@ -34,71 +40,176 @@ export default function Form() {
 
   return (
     <form action={action}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Date */}
+      <div className="rounded-md bg-gray-100 p-4 md:p-6">
         <div className="mb-4">
-          <label htmlFor="date" className="mb-2 block text-sm font-medium">
-            Ngày
+          <label
+            htmlFor="defensePeriodId"
+            className="mb-2 block text-sm font-medium"
+          >
+            Đợt bảo vệ
           </label>
-          <input
-            id="date"
-            name="date"
-            type="date"
-            className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
-            aria-describedby="date-error"
-          />
-          <div id="date-error" aria-live="polite" aria-atomic="true">
-            {state?.errors?.date &&
-              state.errors.date.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
+          <div className="relative">
+            <select
+              id="defensePeriodId"
+              name="defensePeriodId"
+              className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+              defaultValue=""
+              aria-describedby="defensePeriodId-error"
+              required
+            >
+              <option value="" disabled>
+                Chọn đợt bảo vệ
+              </option>
+              {defensePeriods.map(
+                (defensePeriod) =>
+                  defensePeriod?.active && (
+                    <option key={defensePeriod?.id} value={defensePeriod?.id}>
+                      {defensePeriod?.name}
+                    </option>
+                  )
+              )}
+            </select>
+            <CalendarDateRangeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          {state?.errors?.defensePeriodId && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.defensePeriodId}
+            </span>
+          )}
+        </div>
+        <div className="mb-4">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label
+                htmlFor="start-morning-phase"
+                className="mb-2 block text-sm font-medium"
+              >
+                Thời gian bắt đầu ca sáng
+              </label>
+              <input
+                id="start-morning-phase"
+                name="start-morning-phase"
+                type="time"
+                className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
+                aria-describedby="start-morning-phase-error"
+                min="00:00"
+                max="11:59"
+              />
+              {state?.errors?.startMorningPhase && (
+                <span className="text-left text-xs text-red-500 relative">
+                  {state.errors.startMorningPhase}
+                </span>
+              )}
+            </div>
+            <div className="flex-1">
+              <label
+                htmlFor="end-morning-phase"
+                className="mb-2 block text-sm font-medium"
+              >
+                Thời gian kết thúc ca sáng
+              </label>
+              <input
+                id="end-morning-phase"
+                name="end-morning-phase"
+                type="time"
+                className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
+                aria-describedby="end-morning-phase-error"
+                min="00:00"
+                max="11:59"
+              />
+              {state?.errors?.endMorningPhase && (
+                <span className="text-left text-xs text-red-500 relative">
+                  {state.errors.endMorningPhase}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Start Time */}
         <div className="mb-4">
-          <label htmlFor="start" className="mb-2 block text-sm font-medium">
-            Thời gian bắt đầu
-          </label>
-          <input
-            id="start"
-            name="start"
-            type="time"
-            className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
-            aria-describedby="start-error"
-          />
-          <div id="start-error" aria-live="polite" aria-atomic="true">
-            {state?.errors?.start &&
-              state.errors.start.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <label
+                htmlFor="start-afternoon-phase"
+                className="mb-2 block text-sm font-medium"
+              >
+                Thời gian bắt đầu ca chiều
+              </label>
+              <input
+                id="start-afternoon-phase"
+                name="start-afternoon-phase"
+                type="time"
+                className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
+                aria-describedby="start-afternoon-phase-error"
+                min="12:00"
+                max="23:59"
+              />
+              {state?.errors?.startAfternoonPhase && (
+                <span className="text-left text-xs text-red-500 relative">
+                  {state.errors.startAfternoonPhase}
+                </span>
+              )}
+            </div>
+            <div className="flex-1">
+              <label
+                htmlFor="end-afternoon-phase"
+                className="mb-2 block text-sm font-medium"
+              >
+                Thời gian kết thúc ca chiều
+              </label>
+              <input
+                id="end-afternoon-phase"
+                name="end-afternoon-phase"
+                type="time"
+                className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
+                aria-describedby="end-afternoon-phase-error"
+                min="12:00"
+                max="23:59"
+              />
+              {state?.errors?.endAfternoonPhase && (
+                <span className="text-left text-xs text-red-500 relative">
+                  {state.errors.endAfternoonPhase}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* End Time */}
-        <div className="mb-4">
-          <label htmlFor="end" className="mb-2 block text-sm font-medium">
-            Thời gian kết thúc
+        <div>
+          <label
+            htmlFor="time-length"
+            className="mb-2 block text-sm font-medium"
+          >
+            Thời lượng mỗi buổi bảo vệ
           </label>
-          <input
-            id="end"
-            name="end"
-            type="time"
-            className="peer block w-full bg-white rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
-            aria-describedby="end-error"
-          />
-          <div id="end-error" aria-live="polite" aria-atomic="true">
-            {state?.errors?.end &&
-              state.errors.end.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
+          <div className="relative">
+            <select
+              id="time-length"
+              name="time-length"
+              className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+              defaultValue=""
+              aria-describedby="time-length-error"
+              required
+            >
+              <option value="" disabled>
+                Chọn thời lượng mỗi buổi bảo vệ
+              </option>
+              <option value="15">15 phút</option>
+              <option value="20">20 phút</option>
+              <option value="25">25 phút</option>
+              <option value="30">30 phút</option>
+              <option value="35">35 phút</option>
+              <option value="40">40 phút</option>
+              <option value="45">45 phút</option>
+              <option value="50">50 phút</option>
+              <option value="55">55 phút</option>
+              <option value="60">60 phút</option>
+            </select>
+            <ClockIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
           </div>
+          {state?.errors?.timeLength && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.timeLength}
+            </span>
+          )}
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">

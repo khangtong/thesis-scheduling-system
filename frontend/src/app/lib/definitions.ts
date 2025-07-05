@@ -290,9 +290,64 @@ export const TimeSlotFormSchema = z
     path: ['start'],
   });
 
+export const CreateTimeSlotFormSchema = z
+  .object({
+    defensePeriodId: z
+      .number({ message: 'Đợt bảo vệ không hợp lệ.' })
+      .int()
+      .positive(),
+    startMorningPhase: z
+      .string()
+      .min(1, { message: 'Giờ bắt đầu ca sáng không hợp lệ.' })
+      .trim()
+      .nullable(),
+    endMorningPhase: z
+      .string()
+      .min(1, { message: 'Giờ kết thúc ca sáng không hợp lệ.' })
+      .trim()
+      .nullable(),
+    startAfternoonPhase: z
+      .string()
+      .min(1, { message: 'Giờ bắt đầu ca chiều không hợp lệ.' })
+      .trim()
+      .nullable(),
+    endAfternoonPhase: z
+      .string()
+      .min(1, { message: 'Giờ kết thúc ca chiều không hợp lệ.' })
+      .trim()
+      .nullable(),
+    timeLength: z
+      .number({ message: 'Thời lượng không hợp lệ.' })
+      .int()
+      .positive(),
+  })
+  .refine(
+    (data) =>
+      data?.startMorningPhase && data?.endMorningPhase
+        ? data?.startMorningPhase < data?.endMorningPhase
+        : true,
+    {
+      message: 'Giờ bắt đầu phải trước giờ kết thúc.',
+      path: ['startMorningPhase'],
+    }
+  )
+  .refine(
+    (data) =>
+      data?.startAfternoonPhase && data?.endAfternoonPhase
+        ? data?.startAfternoonPhase < data?.endAfternoonPhase
+        : true,
+    {
+      message: 'Giờ bắt đầu phải trước giờ kết thúc.',
+      path: ['startAfternoonPhase'],
+    }
+  );
+
 export const AvailabilityRequestSchema = z.object({
-  defensePeriodId: z.number({ message: 'Đợt bảo vệ không hợp lệ.' }).int().positive(),
-  unavailableDates: z.array(
-    z.date({ message: 'Ngày không hợp lệ.' })
-  ).min(1, { message: 'Vui lòng chọn ít nhất một ngày không thể tham gia.' }),
+  defensePeriodId: z
+    .number({ message: 'Đợt bảo vệ không hợp lệ.' })
+    .int()
+    .positive(),
+  unavailableDates: z
+    .array(z.date({ message: 'Ngày không hợp lệ.' }))
+    .min(1, { message: 'Vui lòng chọn ít nhất một ngày không thể tham gia.' }),
 });

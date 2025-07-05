@@ -7,6 +7,7 @@ import axios from 'axios';
 import {
   AvailabilityRequestSchema,
   CommitteeRoleFormSchema,
+  CreateTimeSlotFormSchema,
   DefensePeriodFormSchema,
   DegreeFormSchema,
   ExpertiseFormSchema,
@@ -1323,11 +1324,44 @@ export async function createTimeSlot(
   state: any,
   formData: FormData
 ): Promise<{ success: boolean; message?: string; errors?: any }> {
-  const validatedFields = TimeSlotFormSchema.safeParse({
-    date: new Date(formData.get('date') + ''),
-    start: formData.get('start'),
-    end: formData.get('end'),
+  if (
+    !(
+      formData.get('start-morning-phase') && formData.get('end-morning-phase')
+    ) &&
+    !(
+      formData.get('start-afternoon-phase') &&
+      formData.get('end-afternoon-phase')
+    )
+  ) {
+    return {
+      success: false,
+      message: 'Vui lòng chọn ít nhất một ca',
+    };
+  }
+
+  const validatedFields = CreateTimeSlotFormSchema.safeParse({
+    defensePeriodId: Number(formData.get('defensePeriodId') || -1),
+    startMorningPhase:
+      formData.get('start-morning-phase') && formData.get('end-morning-phase')
+        ? formData.get('start-morning-phase')
+        : null,
+    endMorningPhase:
+      formData.get('start-morning-phase') && formData.get('end-morning-phase')
+        ? formData.get('end-morning-phase')
+        : null,
+    startAfternoonPhase:
+      formData.get('start-afternoon-phase') &&
+      formData.get('end-afternoon-phase')
+        ? formData.get('start-afternoon-phase')
+        : null,
+    endAfternoonPhase:
+      formData.get('start-afternoon-phase') &&
+      formData.get('end-afternoon-phase')
+        ? formData.get('end-afternoon-phase')
+        : null,
+    timeLength: Number(formData.get('time-length') || -1),
   });
+  console.log(validatedFields.data);
 
   if (!validatedFields.success) {
     return {
@@ -1442,16 +1476,17 @@ export async function requestAvailability(
 ): Promise<{ success: boolean; message?: string; errors?: any }> {
   // Extract the defense period ID
   const defensePeriodId = Number(formData.get('defensePeriodId'));
-  
+
   // Extract the unavailable dates from the form data
   // The checkbox values will be in the format 'unavailableDates'
-  const unavailableDatesEntries = Array.from(formData.entries())
-    .filter(([key]) => key.startsWith('unavailableDates'));
-  
+  const unavailableDatesEntries = Array.from(formData.entries()).filter(
+    ([key]) => key.startsWith('unavailableDates')
+  );
+
   const unavailableDates = unavailableDatesEntries
     .map(([_, value]) => new Date(value.toString()))
-    .filter(date => !isNaN(date.getTime()));
-  
+    .filter((date) => !isNaN(date.getTime()));
+
   // Validate the data
   const validatedFields = AvailabilityRequestSchema.safeParse({
     defensePeriodId,
@@ -1483,9 +1518,15 @@ export async function requestAvailability(
     );
 
     if (response.status === 201) {
-      return { success: true, message: 'Yêu cầu đăng ký lịch bận đã được gửi thành công' };
+      return {
+        success: true,
+        message: 'Yêu cầu đăng ký lịch bận đã được gửi thành công',
+      };
     } else {
-      return { success: false, message: 'Không thể gửi yêu cầu đăng ký lịch bận' };
+      return {
+        success: false,
+        message: 'Không thể gửi yêu cầu đăng ký lịch bận',
+      };
     }
   } catch (error: any) {
     console.error('Request availability error:', error);

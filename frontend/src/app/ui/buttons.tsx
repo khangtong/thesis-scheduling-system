@@ -299,7 +299,7 @@ export function DeleteTimeSlot({ id }: { id: number }) {
             success: 'Xóa khung giờ thành công',
             error: 'Có lỗi xảy ra khi xóa khung giờ',
           });
-          router.push('/dashboard/timeslots');
+          router.push('/dashboard/time-slots');
         },
       },
     });

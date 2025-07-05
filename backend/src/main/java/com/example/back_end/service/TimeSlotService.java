@@ -1,6 +1,8 @@
 package com.example.back_end.service;
 
+import com.example.back_end.dao.DefensePeriodRepository;
 import com.example.back_end.dao.TimeSlotRepository;
+import com.example.back_end.dto.TimeSlotDTO;
 import com.example.back_end.entity.DefensePeriod;
 import com.example.back_end.entity.TimeSlot;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +10,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TimeSlotService {
     private TimeSlotRepository timeSlotRepository;
+    private DefensePeriodRepository defensePeriodRepository;
 
     @Autowired
-    public TimeSlotService(TimeSlotRepository timeSlotRepository) {
+    public TimeSlotService(TimeSlotRepository timeSlotRepository, DefensePeriodRepository defensePeriodRepository) {
         this.timeSlotRepository = timeSlotRepository;
+        this.defensePeriodRepository = defensePeriodRepository;
     }
 
     @Transactional(readOnly = true)
@@ -34,25 +40,41 @@ public class TimeSlotService {
     }
 
     @Transactional
-    public TimeSlot createTimeSlot(TimeSlot timeSlot) {
-        TimeSlot newTimeSlot = new TimeSlot();
+    public List<TimeSlot> createTimeSlot(TimeSlotDTO timeSlotDTO) {
+        DefensePeriod defensePeriod = defensePeriodRepository.findById(timeSlotDTO.getDefensePeriodId()).orElse(null);
+        if (defensePeriod == null)
+            throw new Error("Không tìm thấy đợt bảo vệ");
+        if (!defensePeriod.isActive())
+            throw new Error("Đợt bảo vệ không hoạt động");
 
-        if (timeSlot.getDate() == null)
-            throw new Error("Ngày không được là rỗng");
-        newTimeSlot.setDate(timeSlot.getDate());
+        LocalDateTime start = defensePeriod.getStart();
+        LocalDateTime end = defensePeriod.getEnd();
+        LocalTime endMorning = timeSlotDTO.getEndMorningPhase();
+        LocalTime endAfternoon = timeSlotDTO.getEndAfternoonPhase();
+        int timeLength = timeSlotDTO.getTimeLength();
+        List<TimeSlot> timeSlots = new ArrayList<>();
 
-        if (timeSlot.getStart() == null)
-            throw new Error("Thời gian bắt đầu không được là rỗng");
+        while (!start.isAfter(end)) {
+            LocalTime startMorning = timeSlotDTO.getStartMorningPhase();
+            LocalTime startAfternoon = timeSlotDTO.getStartAfternoonPhase();
+            if (startMorning != null && endMorning != null) {
+                while (startMorning.isBefore(endMorning)) {
+                    TimeSlot timeSlot = new TimeSlot(null, start.toLocalDate(), startMorning, startMorning.plusMinutes(timeLength));
+                    timeSlots.add(timeSlot);
+                    startMorning = startMorning.plusMinutes(timeLength);
+                }
+            }
+            if (startAfternoon != null && endAfternoon != null) {
+                while (startAfternoon.isBefore(endAfternoon)) {
+                    TimeSlot timeSlot = new TimeSlot(null, start.toLocalDate(), startAfternoon, startAfternoon.plusMinutes(timeLength));
+                    timeSlots.add(timeSlot);
+                    startAfternoon = startAfternoon.plusMinutes(timeLength);
+                }
+            }
+            start = start.plusDays(1);
+        }
 
-        if (timeSlot.getEnd() == null)
-            throw new Error("Thời gian kết thúc không được là rỗng");
-
-        if (timeSlot.getStart().isAfter(timeSlot.getEnd()))
-            throw new Error("Thời gian bắt đầu và kết thúc không hợp lệ");
-
-        newTimeSlot.setStart(timeSlot.getStart());
-        newTimeSlot.setEnd(timeSlot.getEnd());
-        return timeSlotRepository.save(newTimeSlot);
+        return timeSlotRepository.saveAll(timeSlots);
     }
 
     @Transactional

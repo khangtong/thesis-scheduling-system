@@ -1,5 +1,6 @@
 package com.example.back_end.rest;
 
+import com.example.back_end.dto.TimeSlotDTO;
 import com.example.back_end.entity.DefensePeriod;
 import com.example.back_end.entity.TimeSlot;
 import com.example.back_end.service.TimeSlotService;
@@ -99,16 +100,16 @@ public class TimeSlotController {
     }
 
     @PostMapping
-    public ResponseEntity<TimeSlot> createTimeSlot(@RequestBody TimeSlot timeSlot, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<List<TimeSlot>> createTimeSlot(@RequestBody TimeSlotDTO timeSlotDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
-                TimeSlot dbTimeSlot = timeSlotService.createTimeSlot(timeSlot);
-                return ResponseEntity.status(HttpStatus.CREATED).body(dbTimeSlot);
+                List<TimeSlot> dbTimeSlots = timeSlotService.createTimeSlot(timeSlotDTO);
+                return ResponseEntity.status(HttpStatus.CREATED).body(dbTimeSlots);
             } else {
-                return new SendError<TimeSlot>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+                return new SendError<List<TimeSlot>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
             }
         } catch (Error error) {
-            return new SendError<TimeSlot>().sendBadRequest(error.getMessage(), response);
+            return new SendError<List<TimeSlot>>().sendBadRequest(error.getMessage(), response);
         }
     }
 

@@ -1,12 +1,17 @@
 import Form from '@/app/ui/time-slots/create-time-slot-form';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
 import { Metadata } from 'next';
+import { fetchDefensePeriods } from '@/app/lib/data';
+import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'Tạo khung giờ',
 };
 
 export default async function Page() {
+  const defensePeriods = await fetchDefensePeriods(
+    (await cookies()).get('session')?.value
+  );
   return (
     <main>
       <Breadcrumbs
@@ -23,7 +28,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form />
+      <Form defensePeriods={defensePeriods} />
     </main>
   );
 }

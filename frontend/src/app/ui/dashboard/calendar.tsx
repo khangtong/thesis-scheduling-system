@@ -22,7 +22,11 @@ export default function Calendar({ events }: { events: any[] }) {
       }}
       events={events}
       eventClick={(info) => {
-        router.push(`/dashboard/defense-periods/${info.event.id}/edit`);
+        if (info.event.title) {
+          router.push(`/dashboard/defense-periods/${info.event.id}/edit`);
+        } else {
+          router.push(`/dashboard/priority-schedules/${info.event.id}/edit`);
+        }
       }}
     />
   );

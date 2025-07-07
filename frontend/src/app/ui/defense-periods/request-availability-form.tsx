@@ -2,7 +2,7 @@
 
 import {
   CalendarDateRangeIcon,
-  CalendarDaysIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
@@ -10,7 +10,7 @@ import { requestAvailability } from '@/app/lib/actions';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { DefensePeriod } from '@/app/lib/definitions';
+import { DefensePeriod, Faculty } from '@/app/lib/definitions';
 
 // Helper function to get all dates between start and end dates
 function getDatesInRange(startDate: Date, endDate: Date) {
@@ -44,8 +44,10 @@ function formatDate(date: Date) {
 
 export default function Form({
   defensePeriods,
+  faculties,
 }: {
   defensePeriods: DefensePeriod[];
+  faculties: Faculty[];
 }) {
   const [state, action, isPending] = useActionState(
     requestAvailability,
@@ -54,9 +56,10 @@ export default function Form({
   const router = useRouter();
   const [selectedDefensePeriod, setSelectedDefensePeriod] =
     useState<DefensePeriod | null>(null);
-  const [availableDates, setAvailableDates] = useState<Date[]>([]);
-  const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
-  const [allChecked, setAllChecked] = useState(false);
+  const [selectedFaculties, setSelectedFaculties] = useState<Set<number>>(
+    new Set()
+  );
+  const [allFacultiesChecked, setAllFacultiesChecked] = useState(false);
 
   // Handle defense period selection change
   const handleDefensePeriodChange = (
@@ -65,46 +68,37 @@ export default function Form({
     const selectedId = Number(e.target.value);
     const selected = defensePeriods.find((dp) => dp?.id === selectedId) || null;
     setSelectedDefensePeriod(selected);
-
-    if (selected && selected.start && selected.end) {
-      const dates = getDatesInRange(selected.start, selected.end);
-      setAvailableDates(dates);
-      // Reset selections when changing defense period
-      setSelectedDates(new Set());
-      setAllChecked(false);
-    } else {
-      setAvailableDates([]);
-    }
   };
 
-  // Handle checkbox change
-  const handleCheckboxChange = (date: Date, checked: boolean) => {
-    const dateStr = date.toISOString();
-    const newSelectedDates = new Set(selectedDates);
+  // Handle faculty checkbox change
+  const handleFacultyCheckboxChange = (facultyId: number, checked: boolean) => {
+    const newSelectedFaculties = new Set(selectedFaculties);
 
     if (checked) {
-      newSelectedDates.add(dateStr);
+      newSelectedFaculties.add(facultyId);
     } else {
-      newSelectedDates.delete(dateStr);
+      newSelectedFaculties.delete(facultyId);
     }
 
-    setSelectedDates(newSelectedDates);
-    setAllChecked(newSelectedDates.size === availableDates.length);
+    setSelectedFaculties(newSelectedFaculties);
+    setAllFacultiesChecked(
+      newSelectedFaculties.size === faculties.filter((f) => f !== null).length
+    );
   };
 
-  // Toggle all checkboxes
-  const toggleAllCheckboxes = () => {
-    if (allChecked) {
+  // Toggle all faculty checkboxes
+  const toggleAllFacultyCheckboxes = () => {
+    if (allFacultiesChecked) {
       // Uncheck all
-      setSelectedDates(new Set());
+      setSelectedFaculties(new Set());
     } else {
       // Check all
-      const allDates = new Set(
-        availableDates.map((date) => date.toISOString())
+      const allFaculties = new Set(
+        faculties.filter((f) => f !== null).map((faculty) => faculty!.id)
       );
-      setSelectedDates(allDates);
+      setSelectedFaculties(allFaculties);
     }
-    setAllChecked(!allChecked);
+    setAllFacultiesChecked(!allFacultiesChecked);
   };
 
   useEffect(() => {
@@ -167,52 +161,81 @@ export default function Form({
             </span>
           )}
         </div>
-        {availableDates.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="block text-sm font-medium">
-                Chọn những ngày bạn muốn yêu cầu giảng viên đăng ký lịch bận
-              </label>
-              <button
-                type="button"
-                onClick={toggleAllCheckboxes}
-                className="text-sm text-blue-600 hover:text-blue-800"
-              >
-                {allChecked ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
-              </button>
-            </div>
-            <div className="mt-3 space-y-2">
-              {availableDates.map((date, index) => {
-                const dateStr = date.toISOString();
-                const isChecked = selectedDates.has(dateStr);
-
-                return (
-                  <div key={index} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`date-${index}`}
-                      name={`unavailableDates`}
-                      value={dateStr}
-                      checked={isChecked}
-                      onChange={(e) =>
-                        handleCheckboxChange(date, e.target.checked)
-                      }
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                    />
-                    <label htmlFor={`date-${index}`} className="text-sm">
-                      {formatDate(date)}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
-            {state?.errors?.unavailableDates && (
-              <span className="text-left text-xs text-red-500 relative">
-                {state.errors.unavailableDates}
-              </span>
-            )}
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium">
+              Chọn khoa mà bạn muốn yêu cầu giảng viên đăng ký lịch bận
+            </label>
+            <button
+              type="button"
+              onClick={toggleAllFacultyCheckboxes}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              {allFacultiesChecked ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+            </button>
           </div>
-        )}
+          <div className="relative">
+            <BookOpenIcon className="pointer-events-none absolute left-3 top-3 h-[18px] w-[18px] text-gray-500" />
+            <div className="mt-3 space-y-2 bg-white p-4 pl-10 rounded-md border border-gray-200">
+              {faculties
+                .filter((faculty) => faculty !== null)
+                .map((faculty) => {
+                  const isChecked = selectedFaculties.has(faculty!.id);
+
+                  return (
+                    <div
+                      key={faculty!.id}
+                      className="flex items-center space-x-2"
+                    >
+                      <input
+                        type="checkbox"
+                        id={`faculty-${faculty!.id}`}
+                        name="selectedFaculties"
+                        value={faculty!.id}
+                        checked={isChecked}
+                        onChange={(e) =>
+                          handleFacultyCheckboxChange(
+                            faculty!.id,
+                            e.target.checked
+                          )
+                        }
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                      />
+                      <label
+                        htmlFor={`faculty-${faculty!.id}`}
+                        className="text-sm"
+                      >
+                        {faculty!.name}
+                      </label>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+          {state?.errors?.selectedFaculties && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.selectedFaculties}
+            </span>
+          )}
+        </div>
+        <div className="mt-4">
+          <label htmlFor="deadline" className="mb-2 block text-sm font-medium">
+            Ngày hết hạn
+          </label>
+          <input
+            id="deadline"
+            name="deadline"
+            type="date"
+            className="block bg-white w-full rounded-md border border-gray-200 py-2 px-3 text-sm placeholder:text-gray-500"
+            aria-describedby="deadline-error"
+            required
+          />
+          {state?.errors?.deadline && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.deadline}
+            </span>
+          )}
+        </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
@@ -221,10 +244,7 @@ export default function Form({
         >
           Hủy
         </Link>
-        <Button
-          type="submit"
-          disabled={isPending || availableDates.length === 0}
-        >
+        <Button type="submit" disabled={isPending}>
           Yêu cầu đăng ký
         </Button>
       </div>

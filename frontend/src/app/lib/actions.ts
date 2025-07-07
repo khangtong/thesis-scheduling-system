@@ -1474,23 +1474,27 @@ export async function requestAvailability(
   state: any,
   formData: FormData
 ): Promise<{ success: boolean; message?: string; errors?: any }> {
+  // Extract the deadline from the form data
+  const deadline = formData.get('deadline');
+
   // Extract the defense period ID
   const defensePeriodId = Number(formData.get('defensePeriodId'));
 
-  // Extract the unavailable dates from the form data
-  // The checkbox values will be in the format 'unavailableDates'
-  const unavailableDatesEntries = Array.from(formData.entries()).filter(
-    ([key]) => key.startsWith('unavailableDates')
+  // Extract the selected faculties from the form data
+  // The checkbox values will be in the format 'selectedFaculties'
+  const selectedFacultiesEntries = Array.from(formData.entries()).filter(
+    ([key]) => key.startsWith('selectedFaculties')
   );
 
-  const unavailableDates = unavailableDatesEntries
-    .map(([_, value]) => new Date(value.toString()))
-    .filter((date) => !isNaN(date.getTime()));
+  const selectedFaculties = selectedFacultiesEntries
+    .map(([_, value]) => Number(value.toString()))
+    .filter((id) => !isNaN(id));
 
   // Validate the data
   const validatedFields = AvailabilityRequestSchema.safeParse({
     defensePeriodId,
-    unavailableDates,
+    selectedFaculties,
+    deadline: new Date(deadline + ''),
   });
 
   if (!validatedFields.success) {
@@ -1505,9 +1509,8 @@ export async function requestAvailability(
   try {
     const authToken = (await cookies()).get('session')?.value;
 
-    // Send the request to the backend
     const response = await axios.post(
-      `${process.env.API_URL}/availability-requests`,
+      `${process.env.API_URL}/request-availability`,
       JSON.stringify(data),
       {
         headers: {
@@ -1518,15 +1521,9 @@ export async function requestAvailability(
     );
 
     if (response.status === 201) {
-      return {
-        success: true,
-        message: 'Yêu cầu đăng ký lịch bận đã được gửi thành công',
-      };
+      return { success: true, message: 'Yêu cầu đã được gửi thành công' };
     } else {
-      return {
-        success: false,
-        message: 'Không thể gửi yêu cầu đăng ký lịch bận',
-      };
+      return { success: false, message: 'Không thể gửi yêu cầu' };
     }
   } catch (error: any) {
     console.error('Request availability error:', error);

@@ -347,7 +347,8 @@ export const AvailabilityRequestSchema = z.object({
     .number({ message: 'Đợt bảo vệ không hợp lệ.' })
     .int()
     .positive(),
-  unavailableDates: z
-    .array(z.date({ message: 'Ngày không hợp lệ.' }))
-    .min(1, { message: 'Vui lòng chọn ít nhất một ngày không thể tham gia.' }),
+  selectedFaculties: z
+    .array(z.number().int().positive())
+    .min(1, { message: 'Vui lòng chọn ít nhất một khoa.' }),
+  deadline: z.date({ message: 'Ngày hết hạn không hợp lệ.' }),
 });

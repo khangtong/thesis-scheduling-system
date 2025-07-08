@@ -119,16 +119,12 @@ export async function logout() {
     // Optional: Call backend to invalidate token
     if (sessionToken) {
       try {
-        await axios.post(
-          `${process.env.API_URL}/logout`,
-          {},
-          {
-            headers: {
-              'Authorization': `Bearer ${sessionToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        await axios.get(`${process.env.API_URL}/logout`, {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
       } catch (error) {
         // Backend logout failed, but we'll still clear cookies
         console.error('Backend logout failed:', error);

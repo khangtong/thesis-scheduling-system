@@ -1,5 +1,11 @@
 import { getUser } from '@/app/lib/actions';
-import { fetchDefensePeriods, fetchTimeSlots } from '@/app/lib/data';
+import {
+  fetchDefensePeriods,
+  fetchDefensePeriodsWithQuery,
+  fetchNotifications,
+  fetchTimeSlots,
+  fetchTimeSlotsByDateRange,
+} from '@/app/lib/data';
 import { DefensePeriod, TimeSlot } from '@/app/lib/definitions';
 import Calendar from '@/app/ui/dashboard/calendar';
 import { Metadata } from 'next';
@@ -39,16 +45,62 @@ export default async function DashboardPage() {
   }
 
   if (user?.role?.name === 'GIANG_VIEN') {
-    const timeSlots = await fetchTimeSlots(
+    // Get notifications that are not on deadline
+    const notifications = await fetchNotifications(
       (await cookies()).get('session')?.value
     );
-    events = timeSlots.map((timeSlot: TimeSlot) => {
-      return {
-        id: timeSlot?.id,
-        start: `${timeSlot?.date}T${timeSlot?.start}`,
-        end: `${timeSlot?.date}T${timeSlot?.end}`,
-      };
+    const activeNotis = notifications.filter((noti: any) => {
+      const deadline = noti.content
+        .substring(
+          noti.content.lastIndexOf('<strong>') + '<strong>'.length,
+          noti.content.lastIndexOf('</strong>')
+        )
+        .split('/')
+        .reverse()
+        .join('-');
+      const now = new Date();
+      return now <= new Date(deadline);
     });
+
+    // Get defense periods from those notifications
+    let activeDefensePeriods: any = [];
+    for (let i = 0; i < activeNotis.length; i++) {
+      const defensePeriodName = activeNotis[i].content.substring(
+        activeNotis[i].content.indexOf('<span>') + '<span>'.length,
+        activeNotis[i].content.indexOf('</span>')
+      );
+      const { defensePeriods, totalPages } = await fetchDefensePeriodsWithQuery(
+        (await cookies()).get('session')?.value,
+        defensePeriodName
+      );
+      if (
+        !activeDefensePeriods.find(
+          (dp: any) => dp?.id === defensePeriods[0]?.id
+        )
+      ) {
+        activeDefensePeriods.push(defensePeriods[0]);
+      }
+    }
+    console.log(activeDefensePeriods);
+
+    // Get time slots from those defense periods
+    for (let j = 0; j < activeDefensePeriods.length; j++) {
+      const timeSlots = await fetchTimeSlotsByDateRange(
+        (await cookies()).get('session')?.value,
+        activeDefensePeriods[j].start.split('T')[0],
+        activeDefensePeriods[j].end.split('T')[0]
+      );
+
+      events.push(
+        ...timeSlots.map((timeSlot: TimeSlot) => {
+          return {
+            id: timeSlot?.id,
+            start: `${timeSlot?.date}T${timeSlot?.start}`,
+            end: `${timeSlot?.date}T${timeSlot?.end}`,
+          };
+        })
+      );
+    }
   }
 
   return (

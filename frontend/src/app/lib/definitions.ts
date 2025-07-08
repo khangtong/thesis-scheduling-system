@@ -77,6 +77,12 @@ export type TimeSlot = {
   end: string;
 } | null;
 
+export type PrioritySchedule = {
+  id: number;
+  lecturer: Lecturer;
+  timeSlot: TimeSlot;
+} | null;
+
 export const ITEMS_PER_PAGE = 7;
 
 export const LoginFormSchema = z.object({

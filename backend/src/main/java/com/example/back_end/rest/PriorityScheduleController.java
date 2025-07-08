@@ -3,6 +3,7 @@ package com.example.back_end.rest;
 import com.example.back_end.dto.PriorityScheduleDTO;
 import com.example.back_end.entity.Degree;
 import com.example.back_end.entity.PrioritySchedule;
+import com.example.back_end.entity.User;
 import com.example.back_end.service.PriorityScheduleService;
 import com.example.back_end.utils.SendError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +30,9 @@ public class PriorityScheduleController {
     @GetMapping
     public ResponseEntity<List<PrioritySchedule>> getAllPrioritySchedules(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
-                List<PrioritySchedule> prioritySchedules = priorityScheduleService.getAllPrioritySchedules();
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+                User user = authController.authenticate(response, request);
+                List<PrioritySchedule> prioritySchedules = priorityScheduleService.getAllPrioritySchedules(user);
                 return ResponseEntity.ok(prioritySchedules);
             } else {
                 return new SendError<List<PrioritySchedule>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

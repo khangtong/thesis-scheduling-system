@@ -39,6 +39,17 @@ public class TimeSlotService {
         return timeSlot;
     }
 
+    @Transactional(readOnly = true)
+    public List<TimeSlot> getTimeSlotsByDateRange(LocalDate startDate, LocalDate endDate) {
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        while (!startDate.isAfter(endDate)) {
+            List<TimeSlot> timeSlots1 = timeSlotRepository.findByDate(startDate);
+            timeSlots.addAll(timeSlots1);
+            startDate = startDate.plusDays(1);
+        }
+        return timeSlots;
+    }
+
     @Transactional
     public List<TimeSlot> createTimeSlot(TimeSlotDTO timeSlotDTO) {
         DefensePeriod defensePeriod = defensePeriodRepository.findById(timeSlotDTO.getDefensePeriodId()).orElse(null);

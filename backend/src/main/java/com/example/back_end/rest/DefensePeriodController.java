@@ -56,7 +56,7 @@ public class DefensePeriodController {
     @GetMapping("/search")
     public ResponseEntity<List<DefensePeriod>> searchDefensePeriods(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<DefensePeriod> defensePeriods = defensePeriodService.searchDefensePeriods(request.getParameterMap().get("query")[0]);
                 return ResponseEntity.ok(defensePeriods);
             } else {

@@ -10,8 +10,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class RequestAvailabilityService {
@@ -56,7 +59,7 @@ public class RequestAvailabilityService {
 
                         Context context = new Context();
                         context.setVariable("periodName", defensePeriodName);
-                        context.setVariable("endDate", requestAvailabilityDTO.getDeadline());
+                        context.setVariable("endDate", requestAvailabilityDTO.getDeadline().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
                         String htmlContent = templateEngine.process("emails/request-availability", context);
                         notification.setContent(htmlContent);

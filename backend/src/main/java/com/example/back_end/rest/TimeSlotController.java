@@ -31,7 +31,7 @@ public class TimeSlotController {
     @GetMapping
     public ResponseEntity<List<TimeSlot>> getAllTimeSlots(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request)) || "GIANG_VIEN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<TimeSlot> timeSlots = timeSlotService.getAllTimeSlots();
                 return ResponseEntity.ok(timeSlots);
             } else {
@@ -90,6 +90,22 @@ public class TimeSlotController {
                     }
                 }
 
+                return ResponseEntity.ok(timeSlots);
+            } else {
+                return new SendError<List<TimeSlot>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<TimeSlot>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
+    @GetMapping("/date-range")
+    public ResponseEntity<List<TimeSlot>> getTimeSlotsByDateRange(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+                LocalDate startDate = LocalDate.parse(request.getParameterMap().get("startDate")[0]);
+                LocalDate endDate = LocalDate.parse(request.getParameterMap().get("endDate")[0]);
+                List<TimeSlot> timeSlots = timeSlotService.getTimeSlotsByDateRange(startDate, endDate);
                 return ResponseEntity.ok(timeSlots);
             } else {
                 return new SendError<List<TimeSlot>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

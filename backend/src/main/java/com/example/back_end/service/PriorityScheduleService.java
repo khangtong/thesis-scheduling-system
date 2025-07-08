@@ -26,8 +26,15 @@ public class PriorityScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<PrioritySchedule> getAllPrioritySchedules() {
-        return priorityScheduleRepository.findAll();
+    public List<PrioritySchedule> getAllPrioritySchedules(User user) {
+        if ("ADMIN".equals(user.getRole().getName()))
+            return priorityScheduleRepository.findAll();
+        else {
+            Lecturer lecturer = lecturerRepository.findByUser(user);
+            if (lecturer == null)
+                throw new Error("Không tìm thấy giảng viên");
+            return priorityScheduleRepository.findByLecturer(lecturer);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -36,22 +43,6 @@ public class PriorityScheduleService {
         if (prioritySchedule == null)
             throw new Error("Không tìm thấy lịch ưu tiên");
         return prioritySchedule;
-    }
-
-    @Transactional(readOnly = true)
-    public List<PrioritySchedule> getPrioritySchedulesByLecturer(PriorityScheduleDTO priorityScheduleDTO) {
-        List<PrioritySchedule> prioritySchedules;
-
-        if (priorityScheduleDTO.getLecturerId() != null) {
-            Lecturer lecturer = lecturerRepository.findById(priorityScheduleDTO.getLecturerId()).orElse(null);
-            if (lecturer == null)
-                throw new Error("Không tìm thấy giảng viên");
-            prioritySchedules = priorityScheduleRepository.findByLecturer(lecturer);
-        } else {
-            throw new Error("Giảng viên không được là rỗng");
-        }
-
-        return prioritySchedules;
     }
 
     @Transactional

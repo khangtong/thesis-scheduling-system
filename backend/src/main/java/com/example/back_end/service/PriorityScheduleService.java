@@ -46,16 +46,23 @@ public class PriorityScheduleService {
     }
 
     @Transactional
-    public PrioritySchedule createPrioritySchedule(PriorityScheduleDTO priorityScheduleDTO) {
+    public PrioritySchedule createPrioritySchedule(User user, PriorityScheduleDTO priorityScheduleDTO) {
         PrioritySchedule newPrioritySchedule = new PrioritySchedule();
 
-        if (priorityScheduleDTO.getLecturerId() != null) {
-            Lecturer lecturer = lecturerRepository.findById(priorityScheduleDTO.getLecturerId()).orElse(null);
+        if ("ADMIN".equals(user.getRole().getName()))
+            if (priorityScheduleDTO.getLecturerId() != null) {
+                Lecturer lecturer = lecturerRepository.findById(priorityScheduleDTO.getLecturerId()).orElse(null);
+                if (lecturer == null)
+                    throw new Error("Không tìm thấy giảng viên");
+                newPrioritySchedule.setLecturer(lecturer);
+            } else {
+                throw new Error("Giảng viên không được là rỗng");
+            }
+        else {
+            Lecturer lecturer = lecturerRepository.findByUser(user);
             if (lecturer == null)
                 throw new Error("Không tìm thấy giảng viên");
             newPrioritySchedule.setLecturer(lecturer);
-        } else {
-            throw new Error("Giảng viên không được là rỗng");
         }
 
         if (priorityScheduleDTO.getTimeSlotId() != null) {
@@ -103,5 +110,21 @@ public class PriorityScheduleService {
         if (prioritySchedule == null)
             throw new Error("Không tìm thấy lịch ưu tiên");
         priorityScheduleRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deletePrioritySchedule(User user, int timeSlotId) {
+        Lecturer lecturer = lecturerRepository.findByUser(user);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
+
+        List<PrioritySchedule> prioritySchedules = priorityScheduleRepository.findByLecturer(lecturer);
+        for (int i = 0; i < prioritySchedules.size(); i++) {
+            PrioritySchedule prioritySchedule = prioritySchedules.get(i);
+            if (prioritySchedule.getTimeSlot().getId().equals(timeSlotId)) {
+                priorityScheduleRepository.delete(prioritySchedule);
+                break;
+            }
+        }
     }
 }

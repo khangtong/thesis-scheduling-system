@@ -44,13 +44,13 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
           <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                   Ngày
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th scope="col" className="px-3 py-3 font-medium">
                   Thời gian bắt đầu
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+                <th scope="col" className="px-3 py-3 font-medium">
                   Thời gian kết thúc
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -64,7 +64,7 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
                   key={timeSlot.id}
                   className="w-full border-b border-gray-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td className="py-3 pl-6 pr-3">
+                  <td className="py-1 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <p>
                         {timeSlot?.date
@@ -73,9 +73,9 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
                       </p>
                     </div>
                   </td>
-                  <td className="px-3 py-3">{timeSlot.start}</td>
-                  <td className="px-3 py-3">{timeSlot.end}</td>
-                  <td className="py-3 pl-6 pr-3">
+                  <td className="px-3 py-1">{timeSlot.start}</td>
+                  <td className="px-3 py-1">{timeSlot.end}</td>
+                  <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <Update path="time-slots" id={timeSlot.id} />
                       <DeleteTimeSlot id={timeSlot.id} />

@@ -6,11 +6,10 @@ import {
   fetchNotifications,
   fetchPrioritySchedules,
   fetchTimeSlotsByDateRange,
-  searchTimeSlots,
 } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
-import SearchForm from '@/app/ui/time-slots/search-form';
+import SearchForm from '@/app/ui/priority-schedules/search-form';
 import { Metadata } from 'next';
 import { Button } from '@/app/ui/button';
 import Link from 'next/link';
@@ -88,14 +87,39 @@ export default async function Page(props: {
     );
   }
 
-  // Paginate time slots based on ITEMS_PER_PAGE
+  // Filter time slots based on search parameters
+  let filteredTimeSlots = [...timeSlots];
+
+  if (searchParams?.date) {
+    filteredTimeSlots = filteredTimeSlots.filter((slot) => {
+      if (!slot?.date) return false;
+      const slotDate = new Date(slot.date).toISOString().split('T')[0];
+      return slotDate === searchParams.date;
+    });
+  }
+
+  if (searchParams?.start) {
+    filteredTimeSlots = filteredTimeSlots.filter((slot) => {
+      if (!slot?.start) return false;
+      return slot.start >= searchParams.start + ':00';
+    });
+  }
+
+  if (searchParams?.end) {
+    filteredTimeSlots = filteredTimeSlots.filter((slot) => {
+      if (!slot?.end) return false;
+      return slot.end <= searchParams.end + ':00';
+    });
+  }
+
+  // Paginate filtered time slots based on ITEMS_PER_PAGE
   const a = [];
-  const totalPages = Math.ceil(timeSlots.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredTimeSlots.length / ITEMS_PER_PAGE);
   let j = 0;
   for (let i = 0; i < totalPages; i++) {
     const b = [];
-    while (j < timeSlots.length && b.length < ITEMS_PER_PAGE) {
-      b.push(timeSlots[j]);
+    while (j < filteredTimeSlots.length && b.length < ITEMS_PER_PAGE) {
+      b.push(filteredTimeSlots[j]);
       j++;
     }
     a.push(b);
@@ -113,20 +137,14 @@ export default async function Page(props: {
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 max-w-full">
         <SearchForm />
-        <div className="flex gap-2">
-          <Link
-            href="/dashboard/priority-schedules/register"
-            className="max-w-[100px] lg:max-w-full flex items-center rounded-lg bg-blue-600 px-2 sm:px-4 text-xs lg:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          >
-            Đăng ký
-          </Link>
-          <Button className="px-6">Lưu</Button>
-        </div>
       </div>
-      <Table timeSlots={timeSlots} prioritySchedules={prioritySchedules} />
-      {/* <div className="mt-5 flex w-full justify-center">
+      <Table
+        timeSlots={a[currentPage - 1]}
+        prioritySchedules={prioritySchedules}
+      />
+      <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
-      </div> */}
+      </div>
     </div>
   );
 }

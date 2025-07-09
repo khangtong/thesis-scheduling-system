@@ -1,19 +1,28 @@
 'use client';
 
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  PencilIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import {
+  createPrioritySchedule,
   deleteCommitteeRole,
   deleteDefensePeriod,
   deleteDegree,
   deleteExpertise,
   deleteFaculty,
+  deletePrioritySchedule,
   deleteRoom,
   deleteTimeSlot,
   deleteUser,
 } from '../lib/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { error } from 'console';
 
 export function Create({ singular, path }: { singular: string; path: string }) {
   return (
@@ -31,7 +40,7 @@ export function Update({ id, path }: { id: number; path: string }) {
   return (
     <Link
       href={`/dashboard/${path}/${id}/edit`}
-      className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+      className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
     </Link>
@@ -52,7 +61,7 @@ export function DeleteUser({ id }: { id: number }) {
           toast.promise(deleteUserWithId(), {
             loading: 'Đang xóa người dùng...',
             success: 'Xóa người dùng thành công',
-            error: 'Có lỗi xảy ra khi xóa người dùng',
+            error: (error) => error.message,
           });
           router.push('/dashboard/users');
         },
@@ -64,7 +73,7 @@ export function DeleteUser({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -87,7 +96,7 @@ export function DeleteFaculty({ id }: { id: number }) {
           toast.promise(deleteFacultyWithId(), {
             loading: 'Đang xóa khoa...',
             success: 'Xóa khoa thành công',
-            error: 'Có lỗi xảy ra khi xóa khoa',
+            error: (error) => error.message,
           });
           router.push('/dashboard/faculties');
         },
@@ -99,7 +108,7 @@ export function DeleteFaculty({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -122,7 +131,7 @@ export function DeleteDegree({ id }: { id: number }) {
           toast.promise(deleteDegreeWithId(), {
             loading: 'Đang xóa học vị...',
             success: 'Xóa học vị thành công',
-            error: 'Có lỗi xảy ra khi xóa học vị',
+            error: (error) => error.message,
           });
           router.push('/dashboard/degrees');
         },
@@ -134,7 +143,7 @@ export function DeleteDegree({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -157,7 +166,7 @@ export function DeleteRoom({ id }: { id: number }) {
           toast.promise(deleteRoomWithId(), {
             loading: 'Đang xóa phòng...',
             success: 'Xóa phòng thành công',
-            error: 'Có lỗi xảy ra khi xóa phòng',
+            error: (error) => error.message,
           });
           router.push('/dashboard/rooms');
         },
@@ -169,7 +178,7 @@ export function DeleteRoom({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -192,7 +201,7 @@ export function DeleteCommitteeRole({ id }: { id: number }) {
           toast.promise(deleteCommitteeRoleWithId(), {
             loading: 'Đang xóa vai trò hội đồng...',
             success: 'Xóa vai trò hội đồng thành công',
-            error: 'Có lỗi xảy ra khi xóa vai trò hội đồng',
+            error: (error) => error.message,
           });
           router.push('/dashboard/committee-roles');
         },
@@ -204,7 +213,7 @@ export function DeleteCommitteeRole({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -227,7 +236,7 @@ export function DeleteExpertise({ id }: { id: number }) {
           toast.promise(deleteExpertiseWithId(), {
             loading: 'Đang xóa chuyên môn...',
             success: 'Xóa chuyên môn thành công',
-            error: 'Có lỗi xảy ra khi xóa chuyên môn',
+            error: (error) => error.message,
           });
           router.push('/dashboard/expertises');
         },
@@ -239,7 +248,7 @@ export function DeleteExpertise({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -262,7 +271,7 @@ export function DeleteDefensePeriod({ id }: { id: number }) {
           toast.promise(deleteDefensePeriodWithId(), {
             loading: 'Đang xóa đợt bảo vệ...',
             success: 'Xóa đợt bảo vệ thành công',
-            error: 'Có lỗi xảy ra khi xóa đợt bảo vệ',
+            error: (error) => error.message,
           });
           router.push('/dashboard/defense-periods');
         },
@@ -274,7 +283,7 @@ export function DeleteDefensePeriod({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
@@ -297,7 +306,7 @@ export function DeleteTimeSlot({ id }: { id: number }) {
           toast.promise(deleteTimeSlotWithId(), {
             loading: 'Đang xóa khung giờ...',
             success: 'Xóa khung giờ thành công',
-            error: 'Có lỗi xảy ra khi xóa khung giờ',
+            error: (error) => error.message,
           });
           router.push('/dashboard/time-slots');
         },
@@ -309,10 +318,77 @@ export function DeleteTimeSlot({ id }: { id: number }) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="rounded-md border border-gray-200 p-2 hover:bg-gray-100"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
       >
         <span className="sr-only">Xóa</span>
         <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function RegisterPrioritySchedule({ id }: { id: number }) {
+  const createPriorityScheduleWithId = createPrioritySchedule.bind(null, id);
+  const router = useRouter();
+
+  function handleCreate(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast.promise(createPriorityScheduleWithId(), {
+      loading: 'Đang đăng ký...',
+      success: (result) => {
+        router.refresh();
+        return result.message;
+      },
+      error: (error) => error.message,
+    });
+  }
+
+  return (
+    <form onSubmit={handleCreate}>
+      <button
+        type="submit"
+        className="cursor-pointer rounded-md border border-gray-200 p-1 hover:bg-gray-100"
+      >
+        <span className="sr-only">Đăng ký</span>
+        <PencilSquareIcon className="w-5 text-green-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeletePrioritySchedule({ id }: { id: number }) {
+  const deletePriorityScheduleWithId = deletePrioritySchedule.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn hủy lịch bận này?', {
+      action: {
+        label: 'Hủy',
+        onClick: () => {
+          toast.promise(deletePriorityScheduleWithId(), {
+            loading: 'Đang hủy lịch bận...',
+            success: (result) => {
+              router.refresh();
+              return result.message;
+            },
+            error: (error) => error.message,
+          });
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
+      >
+        <span className="sr-only">Hủy</span>
+        <XMarkIcon className="w-5 text-red-600" />
       </button>
     </form>
   );

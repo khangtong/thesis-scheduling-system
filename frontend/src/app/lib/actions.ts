@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import axios from 'axios';
 
 import {
@@ -13,6 +14,7 @@ import {
   ExpertiseFormSchema,
   FacultyFormSchema,
   LoginFormSchema,
+  PriorityScheduleFormSchema,
   RequestPasswordResetSchema,
   ResetPasswordSchema,
   RoomFormSchema,
@@ -447,7 +449,7 @@ export async function createUser(state: any, formData: FormData) {
     } else {
       // Something happened in setting up the request that triggered an Error
       return {
-        message: error.message || 'Có lỗi không xác định xảy ra',
+        message: error.response.data.message || 'Có lỗi không xác định xảy ra',
       };
     }
   }
@@ -606,7 +608,7 @@ export async function updateUser(
     } else {
       // Something happened in setting up the request that triggered an Error
       return {
-        message: error.message || 'Có lỗi không xác định xảy ra',
+        message: error.response.data.message || 'Có lỗi không xác định xảy ra',
       };
     }
   }
@@ -626,11 +628,14 @@ export async function deleteUser(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Người dùng đã được tạo thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa người dùng' };
+      throw new Error('Không thể xóa người dùng');
     }
   } catch (error: any) {
     console.error('Delete user error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -672,7 +677,10 @@ export async function createFaculty(
     }
   } catch (error: any) {
     console.error('Create faculty error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -715,7 +723,10 @@ export async function updateFaculty(
     }
   } catch (error: any) {
     console.error('Update faculty error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -736,11 +747,14 @@ export async function deleteFaculty(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Khoa đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa khoa' };
+      throw new Error('Không thể xóa khoa');
     }
   } catch (error: any) {
     console.error('Delete faculty error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -782,7 +796,10 @@ export async function createDegree(
     }
   } catch (error: any) {
     console.error('Create degree error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -825,7 +842,10 @@ export async function updateDegree(
     }
   } catch (error: any) {
     console.error('Update degree error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -846,11 +866,14 @@ export async function deleteDegree(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Học vị đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa học vị' };
+      throw new Error('Không thể xóa học vị');
     }
   } catch (error: any) {
     console.error('Delete degree error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -893,7 +916,10 @@ export async function createRoom(
     }
   } catch (error: any) {
     console.error('Create room error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -937,7 +963,10 @@ export async function updateRoom(
     }
   } catch (error: any) {
     console.error('Update room error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -955,11 +984,14 @@ export async function deleteRoom(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Phòng đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa phòng' };
+      throw new Error('Không thể xóa phòng');
     }
   } catch (error: any) {
     console.error('Delete room error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1004,7 +1036,10 @@ export async function createCommitteeRole(
     }
   } catch (error: any) {
     console.error('Create committee role error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1050,7 +1085,10 @@ export async function updateCommitteeRole(
     }
   } catch (error: any) {
     console.error('Update committee role error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1074,11 +1112,14 @@ export async function deleteCommitteeRole(id: number) {
         message: 'Vai trò hội đồng đã được xóa thành công',
       };
     } else {
-      return { success: false, message: 'Không thể xóa vai trò hội đồng' };
+      throw new Error('Không thể xóa vai trò hội đồng');
     }
   } catch (error: any) {
     console.error('Delete committee role error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1121,7 +1162,10 @@ export async function createExpertise(
     }
   } catch (error: any) {
     console.error('Create expertise error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1168,7 +1212,10 @@ export async function updateExpertise(
     }
   } catch (error: any) {
     console.error('Update expertise error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1189,11 +1236,14 @@ export async function deleteExpertise(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Chuyên môn đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa chuyên môn' };
+      throw new Error('Không thể xóa chuyên môn');
     }
   } catch (error: any) {
     console.error('Delete expertise error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1238,7 +1288,10 @@ export async function createDefensePeriod(
     }
   } catch (error: any) {
     console.error('Create defense period error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1287,7 +1340,10 @@ export async function updateDefensePeriod(
     }
   } catch (error: any) {
     console.error('Update defense period error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1308,11 +1364,14 @@ export async function deleteDefensePeriod(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Đợt bảo vệ đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa đợt bảo vệ' };
+      throw new Error('Không thể xóa đợt bảo vệ');
     }
   } catch (error: any) {
     console.error('Delete defense period error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1389,7 +1448,10 @@ export async function createTimeSlot(
     }
   } catch (error: any) {
     console.error('Create time slot error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1437,7 +1499,10 @@ export async function updateTimeSlot(
     }
   } catch (error: any) {
     console.error('Update time slot error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1458,11 +1523,14 @@ export async function deleteTimeSlot(id: number) {
     if (response.status === 204) {
       return { success: true, message: 'Khung giờ đã được xóa thành công' };
     } else {
-      return { success: false, message: 'Không thể xóa khung giờ' };
+      throw new Error('Không thể xóa khung giờ');
     }
   } catch (error: any) {
     console.error('Delete time slot error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }
 
@@ -1523,6 +1591,83 @@ export async function requestAvailability(
     }
   } catch (error: any) {
     console.error('Request availability error:', error);
-    return { success: false, message: error.message || 'Có lỗi xảy ra' };
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function createPrioritySchedule(
+  timeSlotId: number
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = PriorityScheduleFormSchema.safeParse({
+    lecturerId: null,
+    timeSlotId,
+  });
+
+  if (!validatedFields.success) {
+    throw new Error('Đầu vào không hợp lệ');
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/priority-schedules`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      // Force a revalidation of the cache
+      revalidatePath('/dashboard/priority-schedules');
+      return { success: true, message: 'Đăng ký lịch bận thành công' };
+    } else {
+      throw new Error('Không thể đăng ký lịch bận');
+    }
+  } catch (error: any) {
+    console.error('Create priority schedule error:', error);
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function deletePrioritySchedule(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/priority-schedules/delete?timeSlotId=${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      // Force a revalidation of the cache
+      revalidatePath('/dashboard/priority-schedules');
+      return { success: true, message: 'Hủy đăng ký lịch bận thành công' };
+    } else {
+      throw new Error('Không thể hủy đăng ký lịch bận');
+    }
+  } catch (error: any) {
+    console.error('Delete priority schedule error:', error);
+    return {
+      success: false,
+      message: error.response.data.message || 'Có lỗi xảy ra',
+    };
   }
 }

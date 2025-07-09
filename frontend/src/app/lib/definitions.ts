@@ -83,7 +83,7 @@ export type PrioritySchedule = {
   timeSlot: TimeSlot;
 } | null;
 
-export const ITEMS_PER_PAGE = 7;
+export const ITEMS_PER_PAGE = 12;
 
 export const LoginFormSchema = z.object({
   emailOrUsername: z.union([
@@ -357,4 +357,13 @@ export const AvailabilityRequestSchema = z.object({
     .array(z.number().int().positive())
     .min(1, { message: 'Vui lòng chọn ít nhất một khoa.' }),
   deadline: z.date({ message: 'Ngày hết hạn không hợp lệ.' }),
+});
+
+export const PriorityScheduleFormSchema = z.object({
+  lecturerId: z
+    .number({ message: 'Giảng viên không hợp lệ.' })
+    .int()
+    .positive()
+    .nullable(),
+  timeSlotId: z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive(),
 });

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -23,14 +24,16 @@ public class RequestAvailabilityService {
     private FacultyRepository facultyRepository;
     private NotificationRepository notificationRepository;
     private TemplateEngine templateEngine;
+    private TimeSlotService timeSlotService;
 
     @Autowired
-    public RequestAvailabilityService(DefensePeriodRepository defensePeriodRepository, LecturerRepository lecturerRepository, FacultyRepository facultyRepository, NotificationRepository notificationRepository, TemplateEngine templateEngine) {
+    public RequestAvailabilityService(DefensePeriodRepository defensePeriodRepository, LecturerRepository lecturerRepository, FacultyRepository facultyRepository, NotificationRepository notificationRepository, TemplateEngine templateEngine, TimeSlotService timeSlotService) {
         this.defensePeriodRepository = defensePeriodRepository;
         this.lecturerRepository = lecturerRepository;
         this.facultyRepository = facultyRepository;
         this.notificationRepository = notificationRepository;
         this.templateEngine = templateEngine;
+        this.timeSlotService = timeSlotService;
     }
 
     @Transactional
@@ -42,7 +45,12 @@ public class RequestAvailabilityService {
             DefensePeriod defensePeriod = defensePeriodRepository.findById(requestAvailabilityDTO.getDefensePeriodId()).orElse(null);
             if (defensePeriod == null)
                 throw new Error("Không tìm thấy đợt bảo vệ");
+            if (!defensePeriod.isActive())
+                throw new Error("Đợt bảo vệ không hoạt động");
             defensePeriodName = defensePeriod.getName();
+            List<TimeSlot> timeSlots = timeSlotService.getTimeSlotsByDateRange(defensePeriod.getStart().toLocalDate(), defensePeriod.getEnd().toLocalDate());
+            if (timeSlots.isEmpty())
+                throw new Error("Phải tạo các khung giờ cho đợt bảo vệ để yêu cầu đăng ký lịch bận");
         }
 
         if (requestAvailabilityDTO.getSelectedFaculties() != null) {

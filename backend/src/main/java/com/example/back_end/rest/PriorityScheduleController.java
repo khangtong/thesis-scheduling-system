@@ -59,8 +59,9 @@ public class PriorityScheduleController {
     @PostMapping
     public ResponseEntity<PrioritySchedule> createPrioritySchedule(@RequestBody PriorityScheduleDTO priorityScheduleDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request)) || "GIANG_VIEN".equals(authController.authorize(response, request))) {
-                PrioritySchedule dbPrioritySchedule = priorityScheduleService.createPrioritySchedule(priorityScheduleDTO);
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+                User user = authController.authenticate(response, request);
+                PrioritySchedule dbPrioritySchedule = priorityScheduleService.createPrioritySchedule(user, priorityScheduleDTO);
                 return ResponseEntity.status(HttpStatus.CREATED).body(dbPrioritySchedule);
             } else {
                 return new SendError<PrioritySchedule>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
@@ -73,7 +74,7 @@ public class PriorityScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<PrioritySchedule> updatePriorityScheduleById(@PathVariable int id, @RequestBody PriorityScheduleDTO priorityScheduleDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request)) || "GIANG_VIEN".equals(authController.authorize(response, request))) {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
                 PrioritySchedule updatedPrioritySchedule = priorityScheduleService.updatePriorityScheduleById(id, priorityScheduleDTO);
                 return ResponseEntity.ok(updatedPrioritySchedule);
             } else {
@@ -87,8 +88,23 @@ public class PriorityScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePriorityScheduleById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request)) || "GIANG_VIEN".equals(authController.authorize(response, request))) {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
                 priorityScheduleService.deletePriorityScheduleById(id);
+                return ResponseEntity.ok("Đã xóa lịch ưu tiên thành công");
+            } else {
+                return new SendError<String>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<String>().sendNotFound(error.getMessage(), response);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deletePrioritySchedule(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+                User user = authController.authenticate(response, request);
+                priorityScheduleService.deletePrioritySchedule(user, Integer.parseInt(request.getParameterMap().get("timeSlotId")[0]));
                 return ResponseEntity.ok("Đã xóa lịch ưu tiên thành công");
             } else {
                 return new SendError<String>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

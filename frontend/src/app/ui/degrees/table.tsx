@@ -31,7 +31,7 @@ export default function Table({ degrees = [] }: { degrees: Degree[] }) {
           <table className="hidden w-full text-gray-900 xl:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                   Tên học vị
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -45,12 +45,12 @@ export default function Table({ degrees = [] }: { degrees: Degree[] }) {
                   key={degree?.id}
                   className="w-full border-b border-gray-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
-                  <td className="py-3 pl-6 pr-3">
+                  <td className="py-1 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <p>{degree?.name}</p>
                     </div>
                   </td>
-                  <td className="py-3 pl-6 pr-3">
+                  <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <Update id={degree?.id ? degree.id : -1} path="degrees" />
                       <DeleteDegree id={degree?.id ? degree.id : -1} />

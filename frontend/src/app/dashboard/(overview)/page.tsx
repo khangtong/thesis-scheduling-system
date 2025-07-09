@@ -3,10 +3,15 @@ import {
   fetchDefensePeriods,
   fetchDefensePeriodsWithQuery,
   fetchNotifications,
+  fetchPrioritySchedules,
   fetchTimeSlots,
   fetchTimeSlotsByDateRange,
 } from '@/app/lib/data';
-import { DefensePeriod, TimeSlot } from '@/app/lib/definitions';
+import {
+  DefensePeriod,
+  PrioritySchedule,
+  TimeSlot,
+} from '@/app/lib/definitions';
 import Calendar from '@/app/ui/dashboard/calendar';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
@@ -17,12 +22,11 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const user = await getUser();
+  const authToken = (await cookies()).get('session')?.value;
   let events = [];
 
   if (user?.role?.name === 'ADMIN') {
-    const defensePeriods = await fetchDefensePeriods(
-      (await cookies()).get('session')?.value
-    );
+    const defensePeriods = await fetchDefensePeriods(authToken);
     events = defensePeriods.map((defensePeriod: DefensePeriod) => {
       // Add one day to the end date if it exists
       let endDate = defensePeriod?.end;
@@ -46,9 +50,7 @@ export default async function DashboardPage() {
 
   if (user?.role?.name === 'GIANG_VIEN') {
     // Get notifications that are not on deadline
-    const notifications = await fetchNotifications(
-      (await cookies()).get('session')?.value
-    );
+    const notifications = await fetchNotifications(authToken);
     const activeNotis = notifications.filter((noti: any) => {
       const deadline = noti.content
         .substring(
@@ -70,7 +72,7 @@ export default async function DashboardPage() {
         activeNotis[i].content.indexOf('</span>')
       );
       const { defensePeriods, totalPages } = await fetchDefensePeriodsWithQuery(
-        (await cookies()).get('session')?.value,
+        authToken,
         defensePeriodName
       );
       if (
@@ -84,9 +86,10 @@ export default async function DashboardPage() {
     console.log(activeDefensePeriods);
 
     // Get time slots from those defense periods
+    const prioritySchedules = await fetchPrioritySchedules(authToken);
     for (let j = 0; j < activeDefensePeriods.length; j++) {
       const timeSlots = await fetchTimeSlotsByDateRange(
-        (await cookies()).get('session')?.value,
+        authToken,
         activeDefensePeriods[j].start.split('T')[0],
         activeDefensePeriods[j].end.split('T')[0]
       );
@@ -97,6 +100,11 @@ export default async function DashboardPage() {
             id: timeSlot?.id,
             start: `${timeSlot?.date}T${timeSlot?.start}`,
             end: `${timeSlot?.date}T${timeSlot?.end}`,
+            backgroundColor: prioritySchedules.find(
+              (ps: PrioritySchedule) => ps?.timeSlot?.id === timeSlot?.id
+            )
+              ? '#e7000b'
+              : '#00a63e',
           };
         })
       );

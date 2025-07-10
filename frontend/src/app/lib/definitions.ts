@@ -83,6 +83,17 @@ export type PrioritySchedule = {
   timeSlot: TimeSlot;
 } | null;
 
+export type DefenseSession = {
+  id: number;
+  status: string;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  room: Room;
+  timeSlot: TimeSlot;
+  defensePeriod: DefensePeriod;
+} | null;
+
 export const ITEMS_PER_PAGE = 12;
 
 export const LoginFormSchema = z.object({
@@ -366,4 +377,18 @@ export const PriorityScheduleFormSchema = z.object({
     .positive()
     .nullable(),
   timeSlotId: z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive(),
+});
+
+export const DefenseSessionFormSchema = z.object({
+  status: z.string().min(1, { message: 'Trạng thái không hợp lệ.' }).trim(),
+  note: z
+    .string()
+    .max(500, { message: 'Ghi chú không được quá 500 ký tự.' })
+    .nullable(),
+  roomId: z.number({ message: 'Phòng không hợp lệ.' }).int().positive(),
+  timeSlotId: z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive(),
+  defensePeriodId: z
+    .number({ message: 'Đợt bảo vệ không hợp lệ.' })
+    .int()
+    .positive(),
 });

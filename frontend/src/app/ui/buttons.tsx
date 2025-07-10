@@ -12,6 +12,7 @@ import {
   createPrioritySchedule,
   deleteCommitteeRole,
   deleteDefensePeriod,
+  deleteDefenseSession,
   deleteDegree,
   deleteExpertise,
   deleteFaculty,
@@ -389,6 +390,41 @@ export function DeletePrioritySchedule({ id }: { id: number }) {
       >
         <span className="sr-only">Hủy</span>
         <XMarkIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteDefenseSession({ id }: { id: number }) {
+  const deleteDefenseSessionWithId = deleteDefenseSession.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa buổi bảo vệ này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteDefenseSessionWithId(), {
+            loading: 'Đang xóa buổi bảo vệ...',
+            success: 'Xóa buổi bảo vệ thành công',
+            error: (error) => error.message,
+          });
+          router.push('/dashboard/defense-sessions');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
       </button>
     </form>
   );

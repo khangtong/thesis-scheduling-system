@@ -821,3 +821,111 @@ export async function fetchPrioritySchedules(token: string | undefined) {
     throw new Error('Failed to fetch priority schedules.');
   }
 }
+
+export async function fetchDefenseSessions(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/defense-sessions`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense sessions.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching defense sessions:', error);
+    throw new Error('Failed to fetch defense sessions.');
+  }
+}
+
+export async function fetchDefenseSessionById(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/defense-sessions/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense session.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching defense session:', error);
+    throw new Error('Failed to fetch defense session.');
+  }
+}
+
+export async function searchDefenseSessions(
+  token: string | undefined,
+  query: string
+) {
+  try {
+    let url = `${process.env.API_URL}/defense-sessions/search`;
+    const params = new URLSearchParams();
+
+    if (
+      query.includes('status=') ||
+      query.includes('defensePeriodId=') ||
+      query.includes('timeSlotId=') ||
+      query.includes('roomId=')
+    ) {
+      // Parse the query string
+      const queryParams = new URLSearchParams(query);
+
+      // Add each parameter to the URL params if it exists
+      if (queryParams.has('status'))
+        params.append('status', queryParams.get('status')!);
+      if (queryParams.has('defensePeriodId'))
+        params.append('defensePeriodId', queryParams.get('defensePeriodId')!);
+      if (queryParams.has('timeSlotId'))
+        params.append('timeSlotId', queryParams.get('timeSlotId')!);
+      if (queryParams.has('roomId'))
+        params.append('roomId', queryParams.get('roomId')!);
+    } else if (query) {
+      // If it's a simple query string, use it as is
+      params.append('query', query);
+    }
+
+    // Append the parameters to the URL
+    console.log(params.toString());
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch defense sessions.');
+    }
+
+    const data = await response.json();
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return { data, totalPages };
+  } catch (error) {
+    console.error('Error fetching defense sessions:', error);
+    throw new Error('Failed to fetch defense sessions.');
+  }
+}

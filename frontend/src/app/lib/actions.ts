@@ -10,6 +10,7 @@ import {
   CommitteeRoleFormSchema,
   CreateTimeSlotFormSchema,
   DefensePeriodFormSchema,
+  DefenseSessionFormSchema,
   DegreeFormSchema,
   ExpertiseFormSchema,
   FacultyFormSchema,
@@ -634,7 +635,7 @@ export async function deleteUser(id: number) {
     console.error('Delete user error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -679,7 +680,7 @@ export async function createFaculty(
     console.error('Create faculty error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -725,7 +726,7 @@ export async function updateFaculty(
     console.error('Update faculty error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -753,7 +754,7 @@ export async function deleteFaculty(id: number) {
     console.error('Delete faculty error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -798,7 +799,7 @@ export async function createDegree(
     console.error('Create degree error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -844,7 +845,7 @@ export async function updateDegree(
     console.error('Update degree error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -872,7 +873,7 @@ export async function deleteDegree(id: number) {
     console.error('Delete degree error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -918,7 +919,7 @@ export async function createRoom(
     console.error('Create room error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -965,7 +966,7 @@ export async function updateRoom(
     console.error('Update room error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -990,7 +991,7 @@ export async function deleteRoom(id: number) {
     console.error('Delete room error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1038,7 +1039,7 @@ export async function createCommitteeRole(
     console.error('Create committee role error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1087,7 +1088,7 @@ export async function updateCommitteeRole(
     console.error('Update committee role error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1118,7 +1119,7 @@ export async function deleteCommitteeRole(id: number) {
     console.error('Delete committee role error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1164,7 +1165,7 @@ export async function createExpertise(
     console.error('Create expertise error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1214,7 +1215,7 @@ export async function updateExpertise(
     console.error('Update expertise error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1242,7 +1243,7 @@ export async function deleteExpertise(id: number) {
     console.error('Delete expertise error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1290,7 +1291,7 @@ export async function createDefensePeriod(
     console.error('Create defense period error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1342,7 +1343,7 @@ export async function updateDefensePeriod(
     console.error('Update defense period error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1370,7 +1371,7 @@ export async function deleteDefensePeriod(id: number) {
     console.error('Delete defense period error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1450,7 +1451,7 @@ export async function createTimeSlot(
     console.error('Create time slot error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1501,7 +1502,7 @@ export async function updateTimeSlot(
     console.error('Update time slot error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1529,7 +1530,7 @@ export async function deleteTimeSlot(id: number) {
     console.error('Delete time slot error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1593,7 +1594,7 @@ export async function requestAvailability(
     console.error('Request availability error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1637,7 +1638,7 @@ export async function createPrioritySchedule(
     console.error('Create priority schedule error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }
@@ -1667,7 +1668,131 @@ export async function deletePrioritySchedule(id: number) {
     console.error('Delete priority schedule error:', error);
     return {
       success: false,
-      message: error.response.data.message || 'Có lỗi xảy ra',
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function createDefenseSession(state: any, formData: FormData) {
+  const validatedFields = DefenseSessionFormSchema.safeParse({
+    status: 'Chưa có luận văn',
+    note: formData.get('note'),
+    roomId: Number(formData.get('roomId')),
+    timeSlotId: Number(formData.get('timeSlotId')),
+    defensePeriodId: Number(formData.get('defensePeriodId')),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/defense-sessions`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Buổi bảo vệ đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo buổi bảo vệ' };
+    }
+  } catch (error: any) {
+    console.error('Create defense session error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function updateDefenseSession(
+  id: number,
+  state: any,
+  formData: FormData
+): Promise<{ success: boolean; message?: string; errors?: any }> {
+  const validatedFields = DefenseSessionFormSchema.safeParse({
+    status: formData.get('status'),
+    note: formData.get('note'),
+    roomId: Number(formData.get('roomId')),
+    timeSlotId: Number(formData.get('timeSlotId')),
+    defensePeriodId: Number(formData.get('defensePeriodId')),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/defense-sessions/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, message: 'Cập nhật buổi bảo vệ thành công' };
+    } else {
+      return { success: false, message: 'Không thể cập nhật buổi bảo vệ' };
+    }
+  } catch (error: any) {
+    console.error('Update defense session error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function deleteDefenseSession(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(
+      `${process.env.API_URL}/defense-sessions/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return { success: true, message: 'Buổi bảo vệ đã được xóa thành công' };
+    } else {
+      throw new Error('Không thể xóa buổi bảo vệ');
+    }
+  } catch (error: any) {
+    console.error('Delete defense session error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
     };
   }
 }

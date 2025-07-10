@@ -4,6 +4,7 @@ import com.example.back_end.dto.DefenseSessionDTO;
 import com.example.back_end.dto.LecturerDTO;
 import com.example.back_end.entity.DefenseSession;
 import com.example.back_end.entity.Lecturer;
+import com.example.back_end.entity.TimeSlot;
 import com.example.back_end.service.DefenseSessionService;
 import com.example.back_end.utils.SendError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -52,6 +55,58 @@ public class DefenseSessionController {
             }
         } catch (Error error) {
             return new SendError<DefenseSession>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<DefenseSession>> searchDefenseSessions(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<DefenseSession> defenseSessions = defenseSessionService.getAllDefenseSessions();
+
+                if (request.getParameterMap().get("status") != null) {
+                    String status = request.getParameterMap().get("status")[0];
+                    System.out.println(status);
+                    for (int i = defenseSessions.size() - 1; i >= 0; i--) {
+                        DefenseSession defenseSession = defenseSessions.get(i);
+                        if (!defenseSession.getStatus().equals(status))
+                            defenseSessions.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("defensePeriodId") != null) {
+                    int defensePeriodId = Integer.parseInt(request.getParameterMap().get("defensePeriodId")[0]);
+                    for (int i = defenseSessions.size() - 1; i >= 0; i--) {
+                        DefenseSession defenseSession = defenseSessions.get(i);
+                        if (!defenseSession.getDefensePeriod().getId().equals(defensePeriodId))
+                            defenseSessions.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("timeSlotId") != null) {
+                    int timeSlotId = Integer.parseInt(request.getParameterMap().get("timeSlotId")[0]);
+                    for (int i = defenseSessions.size() - 1; i >= 0; i--) {
+                        DefenseSession defenseSession = defenseSessions.get(i);
+                        if (!defenseSession.getTimeSlot().getId().equals(timeSlotId))
+                            defenseSessions.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("roomId") != null) {
+                    int roomId = Integer.parseInt(request.getParameterMap().get("roomId")[0]);
+                    for (int i = defenseSessions.size() - 1; i >= 0; i--) {
+                        DefenseSession defenseSession = defenseSessions.get(i);
+                        if (!defenseSession.getRoom().getId().equals(roomId))
+                            defenseSessions.remove(i);
+                    }
+                }
+
+                return ResponseEntity.ok(defenseSessions);
+            } else {
+                return new SendError<List<DefenseSession>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<DefenseSession>>().sendUnauthorized(error.getMessage(), response);
         }
     }
 

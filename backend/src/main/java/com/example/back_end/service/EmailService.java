@@ -1,8 +1,7 @@
 package com.example.back_end.service;
 
 import com.example.back_end.entity.CommitteeMember;
-import com.example.back_end.entity.DefenseSession;
-import com.example.back_end.entity.Thesis;
+import com.example.back_end.entity.DefenseCommittee;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,13 +104,13 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
-    public void sendStudentScheduleEmail(String to, String studentFullName, String thesisTitle, DefenseSession defenseSession, List<CommitteeMember> committeeMembers) throws MessagingException {
+    public void sendStudentScheduleEmail(String to, String studentFullName, String thesisTitle, DefenseCommittee defenseCommittee, List<CommitteeMember> committeeMembers) throws MessagingException {
         Context context = new Context();
         context.setVariable("studentFullName", studentFullName);
         context.setVariable("thesisTitle", thesisTitle);
-        context.setVariable("sessionDate", defenseSession.getTimeSlot().getDate());
-        context.setVariable("sessionTime", defenseSession.getTimeSlot().getStart());
-        context.setVariable("locationName", defenseSession.getRoom().getName());
+        context.setVariable("sessionDate", defenseCommittee.getTimeSlot().getDate());
+        context.setVariable("sessionTime", defenseCommittee.getTimeSlot().getStart());
+        context.setVariable("locationName", defenseCommittee.getRoom().getName());
         context.setVariable("committeeMembers", committeeMembers);
 
         String htmlContent = templateEngine.process("student-schedule", context);

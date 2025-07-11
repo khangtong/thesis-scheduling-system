@@ -7,7 +7,6 @@ public class ThesisDTO {
     private Integer studentId;
     private Integer lecturerId;
     private Integer defenseCommitteeId;
-    private Integer defenseSessionId;
 
     public ThesisDTO() {}
 
@@ -57,13 +56,5 @@ public class ThesisDTO {
 
     public void setDefenseCommitteeId(Integer defenseCommitteeId) {
         this.defenseCommitteeId = defenseCommitteeId;
-    }
-
-    public Integer getDefenseSessionId() {
-        return defenseSessionId;
-    }
-
-    public void setDefenseSessionId(Integer defenseSessionId) {
-        this.defenseSessionId = defenseSessionId;
     }
 }

@@ -1,42 +1,30 @@
 'use client';
 
 import {
-  AtSymbolIcon,
+  PencilSquareIcon,
   BuildingOfficeIcon,
   CalendarDateRangeIcon,
   ClockIcon,
-  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { updateDefenseSession } from '@/app/lib/actions';
+import { createDefenseCommittee } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import {
-  DefensePeriod,
-  DefenseSession,
-  Room,
-  TimeSlot,
-} from '@/app/lib/definitions';
+import { DefensePeriod, Room, TimeSlot } from '@/app/lib/definitions';
 
 export default function Form({
-  defenseSession,
   rooms,
   timeSlots,
   defensePeriods,
 }: {
-  defenseSession: DefenseSession;
   rooms: Room[];
   timeSlots: TimeSlot[];
   defensePeriods: DefensePeriod[];
 }) {
-  const updateDefenseSessionWithId = updateDefenseSession.bind(
-    null,
-    defenseSession?.id || -1
-  );
   const [state, action, isPending] = useActionState(
-    updateDefenseSessionWithId,
+    createDefenseCommittee,
     undefined
   );
   const router = useRouter();
@@ -51,8 +39,8 @@ export default function Form({
       if (state !== undefined) {
         if (state?.message) {
           if (state?.success) {
-            toast.success('Cập nhật buổi bảo vệ thành công!');
-            router.push('/dashboard/defense-sessions');
+            toast.success('Tạo hội đồng thành công!');
+            router.push('/dashboard/defense-committees');
           } else {
             toast.error(state.message);
           }
@@ -65,55 +53,25 @@ export default function Form({
     <form action={action} aria-describedby="form-error">
       <div className="rounded-md bg-gray-100 p-4 md:p-6">
         <div className="mb-4">
-          <label htmlFor="status" className="mb-2 block text-sm font-medium">
-            Trạng thái
-          </label>
-          <div className="relative">
-            <select
-              id="status"
-              name="status"
-              className="pointer-events-none opacity-50 peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseSession?.status || ''}
-              aria-describedby="status-error"
-              required
-            >
-              <option value="" disabled>
-                Chọn trạng thái
-              </option>
-              <option value="Chưa có luận văn">Chưa có luận văn</option>
-              <option value="Đã có luận văn">Đã có luận văn</option>
-              <option value="Đang bảo vệ">Đang bảo vệ</option>
-              <option value="Đã bảo vệ">Đã bảo vệ</option>
-            </select>
-            <InformationCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
-          </div>
-          {state?.errors?.status && (
-            <span className="text-left text-xs text-red-500 relative">
-              {state.errors.status}
-            </span>
-          )}
-        </div>
-        <div className="mb-4">
-          <label htmlFor="note" className="mb-2 block text-sm font-medium">
-            Ghi chú
+          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+            Tên hội đồng
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                id="note"
-                name="note"
+                id="name"
+                name="name"
                 type="text"
-                placeholder="Nhập ghi chú"
+                placeholder="Nhập tên hội đồng"
                 className="peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-                aria-describedby="note-error"
-                defaultValue={defenseSession?.note || ''}
+                aria-describedby="name-error"
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
-          {state?.errors?.note && (
+          {state?.errors?.name && (
             <span className="text-left text-xs text-red-500 relative">
-              {state.errors.note}
+              {state.errors.name}
             </span>
           )}
         </div>
@@ -129,7 +87,7 @@ export default function Form({
               id="defensePeriodId"
               name="defensePeriodId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseSession?.defensePeriod?.id}
+              defaultValue=""
               aria-describedby="defensePeriodId-error"
               required
             >
@@ -165,7 +123,7 @@ export default function Form({
               id="timeSlotId"
               name="timeSlotId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseSession?.timeSlot?.id}
+              defaultValue=""
               aria-describedby="timeSlotId-error"
               required
             >
@@ -197,7 +155,7 @@ export default function Form({
               id="roomId"
               name="roomId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseSession?.room?.id}
+              defaultValue=""
               aria-describedby="roomId-error"
               required
             >
@@ -224,13 +182,13 @@ export default function Form({
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/faculties"
+          href="/dashboard/defense-committees"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Hủy
         </Link>
         <Button type="submit" disabled={isPending}>
-          Cập nhật buổi bảo vệ
+          Tạo hội đồng
         </Button>
       </div>
     </form>

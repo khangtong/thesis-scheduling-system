@@ -1,30 +1,41 @@
 'use client';
 
 import {
-  PencilSquareIcon,
+  AtSymbolIcon,
   BuildingOfficeIcon,
   CalendarDateRangeIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { createDefenseSession } from '@/app/lib/actions';
+import { updateDefenseCommittee } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { DefensePeriod, Room, TimeSlot } from '@/app/lib/definitions';
+import {
+  DefensePeriod,
+  DefenseCommittee,
+  Room,
+  TimeSlot,
+} from '@/app/lib/definitions';
 
 export default function Form({
+  defenseCommittee,
   rooms,
   timeSlots,
   defensePeriods,
 }: {
+  defenseCommittee: DefenseCommittee;
   rooms: Room[];
   timeSlots: TimeSlot[];
   defensePeriods: DefensePeriod[];
 }) {
+  const updateDefenseCommitteeWithId = updateDefenseCommittee.bind(
+    null,
+    defenseCommittee?.id || -1
+  );
   const [state, action, isPending] = useActionState(
-    createDefenseSession,
+    updateDefenseCommitteeWithId,
     undefined
   );
   const router = useRouter();
@@ -39,8 +50,8 @@ export default function Form({
       if (state !== undefined) {
         if (state?.message) {
           if (state?.success) {
-            toast.success('Tạo buổi bảo vệ thành công!');
-            router.push('/dashboard/defense-sessions');
+            toast.success('Cập nhật hội đồng thành công!');
+            router.push('/dashboard/defense-committees');
           } else {
             toast.error(state.message);
           }
@@ -53,25 +64,26 @@ export default function Form({
     <form action={action} aria-describedby="form-error">
       <div className="rounded-md bg-gray-100 p-4 md:p-6">
         <div className="mb-4">
-          <label htmlFor="note" className="mb-2 block text-sm font-medium">
-            Ghi chú
+          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+            Tên hội đồng
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                id="note"
-                name="note"
+                id="name"
+                name="name"
                 type="text"
-                placeholder="Nhập ghi chú"
+                placeholder="Nhập tên hội đồng"
                 className="peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-                aria-describedby="note-error"
+                aria-describedby="name-error"
+                defaultValue={defenseCommittee?.name || ''}
               />
-              <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
-          {state?.errors?.note && (
+          {state?.errors?.name && (
             <span className="text-left text-xs text-red-500 relative">
-              {state.errors.note}
+              {state.errors.name}
             </span>
           )}
         </div>
@@ -87,7 +99,7 @@ export default function Form({
               id="defensePeriodId"
               name="defensePeriodId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={defenseCommittee?.defensePeriod?.id}
               aria-describedby="defensePeriodId-error"
               required
             >
@@ -123,7 +135,7 @@ export default function Form({
               id="timeSlotId"
               name="timeSlotId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={defenseCommittee?.timeSlot?.id}
               aria-describedby="timeSlotId-error"
               required
             >
@@ -155,7 +167,7 @@ export default function Form({
               id="roomId"
               name="roomId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={defenseCommittee?.room?.id}
               aria-describedby="roomId-error"
               required
             >
@@ -182,13 +194,13 @@ export default function Form({
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/faculties"
+          href="/dashboard/defense-committees"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Hủy
         </Link>
         <Button type="submit" disabled={isPending}>
-          Tạo buổi bảo vệ
+          Cập nhật hội đồng
         </Button>
       </div>
     </form>

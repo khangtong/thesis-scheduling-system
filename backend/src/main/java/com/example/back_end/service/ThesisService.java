@@ -17,15 +17,13 @@ public class ThesisService {
     private StudentRepository studentRepository;
     private LecturerRepository lecturerRepository;
     private DefenseCommitteeRepository defenseCommitteeRepository;
-    private DefenseSessionRepository defenseSessionRepository;
 
     @Autowired
-    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, DefenseCommitteeRepository defenseCommitteeRepository, DefenseSessionRepository defenseSessionRepository) {
+    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, DefenseCommitteeRepository defenseCommitteeRepository) {
         this.thesisRepository = thesisRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
         this.defenseCommitteeRepository = defenseCommitteeRepository;
-        this.defenseSessionRepository = defenseSessionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -96,15 +94,6 @@ public class ThesisService {
             throw new Error("Hội đồng không được là rỗng");
         }
 
-        if (thesisDTO.getDefenseSessionId() != null) {
-            DefenseSession defenseSession = defenseSessionRepository.findById(thesisDTO.getDefenseSessionId()).orElse(null);
-            if (defenseSession == null)
-                throw new Error("Không tìm thấy buổi bảo vệ");
-            thesis.setDefenseSession(defenseSession);
-        } else {
-            throw new Error("Buổi bảo vệ không được là rỗng");
-        }
-
         thesis.setCreatedAt(LocalDateTime.now());
         thesis.setUpdatedAt(LocalDateTime.now());
         return thesisRepository.save(thesis);
@@ -149,15 +138,6 @@ public class ThesisService {
             thesis.setDefenseCommittee(defenseCommittee);
         } else {
             throw new Error("Hội đồng không được là rỗng");
-        }
-
-        if (thesisDTO.getDefenseSessionId() != null) {
-            DefenseSession defenseSession = defenseSessionRepository.findById(thesisDTO.getDefenseSessionId()).orElse(null);
-            if (defenseSession == null)
-                throw new Error("Không tìm thấy buổi bảo vệ");
-            thesis.setDefenseSession(defenseSession);
-        } else {
-            throw new Error("Buổi bảo vệ không được là rỗng");
         }
 
         thesis.setUpdatedAt(LocalDateTime.now());

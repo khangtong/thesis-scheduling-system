@@ -822,9 +822,9 @@ export async function fetchPrioritySchedules(token: string | undefined) {
   }
 }
 
-export async function fetchDefenseSessions(token: string | undefined) {
+export async function fetchDefenseCommittees(token: string | undefined) {
   try {
-    const response = await fetch(`${process.env.API_URL}/defense-sessions`, {
+    const response = await fetch(`${process.env.API_URL}/defense-committees`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -833,24 +833,24 @@ export async function fetchDefenseSessions(token: string | undefined) {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch defense sessions.');
+      throw new Error('Failed to fetch defense committees.');
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching defense sessions:', error);
-    throw new Error('Failed to fetch defense sessions.');
+    console.error('Error fetching defense committees:', error);
+    throw new Error('Failed to fetch defense committees.');
   }
 }
 
-export async function fetchDefenseSessionById(
+export async function fetchDefenseCommitteeById(
   token: string | undefined,
   id: string
 ) {
   try {
     const response = await fetch(
-      `${process.env.API_URL}/defense-sessions/${id}`,
+      `${process.env.API_URL}/defense-committees/${id}`,
       {
         method: 'GET',
         headers: {
@@ -861,23 +861,23 @@ export async function fetchDefenseSessionById(
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch defense session.');
+      throw new Error('Failed to fetch defense committee.');
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching defense session:', error);
-    throw new Error('Failed to fetch defense session.');
+    console.error('Error fetching defense committee:', error);
+    throw new Error('Failed to fetch defense committee.');
   }
 }
 
-export async function searchDefenseSessions(
+export async function searchDefenseCommittees(
   token: string | undefined,
   query: string
 ) {
   try {
-    let url = `${process.env.API_URL}/defense-sessions/search`;
+    let url = `${process.env.API_URL}/defense-committees/search`;
     const params = new URLSearchParams();
 
     if (
@@ -918,14 +918,14 @@ export async function searchDefenseSessions(
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch defense sessions.');
+      throw new Error('Failed to fetch defense committees.');
     }
 
     const data = await response.json();
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     return { data, totalPages };
   } catch (error) {
-    console.error('Error fetching defense sessions:', error);
-    throw new Error('Failed to fetch defense sessions.');
+    console.error('Error fetching defense committees:', error);
+    throw new Error('Failed to fetch defense committees.');
   }
 }

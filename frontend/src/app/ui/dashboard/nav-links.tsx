@@ -52,19 +52,9 @@ export default function NavLinks({ role }: NavLinksProps) {
         icon: CalendarDateRangeIcon,
       },
       {
-        name: 'Buổi bảo vệ',
-        href: '/dashboard/defense-sessions',
-        icon: CalendarDaysIcon,
-      },
-      {
         name: 'Khung giờ',
         href: '/dashboard/time-slots',
         icon: ClockIcon,
-      },
-      {
-        name: 'Phòng',
-        href: '/dashboard/rooms',
-        icon: BuildingOfficeIcon,
       },
       {
         name: 'Hội đồng',
@@ -75,6 +65,11 @@ export default function NavLinks({ role }: NavLinksProps) {
         name: 'Vai trò hội đồng',
         href: '/dashboard/committee-roles',
         icon: TagIcon,
+      },
+      {
+        name: 'Phòng',
+        href: '/dashboard/rooms',
+        icon: BuildingOfficeIcon,
       },
       {
         name: 'Thống kê',

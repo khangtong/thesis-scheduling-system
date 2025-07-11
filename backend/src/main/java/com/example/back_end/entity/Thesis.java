@@ -37,13 +37,9 @@ public class Thesis {
     @JoinColumn(name = "\"LV_HoiDong\"")
     private DefenseCommittee defenseCommittee;
 
-    @ManyToOne
-    @JoinColumn(name = "\"LV_BuoiBV\"")
-    private DefenseSession defenseSession;
-
     public Thesis() {}
 
-    public Thesis(Integer id, String title, String status, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Lecturer lecturer, DefenseCommittee defenseCommittee, DefenseSession defenseSession) {
+    public Thesis(Integer id, String title, String status, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Lecturer lecturer, DefenseCommittee defenseCommittee) {
         this.id = id;
         this.title = title;
         this.status = status;
@@ -52,7 +48,6 @@ public class Thesis {
         this.student = student;
         this.lecturer = lecturer;
         this.defenseCommittee = defenseCommittee;
-        this.defenseSession = defenseSession;
     }
 
     public Integer getId() {
@@ -119,14 +114,6 @@ public class Thesis {
         this.defenseCommittee = defenseCommittee;
     }
 
-    public DefenseSession getDefenseSession() {
-        return defenseSession;
-    }
-
-    public void setDefenseSession(DefenseSession defenseSession) {
-        this.defenseSession = defenseSession;
-    }
-
     @Override
     public String toString() {
         return "Thesis{" +
@@ -138,7 +125,6 @@ public class Thesis {
                 ", student=" + student +
                 ", lecturer=" + lecturer +
                 ", defenseCommittee=" + defenseCommittee +
-                ", defenseSession=" + defenseSession +
                 '}';
     }
 }

@@ -10,7 +10,7 @@ import {
   CommitteeRoleFormSchema,
   CreateTimeSlotFormSchema,
   DefensePeriodFormSchema,
-  DefenseSessionFormSchema,
+  DefenseCommitteeFormSchema,
   DegreeFormSchema,
   ExpertiseFormSchema,
   FacultyFormSchema,
@@ -1673,10 +1673,9 @@ export async function deletePrioritySchedule(id: number) {
   }
 }
 
-export async function createDefenseSession(state: any, formData: FormData) {
-  const validatedFields = DefenseSessionFormSchema.safeParse({
-    status: 'Chưa có luận văn',
-    note: formData.get('note'),
+export async function createDefenseCommittee(state: any, formData: FormData) {
+  const validatedFields = DefenseCommitteeFormSchema.safeParse({
+    name: formData.get('name'),
     roomId: Number(formData.get('roomId')),
     timeSlotId: Number(formData.get('timeSlotId')),
     defensePeriodId: Number(formData.get('defensePeriodId')),
@@ -1695,7 +1694,7 @@ export async function createDefenseSession(state: any, formData: FormData) {
     const authToken = (await cookies()).get('session')?.value;
 
     const response = await axios.post(
-      `${process.env.API_URL}/defense-sessions`,
+      `${process.env.API_URL}/defense-committees`,
       JSON.stringify(data),
       {
         headers: {
@@ -1706,12 +1705,12 @@ export async function createDefenseSession(state: any, formData: FormData) {
     );
 
     if (response.status === 201) {
-      return { success: true, message: 'Buổi bảo vệ đã được tạo thành công' };
+      return { success: true, message: 'Hội đồng đã được tạo thành công' };
     } else {
-      return { success: false, message: 'Không thể tạo buổi bảo vệ' };
+      return { success: false, message: 'Không thể tạo hội đồng' };
     }
   } catch (error: any) {
-    console.error('Create defense session error:', error);
+    console.error('Create defense committee error:', error);
     return {
       success: false,
       message: error?.response?.data?.message || 'Có lỗi xảy ra',
@@ -1719,14 +1718,13 @@ export async function createDefenseSession(state: any, formData: FormData) {
   }
 }
 
-export async function updateDefenseSession(
+export async function updateDefenseCommittee(
   id: number,
   state: any,
   formData: FormData
 ): Promise<{ success: boolean; message?: string; errors?: any }> {
-  const validatedFields = DefenseSessionFormSchema.safeParse({
-    status: formData.get('status'),
-    note: formData.get('note'),
+  const validatedFields = DefenseCommitteeFormSchema.safeParse({
+    name: formData.get('name'),
     roomId: Number(formData.get('roomId')),
     timeSlotId: Number(formData.get('timeSlotId')),
     defensePeriodId: Number(formData.get('defensePeriodId')),
@@ -1745,7 +1743,7 @@ export async function updateDefenseSession(
     const authToken = (await cookies()).get('session')?.value;
 
     const response = await axios.put(
-      `${process.env.API_URL}/defense-sessions/${id}`,
+      `${process.env.API_URL}/defense-committees/${id}`,
       JSON.stringify(data),
       {
         headers: {
@@ -1756,12 +1754,12 @@ export async function updateDefenseSession(
     );
 
     if (response.status === 200) {
-      return { success: true, message: 'Cập nhật buổi bảo vệ thành công' };
+      return { success: true, message: 'Cập nhật hội đồng thành công' };
     } else {
-      return { success: false, message: 'Không thể cập nhật buổi bảo vệ' };
+      return { success: false, message: 'Không thể cập nhật hội đồng' };
     }
   } catch (error: any) {
-    console.error('Update defense session error:', error);
+    console.error('Update defense committee error:', error);
     return {
       success: false,
       message: error?.response?.data?.message || 'Có lỗi xảy ra',
@@ -1769,12 +1767,12 @@ export async function updateDefenseSession(
   }
 }
 
-export async function deleteDefenseSession(id: number) {
+export async function deleteDefenseCommittee(id: number) {
   try {
     const authToken = (await cookies()).get('session')?.value;
 
     const response = await axios.delete(
-      `${process.env.API_URL}/defense-sessions/${id}`,
+      `${process.env.API_URL}/defense-committees/${id}`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -1784,12 +1782,12 @@ export async function deleteDefenseSession(id: number) {
     );
 
     if (response.status === 204) {
-      return { success: true, message: 'Buổi bảo vệ đã được xóa thành công' };
+      return { success: true, message: 'Hội đồng đã được xóa thành công' };
     } else {
-      throw new Error('Không thể xóa buổi bảo vệ');
+      throw new Error('Không thể xóa hội đồng');
     }
   } catch (error: any) {
-    console.error('Delete defense session error:', error);
+    console.error('Delete defense committee error:', error);
     return {
       success: false,
       message: error?.response?.data?.message || 'Có lỗi xảy ra',

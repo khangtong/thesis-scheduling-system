@@ -2,6 +2,8 @@ package com.example.back_end.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "\"HOI_DONG\"")
 public class DefenseCommittee {
@@ -12,6 +14,24 @@ public class DefenseCommittee {
 
     @Column(name = "\"HD_Ten\"")
     private String name;
+
+    @Column(name = "\"HD_Tao\"")
+    private LocalDateTime createdAt;
+
+    @Column(name = "\"HD_CapNhat\"")
+    private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "\"HD_DotBV\"")
+    private DefensePeriod defensePeriod;
+
+    @ManyToOne
+    @JoinColumn(name = "\"HD_KhungGio\"")
+    private TimeSlot timeSlot;
+
+    @ManyToOne
+    @JoinColumn(name = "\"HD_Phong\"")
+    private Room room;
 
     public DefenseCommittee() {}
 
@@ -34,6 +54,46 @@ public class DefenseCommittee {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public DefensePeriod getDefensePeriod() {
+        return defensePeriod;
+    }
+
+    public void setDefensePeriod(DefensePeriod defensePeriod) {
+        this.defensePeriod = defensePeriod;
+    }
+
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     @Override

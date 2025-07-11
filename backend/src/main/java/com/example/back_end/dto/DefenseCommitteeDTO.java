@@ -5,8 +5,9 @@ import java.util.List;
 public class DefenseCommitteeDTO {
     private Integer id;
     private String name;
-    private List<Integer> lecturerIds;
-    private List<Integer> committeeRoleIds;
+    private Integer defensePeriodId;
+    private Integer timeSlotId;
+    private Integer roomId;
 
     public DefenseCommitteeDTO() {}
 
@@ -26,19 +27,27 @@ public class DefenseCommitteeDTO {
         this.name = name;
     }
 
-    public List<Integer> getLecturerIds() {
-        return lecturerIds;
+    public Integer getDefensePeriodId() {
+        return defensePeriodId;
     }
 
-    public void setLecturerIds(List<Integer> lecturerIds) {
-        this.lecturerIds = lecturerIds;
+    public void setDefensePeriodId(Integer defensePeriodId) {
+        this.defensePeriodId = defensePeriodId;
     }
 
-    public List<Integer> getCommitteeRoleIds() {
-        return committeeRoleIds;
+    public Integer getTimeSlotId() {
+        return timeSlotId;
     }
 
-    public void setCommitteeRoleIds(List<Integer> committeeRoleIds) {
-        this.committeeRoleIds = committeeRoleIds;
+    public void setTimeSlotId(Integer timeSlotId) {
+        this.timeSlotId = timeSlotId;
+    }
+
+    public Integer getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
     }
 }

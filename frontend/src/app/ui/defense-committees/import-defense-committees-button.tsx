@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
-import { DefenseSessionFormSchema } from '@/app/lib/definitions';
-import { createDefenseSession } from '@/app/lib/actions';
+import { DefenseCommitteeFormSchema } from '@/app/lib/definitions';
+import { createDefenseCommittee } from '@/app/lib/actions';
 
-export function ImportDefenseSessionsButton() {
+export function ImportDefenseCommitteesButton() {
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = async (
@@ -32,15 +32,14 @@ export function ImportDefenseSessionsButton() {
             return reject(new Error('Tập tin không chứa dữ liệu.'));
           }
 
-          const createdDefenseSessions = [];
+          const createdDefenseCommittees = [];
           const errors: { row: number; error: any }[] = [];
 
           for (let i = 0; i < json.length; i++) {
             const row = json[i];
             console.log(row);
-            const validatedFields = DefenseSessionFormSchema.safeParse({
-              status: 'Chưa có luận văn',
-              note: row.note || '',
+            const validatedFields = DefenseCommitteeFormSchema.safeParse({
+              name: row.name || '',
               roomId: Number(row.roomId),
               timeSlotId: Number(row.timeSlotId),
               defensePeriodId: Number(row.defensePeriodId),
@@ -53,9 +52,9 @@ export function ImportDefenseSessionsButton() {
                   (validatedFields.data as Record<string, any>)[key]
                 );
               });
-              const result = await createDefenseSession(null, formData);
+              const result = await createDefenseCommittee(null, formData);
               if (result?.success) {
-                createdDefenseSessions.push(validatedFields.data);
+                createdDefenseCommittees.push(validatedFields.data);
               } else {
                 errors.push({ row: i + 2, error: result?.message });
               }
@@ -80,12 +79,12 @@ export function ImportDefenseSessionsButton() {
               .join('\n');
             reject(
               new Error(
-                `Một số buổi bảo vệ không thể được tạo: ${errorMessages}\n`
+                `Một số hội đồng không thể được tạo: ${errorMessages}\n`
               )
             );
           } else {
             resolve(
-              `Đã tạo thành công ${createdDefenseSessions.length} buổi bảo vệ.`
+              `Đã tạo thành công ${createdDefenseCommittees.length} hội đồng.`
             );
           }
         } catch {
@@ -105,13 +104,13 @@ export function ImportDefenseSessionsButton() {
   return (
     <div>
       <label
-        htmlFor="import-defense-sessions"
+        htmlFor="import-defense-committees"
         className="flex h-10 items-center rounded-lg bg-blue-600 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
-        {loading ? 'Đang tải...' : 'Tải lên buổi bảo vệ'}
+        {loading ? 'Đang tải...' : 'Tải lên hội đồng'}
       </label>
       <input
-        id="import-defense-sessions"
+        id="import-defense-committees"
         type="file"
         accept=".xlsx, .xls"
         className="hidden"

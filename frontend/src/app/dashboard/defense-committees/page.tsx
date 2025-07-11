@@ -1,21 +1,21 @@
 import { Metadata } from 'next';
 import { lexend } from '@/app/ui/fonts';
 import Pagination from '@/app/ui/pagination';
-import Table from '@/app/ui/defense-sessions/table';
+import Table from '@/app/ui/defense-committees/table';
 import { Create } from '@/app/ui/buttons';
-import { ImportDefenseSessionsButton } from '@/app/ui/defense-sessions/import-defense-sessions-button';
+import { ImportDefenseCommitteesButton } from '@/app/ui/defense-committees/import-defense-committees-button';
 import {
   fetchDefensePeriods,
-  searchDefenseSessions,
+  searchDefenseCommittees,
   fetchRooms,
   fetchTimeSlots,
 } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
-import SearchForm from '@/app/ui/defense-sessions/search-form';
+import SearchForm from '@/app/ui/defense-committees/search-form';
 
 export const metadata: Metadata = {
-  title: 'Buổi bảo vệ',
+  title: 'Hội đồng',
 };
 
 export default async function Page(props: {
@@ -29,12 +29,12 @@ export default async function Page(props: {
   const currentPage = Number(searchParams?.page) || 1;
 
   const authToken = (await cookies()).get('session')?.value;
-  const { data, totalPages } = await searchDefenseSessions(authToken, query);
+  const { data, totalPages } = await searchDefenseCommittees(authToken, query);
   const rooms = await fetchRooms(authToken);
   const timeSlots = await fetchTimeSlots(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
 
-  // Paginate defense-sessions based on ITEMS_PER_PAGE
+  // Paginate defense-committees based on ITEMS_PER_PAGE
   const a = [];
   let j = 0;
   for (let i = 0; i < totalPages; i++) {
@@ -49,7 +49,7 @@ export default async function Page(props: {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lexend.className} text-2xl`}>Quản lý buổi bảo vệ</h1>
+        <h1 className={`${lexend.className} text-2xl`}>Quản lý hội đồng</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
         <SearchForm
@@ -58,11 +58,11 @@ export default async function Page(props: {
           defensePeriods={defensePeriods}
         />
         <div className="flex gap-2">
-          <ImportDefenseSessionsButton />
-          <Create singular="buổi bảo vệ" path="defense-sessions" />
+          <ImportDefenseCommitteesButton />
+          <Create singular="hội đồng" path="defense-committees" />
         </div>
       </div>
-      <Table defenseSessions={a[currentPage - 1]} />
+      <Table defenseCommittees={a[currentPage - 1]} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

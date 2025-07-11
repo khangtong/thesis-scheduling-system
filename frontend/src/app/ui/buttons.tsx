@@ -12,7 +12,7 @@ import {
   createPrioritySchedule,
   deleteCommitteeRole,
   deleteDefensePeriod,
-  deleteDefenseSession,
+  deleteDefenseCommittee,
   deleteDegree,
   deleteExpertise,
   deleteFaculty,
@@ -395,23 +395,23 @@ export function DeletePrioritySchedule({ id }: { id: number }) {
   );
 }
 
-export function DeleteDefenseSession({ id }: { id: number }) {
-  const deleteDefenseSessionWithId = deleteDefenseSession.bind(null, id);
+export function DeleteDefenseCommittee({ id }: { id: number }) {
+  const deleteDefenseCommitteeWithId = deleteDefenseCommittee.bind(null, id);
   const router = useRouter();
 
   function handleDelete(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    toast('Bạn có chắc chắn muốn xóa buổi bảo vệ này?', {
+    toast('Bạn có chắc chắn muốn xóa hội đồng này?', {
       action: {
         label: 'Xóa',
         onClick: () => {
-          toast.promise(deleteDefenseSessionWithId(), {
-            loading: 'Đang xóa buổi bảo vệ...',
-            success: 'Xóa buổi bảo vệ thành công',
+          toast.promise(deleteDefenseCommitteeWithId(), {
+            loading: 'Đang xóa hội đồng...',
+            success: 'Xóa hội đồng thành công',
             error: (error) => error.message,
           });
-          router.push('/dashboard/defense-sessions');
+          router.push('/dashboard/defense-committees');
         },
       },
     });

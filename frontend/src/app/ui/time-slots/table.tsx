@@ -30,6 +30,9 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
                     <p className="text-sm text-gray-500">
                       Kết thúc: {timeSlot.end}
                     </p>
+                    <p className="text-sm text-gray-500">
+                      Hội đồng: {timeSlot.defenseCommittee?.name || 'Chưa có'}
+                    </p>
                   </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
@@ -53,6 +56,9 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
                 <th scope="col" className="px-3 py-3 font-medium">
                   Thời gian kết thúc
                 </th>
+                <th scope="col" className="px-3 py-3 font-medium">
+                  Hội đồng
+                </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
                 </th>
@@ -75,6 +81,9 @@ export default async function Table({ timeSlots }: { timeSlots: TimeSlot[] }) {
                   </td>
                   <td className="px-3 py-1">{timeSlot.start}</td>
                   <td className="px-3 py-1">{timeSlot.end}</td>
+                  <td className="px-3 py-1">
+                    {timeSlot.defenseCommittee?.name || 'Chưa có'}
+                  </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <Update path="time-slots" id={timeSlot.id} />

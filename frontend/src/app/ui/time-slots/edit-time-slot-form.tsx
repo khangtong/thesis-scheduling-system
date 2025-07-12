@@ -8,8 +8,16 @@ import { Button } from '@/app/ui/button';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { DefenseCommittee } from '@/app/lib/definitions';
+import { UserGroupIcon } from '@heroicons/react/24/outline';
 
-export default function Form({ timeSlot }: { timeSlot: TimeSlot }) {
+export default function Form({
+  timeSlot,
+  defenseCommittees,
+}: {
+  timeSlot: TimeSlot;
+  defenseCommittees: DefenseCommittee[];
+}) {
   const [state, action, isPending] = useActionState(
     updateTimeSlot.bind(null, timeSlot?.id),
     undefined
@@ -95,6 +103,39 @@ export default function Form({ timeSlot }: { timeSlot: TimeSlot }) {
           {state?.errors?.end && (
             <span className="text-left text-xs text-red-500 relative">
               {state.errors.end}
+            </span>
+          )}
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="defenseCommitteeId"
+            className="mb-2 block text-sm font-medium"
+          >
+            Hội đồng
+          </label>
+          <div className="relative">
+            <select
+              id="defenseCommitteeId"
+              name="defenseCommitteeId"
+              className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+              defaultValue={timeSlot?.defenseCommittee?.id || ''}
+              aria-describedby="defenseCommitteeId-error"
+              required
+            >
+              <option value="" disabled>
+                Chọn hội đồng
+              </option>
+              {defenseCommittees.map((defenseCommittee) => (
+                <option key={defenseCommittee?.id} value={defenseCommittee?.id}>
+                  {defenseCommittee?.name}
+                </option>
+              ))}
+            </select>
+            <UserGroupIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          {state?.errors?.defenseCommitteeId && (
+            <span className="text-left text-xs text-red-500 relative">
+              {state.errors.defenseCommitteeId}
             </span>
           )}
         </div>

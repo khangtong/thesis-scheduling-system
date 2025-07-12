@@ -74,10 +74,7 @@ export default function Table({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                  Trạng thái
-                </th>
-                <th scope="col" className="px-3 py-3 font-medium">
-                  Ghi chú
+                  Tên hội đồng
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
                   Tạo

@@ -6,8 +6,10 @@ public class DefenseCommitteeDTO {
     private Integer id;
     private String name;
     private Integer defensePeriodId;
-    private Integer timeSlotId;
+    private List<Integer> timeSlotIds;
     private Integer roomId;
+    private List<Integer> lecturerIds;
+    private List<Integer> committeeRoleIds;
 
     public DefenseCommitteeDTO() {}
 
@@ -35,12 +37,12 @@ public class DefenseCommitteeDTO {
         this.defensePeriodId = defensePeriodId;
     }
 
-    public Integer getTimeSlotId() {
-        return timeSlotId;
+    public List<Integer> getTimeSlotIds() {
+        return timeSlotIds;
     }
 
-    public void setTimeSlotId(Integer timeSlotId) {
-        this.timeSlotId = timeSlotId;
+    public void setTimeSlotIds(List<Integer> timeSlotIds) {
+        this.timeSlotIds = timeSlotIds;
     }
 
     public Integer getRoomId() {
@@ -49,5 +51,21 @@ public class DefenseCommitteeDTO {
 
     public void setRoomId(Integer roomId) {
         this.roomId = roomId;
+    }
+
+    public List<Integer> getLecturerIds() {
+        return lecturerIds;
+    }
+
+    public void setLecturerIds(List<Integer> lecturerIds) {
+        this.lecturerIds = lecturerIds;
+    }
+
+    public List<Integer> getCommitteeRoleIds() {
+        return committeeRoleIds;
+    }
+
+    public void setCommitteeRoleIds(List<Integer> committeeRoleIds) {
+        this.committeeRoleIds = committeeRoleIds;
     }
 }

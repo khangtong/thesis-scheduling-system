@@ -131,8 +131,10 @@ export default async function Page(props: {
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lexend.className} text-2xl`}>
-          Đăng ký lịch bận (Hạn đăng ký:{' '}
-          {new Date(deadline).toLocaleDateString()})
+          Đăng ký lịch bận
+          {a.length > 0 && (
+            <span>Hạn đăng ký: {new Date(deadline).toLocaleDateString()}</span>
+          )}
         </h1>
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 max-w-full">

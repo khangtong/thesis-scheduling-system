@@ -130,10 +130,10 @@ public class TimeSlotController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TimeSlot> updateTimeSlotById(@PathVariable int id, @RequestBody TimeSlot timeSlot, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<TimeSlot> updateTimeSlotById(@PathVariable int id, @RequestBody TimeSlotDTO timeSlotDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
-                TimeSlot updatedTimeSlot = timeSlotService.updateTimeSlotById(id, timeSlot);
+                TimeSlot updatedTimeSlot = timeSlotService.updateTimeSlotById(id, timeSlotDTO);
                 return ResponseEntity.ok(updatedTimeSlot);
             } else {
                 return new SendError<TimeSlot>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

@@ -1,8 +1,10 @@
 package com.example.back_end.service;
 
+import com.example.back_end.dao.DefenseCommitteeRepository;
 import com.example.back_end.dao.DefensePeriodRepository;
 import com.example.back_end.dao.TimeSlotRepository;
 import com.example.back_end.dto.TimeSlotDTO;
+import com.example.back_end.entity.DefenseCommittee;
 import com.example.back_end.entity.DefensePeriod;
 import com.example.back_end.entity.TimeSlot;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ import java.util.List;
 public class TimeSlotService {
     private TimeSlotRepository timeSlotRepository;
     private DefensePeriodRepository defensePeriodRepository;
+    private DefenseCommitteeRepository defenseCommitteeRepository;
 
     @Autowired
-    public TimeSlotService(TimeSlotRepository timeSlotRepository, DefensePeriodRepository defensePeriodRepository) {
+    public TimeSlotService(TimeSlotRepository timeSlotRepository, DefensePeriodRepository defensePeriodRepository, DefenseCommitteeRepository defenseCommitteeRepository) {
         this.timeSlotRepository = timeSlotRepository;
         this.defensePeriodRepository = defensePeriodRepository;
+        this.defenseCommitteeRepository = defenseCommitteeRepository;
     }
 
     @Transactional(readOnly = true)
@@ -89,26 +93,28 @@ public class TimeSlotService {
     }
 
     @Transactional
-    public TimeSlot updateTimeSlotById(int id, TimeSlot timeSlot) {
+    public TimeSlot updateTimeSlotById(int id, TimeSlotDTO timeSlotDTO) {
         TimeSlot dbTimeSlot = timeSlotRepository.findById(id).orElse(null);
-        if (timeSlot == null)
+        if (dbTimeSlot == null)
             throw new Error("Không tìm thấy khung giờ");
 
-        if (timeSlot.getDate() == null)
+        if (timeSlotDTO.getDate() == null)
             throw new Error("Ngày không được là rỗng");
-        dbTimeSlot.setDate(timeSlot.getDate());
+        dbTimeSlot.setDate(timeSlotDTO.getDate());
 
-        if (timeSlot.getStart() == null)
+        if (timeSlotDTO.getStart() == null)
             throw new Error("Thời gian bắt đầu không được là rỗng");
 
-        if (timeSlot.getEnd() == null)
+        if (timeSlotDTO.getEnd() == null)
             throw new Error("Thời gian kết thúc không được là rỗng");
 
-        if (timeSlot.getStart().isAfter(timeSlot.getEnd()))
+        if (timeSlotDTO.getStart().isAfter(timeSlotDTO.getEnd()))
             throw new Error("Thời gian bắt đầu và kết thúc không hợp lệ");
 
-        dbTimeSlot.setStart(timeSlot.getStart());
-        dbTimeSlot.setEnd(timeSlot.getEnd());
+        dbTimeSlot.setStart(timeSlotDTO.getStart());
+        dbTimeSlot.setEnd(timeSlotDTO.getEnd());
+        DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(timeSlotDTO.getDefenseCommitteeId()).orElse(null);
+        dbTimeSlot.setDefenseCommittee(defenseCommittee);
         return timeSlotRepository.save(dbTimeSlot);
     }
 

@@ -108,8 +108,8 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("studentFullName", studentFullName);
         context.setVariable("thesisTitle", thesisTitle);
-        context.setVariable("sessionDate", defenseCommittee.getTimeSlot().getDate());
-        context.setVariable("sessionTime", defenseCommittee.getTimeSlot().getStart());
+//        context.setVariable("sessionDate", defenseCommittee.getTimeSlot().getDate());
+//        context.setVariable("sessionTime", defenseCommittee.getTimeSlot().getStart());
         context.setVariable("locationName", defenseCommittee.getRoom().getName());
         context.setVariable("committeeMembers", committeeMembers);
 

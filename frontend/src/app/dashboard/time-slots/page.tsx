@@ -1,7 +1,7 @@
 import Pagination from '@/app/ui/pagination';
 import Table from '@/app/ui/time-slots/table';
 import { lexend } from '@/app/ui/fonts';
-import { searchTimeSlots } from '@/app/lib/data';
+import { fetchDefenseCommittees, searchTimeSlots } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { Create } from '@/app/ui/buttons';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
@@ -37,10 +37,9 @@ export default async function Page(props: {
     query = searchParams.query;
   }
 
-  const { data, totalPages } = await searchTimeSlots(
-    (await cookies()).get('session')?.value,
-    query
-  );
+  const authToken = (await cookies()).get('session')?.value;
+  const { data, totalPages } = await searchTimeSlots(authToken, query);
+  const defenseCommittees = await fetchDefenseCommittees(authToken);
 
   // Paginate defense-periods based on ITEMS_PER_PAGE
   const a = [];
@@ -60,7 +59,7 @@ export default async function Page(props: {
         <h1 className={`${lexend.className} text-2xl`}>Quản lý khung giờ</h1>
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 max-w-full">
-        <SearchForm />
+        <SearchForm defenseCommittees={defenseCommittees} />
         <div className="flex gap-2">
           <ImportTimeSlotsButton />
           <Create path="time-slots" singular="khung giờ" />

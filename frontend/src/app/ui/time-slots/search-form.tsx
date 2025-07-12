@@ -3,8 +3,13 @@
 import { MagnifyingGlassIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { DefenseCommittee } from '@/app/lib/definitions';
 
-export default function SearchForm() {
+export default function SearchForm({
+  defenseCommittees,
+}: {
+  defenseCommittees: DefenseCommittee[];
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -12,6 +17,9 @@ export default function SearchForm() {
   const [date, setDate] = useState(searchParams.get('date') || '');
   const [startTime, setStartTime] = useState(searchParams.get('start') || '');
   const [endTime, setEndTime] = useState(searchParams.get('end') || '');
+  const [defenseCommitteeId, setDefenseCommitteeId] = useState(
+    searchParams.get('defenseCommitteeId') || ''
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +47,13 @@ export default function SearchForm() {
       params.delete('end');
     }
 
+    // Set or delete defense committee id parameter
+    if (defenseCommitteeId) {
+      params.set('defenseCommitteeId', defenseCommitteeId);
+    } else {
+      params.delete('defenseCommitteeId');
+    }
+
     replace(`${pathname}?${params.toString()}`);
   };
 
@@ -47,12 +62,14 @@ export default function SearchForm() {
     setDate('');
     setStartTime('');
     setEndTime('');
+    setDefenseCommitteeId('');
 
     // Reset URL parameters
     const params = new URLSearchParams(searchParams);
     params.delete('date');
     params.delete('start');
     params.delete('end');
+    params.delete('defenseCommitteeId');
     params.set('page', '1');
 
     replace(`${pathname}?${params.toString()}`);
@@ -97,6 +114,32 @@ export default function SearchForm() {
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
         />
+      </div>
+
+      <div className="flex flex-col">
+        <label
+          htmlFor="defenseCommitteeId"
+          className="text-sm text-gray-600 mb-1"
+        >
+          Hội đồng
+        </label>
+        <select
+          id="defenseCommitteeId"
+          name="defenseCommitteeId"
+          className="w-full rounded-md border border-gray-200 py-[10px] text-sm"
+          aria-describedby="defenseCommitteeId-error"
+          value={defenseCommitteeId}
+          onChange={(e) => setDefenseCommitteeId(e.target.value)}
+        >
+          <option value="" disabled>
+            Chọn hội đồng
+          </option>
+          {defenseCommittees.map((defenseCommittee) => (
+            <option key={defenseCommittee?.id} value={defenseCommittee?.id}>
+              {defenseCommittee?.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex items-end gap-2">

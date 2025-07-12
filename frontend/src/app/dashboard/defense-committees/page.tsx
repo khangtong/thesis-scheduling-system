@@ -21,12 +21,35 @@ export const metadata: Metadata = {
 export default async function Page(props: {
   searchParams?: Promise<{
     query?: string;
+    name?: string;
+    defensePeriodId?: string;
+    timeSlotId?: string;
+    roomId?: string;
     page?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
-  const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
+
+  // Construct query string from search parameters
+  let query = '';
+  if (
+    searchParams?.name ||
+    searchParams?.defensePeriodId ||
+    searchParams?.timeSlotId ||
+    searchParams?.roomId
+  ) {
+    const params = new URLSearchParams();
+    if (searchParams?.name) params.append('name', searchParams.name);
+    if (searchParams?.defensePeriodId)
+      params.append('defensePeriodId', searchParams.defensePeriodId);
+    if (searchParams?.timeSlotId)
+      params.append('timeSlotId', searchParams.timeSlotId);
+    if (searchParams?.roomId) params.append('roomId', searchParams.roomId);
+    query = params.toString();
+  } else if (searchParams?.query) {
+    query = searchParams.query;
+  }
 
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchDefenseCommittees(authToken, query);

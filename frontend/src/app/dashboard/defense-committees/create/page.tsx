@@ -9,7 +9,7 @@ import {
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'Tạo buổi bảo vệ',
+  title: 'Tạo hội đồng',
 };
 
 export default async function Page() {
@@ -22,12 +22,12 @@ export default async function Page() {
       <Breadcrumbs
         breadcrumbs={[
           {
-            label: 'Buổi bảo vệ',
+            label: 'Hội đồng',
             href: '/dashboard/defense-committees',
             active: false,
           },
           {
-            label: 'Tạo buổi bảo vệ',
+            label: 'Tạo hội đồng',
             href: '/dashboard/defense-committees/create',
             active: true,
           },

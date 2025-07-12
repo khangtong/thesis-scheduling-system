@@ -26,10 +26,6 @@ public class DefenseCommittee {
     private DefensePeriod defensePeriod;
 
     @ManyToOne
-    @JoinColumn(name = "\"HD_KhungGio\"")
-    private TimeSlot timeSlot;
-
-    @ManyToOne
     @JoinColumn(name = "\"HD_Phong\"")
     private Room room;
 
@@ -78,14 +74,6 @@ public class DefenseCommittee {
 
     public void setDefensePeriod(DefensePeriod defensePeriod) {
         this.defensePeriod = defensePeriod;
-    }
-
-    public TimeSlot getTimeSlot() {
-        return timeSlot;
-    }
-
-    public void setTimeSlot(TimeSlot timeSlot) {
-        this.timeSlot = timeSlot;
     }
 
     public Room getRoom() {

@@ -75,6 +75,7 @@ export type TimeSlot = {
   date: Date;
   start: string;
   end: string;
+  defenseCommittee: DefenseCommittee | null;
 } | null;
 
 export type PrioritySchedule = {
@@ -89,7 +90,6 @@ export type DefenseCommittee = {
   createdAt: Date;
   updatedAt: Date;
   room: Room;
-  timeSlot: TimeSlot;
   defensePeriod: DefensePeriod;
 } | null;
 
@@ -300,6 +300,11 @@ export const TimeSlotFormSchema = z
     date: z.date({ message: 'Ngày không hợp lệ.' }),
     start: z.string().min(1, { message: 'Giờ bắt đầu không hợp lệ.' }).trim(),
     end: z.string().min(1, { message: 'Giờ kết thúc không hợp lệ.' }).trim(),
+    defenseCommitteeId: z
+      .number({ message: 'Hội đồng không hợp lệ' })
+      .int()
+      .positive()
+      .nullable(),
   })
   .refine((data) => data.start < data.end, {
     message: 'Giờ bắt đầu phải trước giờ kết thúc.',
@@ -385,7 +390,9 @@ export const DefenseCommitteeFormSchema = z.object({
     .max(100, { message: 'Tên hội đồng không được quá 50 ký tự.' })
     .trim(),
   roomId: z.number({ message: 'Phòng không hợp lệ.' }).int().positive(),
-  timeSlotId: z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive(),
+  timeSlotId: z.array(
+    z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive()
+  ),
   defensePeriodId: z
     .number({ message: 'Đợt bảo vệ không hợp lệ.' })
     .int()

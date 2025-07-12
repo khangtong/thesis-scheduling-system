@@ -22,6 +22,10 @@ public class TimeSlot {
     @Column(name = "\"KG_KetThuc\"")
     private LocalTime end;
 
+    @ManyToOne
+    @JoinColumn(name = "\"KG_HoiDong\"")
+    private DefenseCommittee defenseCommittee;
+
     public TimeSlot() {}
 
     public TimeSlot(Integer id, LocalDate date, LocalTime start, LocalTime end) {
@@ -61,6 +65,14 @@ public class TimeSlot {
 
     public void setEnd(LocalTime end) {
         this.end = end;
+    }
+
+    public DefenseCommittee getDefenseCommittee() {
+        return defenseCommittee;
+    }
+
+    public void setDefenseCommittee(DefenseCommittee defenseCommittee) {
+        this.defenseCommittee = defenseCommittee;
     }
 
     @Override

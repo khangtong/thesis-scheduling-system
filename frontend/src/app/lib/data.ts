@@ -881,7 +881,7 @@ export async function searchDefenseCommittees(
     const params = new URLSearchParams();
 
     if (
-      query.includes('status=') ||
+      query.includes('name=') ||
       query.includes('defensePeriodId=') ||
       query.includes('timeSlotId=') ||
       query.includes('roomId=')
@@ -890,8 +890,8 @@ export async function searchDefenseCommittees(
       const queryParams = new URLSearchParams(query);
 
       // Add each parameter to the URL params if it exists
-      if (queryParams.has('status'))
-        params.append('status', queryParams.get('status')!);
+      if (queryParams.has('name'))
+        params.append('name', queryParams.get('name')!);
       if (queryParams.has('defensePeriodId'))
         params.append('defensePeriodId', queryParams.get('defensePeriodId')!);
       if (queryParams.has('timeSlotId'))

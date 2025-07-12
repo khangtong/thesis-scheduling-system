@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -52,6 +53,53 @@ public class DefenseCommitteeController {
             }
         } catch (Error error) {
             return new SendError<DefenseCommittee>().sendNotFound(error.getMessage(), response);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<DefenseCommittee>> searchDefenseCommittees(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            String role = authController.authorize(response, request);
+            if (!"SINH_VIEN".equals(role)) {
+                List<DefenseCommittee> defenseCommittees = defenseCommitteeService.getAllDefenseCommittees();
+//                if ("ADMIN".equals(role))
+//                    defenseCommittees = defenseCommitteeService.getAllDefenseCommittees();
+//                else
+//                    defenseCommittees = defenseCommitteeService.getDefenseCommitteesByLecturer();
+
+                if (request.getParameterMap().get("name") != null) {
+                    String name = request.getParameterMap().get("name")[0];
+                    for (int i = defenseCommittees.size() - 1; i >= 0 ; i--) {
+                        DefenseCommittee defenseCommittee = defenseCommittees.get(i);
+                        if (!defenseCommittee.getName().contains(name))
+                            defenseCommittees.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("defensePeriodId") != null) {
+                    int defensePeriodId = Integer.parseInt(request.getParameterMap().get("defensePeriodId")[0]);
+                    for (int i = defenseCommittees.size() - 1; i >= 0 ; i--) {
+                        DefenseCommittee defenseCommittee = defenseCommittees.get(i);
+                        if (!defenseCommittee.getDefensePeriod().getId().equals(defensePeriodId))
+                            defenseCommittees.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("roomId") != null) {
+                    int roomId = Integer.parseInt(request.getParameterMap().get("roomId")[0]);
+                    for (int i = defenseCommittees.size() - 1; i >= 0 ; i--) {
+                        DefenseCommittee defenseCommittee = defenseCommittees.get(i);
+                        if (!defenseCommittee.getRoom().getId().equals(roomId))
+                            defenseCommittees.remove(i);
+                    }
+                }
+
+                return ResponseEntity.ok(defenseCommittees);
+            } else {
+                return new SendError<List<DefenseCommittee>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<DefenseCommittee>>().sendUnauthorized(error.getMessage(), response);
         }
     }
 

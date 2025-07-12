@@ -18,7 +18,7 @@ export default function SearchForm({
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const [status, setStatus] = useState(searchParams.get('status') || '');
+  const [name, setName] = useState(searchParams.get('name') || '');
   const [defensePeriodId, setDefensePeriodId] = useState(
     searchParams.get('defensePeriodId') || ''
   );
@@ -32,11 +32,11 @@ export default function SearchForm({
     const params = new URLSearchParams(searchParams);
     params.set('page', '1');
 
-    // Set or delete status parameter
-    if (status) {
-      params.set('status', status);
+    // Set or delete name parameter
+    if (name) {
+      params.set('name', name);
     } else {
-      params.delete('status');
+      params.delete('name');
     }
 
     // Set or delete defense period parameter
@@ -65,14 +65,14 @@ export default function SearchForm({
 
   const handleReset = () => {
     // Reset state values
-    setStatus('');
+    setName('');
     setDefensePeriodId('');
     setTimeSlotId('');
     setRoomId('');
 
     // Reset URL parameters
     const params = new URLSearchParams(searchParams);
-    params.delete('status');
+    params.delete('name');
     params.delete('defensePeriodId');
     params.delete('timeSlotId');
     params.delete('roomId');
@@ -84,32 +84,23 @@ export default function SearchForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-1 gap-2 flex-wrap">
       <div className="flex flex-col">
-        <label htmlFor="status" className="mb-2 block text-sm font-medium">
-          Trạng thái
+        <label htmlFor="name" className="text-sm text-gray-600 mb-1">
+          Tên hội đồng
         </label>
-        <select
-          id="status"
-          name="status"
-          className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 text-sm placeholder:text-gray-500"
-          aria-describedby="status-error"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="" disabled>
-            Chọn trạng thái
-          </option>
-          <option value="Chưa có luận văn">Chưa có luận văn</option>
-          <option value="Đã có luận văn">Đã có luận văn</option>
-          <option value="Đang bảo vệ">Đang bảo vệ</option>
-          <option value="Đã bảo vệ">Đã bảo vệ</option>
-        </select>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Nhập tên hội đồng"
+          className="peer block bg-white w-full max-w-[160px] rounded-md border border-gray-200 py-2 pl-1 text-sm placeholder:text-gray-500"
+          aria-describedby="name-error"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       </div>
 
       <div className="flex flex-col">
-        <label
-          htmlFor="defensePeriodId"
-          className="mb-2 block text-sm font-medium"
-        >
+        <label htmlFor="defensePeriodId" className="text-sm text-gray-600 mb-1">
           Đợt bảo vệ
         </label>
         <select
@@ -123,19 +114,16 @@ export default function SearchForm({
           <option value="" disabled>
             Chọn đợt bảo vệ
           </option>
-          {defensePeriods.map(
-            (defensePeriod) =>
-              defensePeriod?.active && (
-                <option key={defensePeriod?.id} value={defensePeriod?.id}>
-                  {defensePeriod?.name}
-                </option>
-              )
-          )}
+          {defensePeriods.map((defensePeriod) => (
+            <option key={defensePeriod?.id} value={defensePeriod?.id}>
+              {defensePeriod?.name}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="timeSlotId" className="mb-2 block text-sm font-medium">
+        <label htmlFor="timeSlotId" className="text-sm text-gray-600 mb-1">
           Khung giờ
         </label>
         <select
@@ -158,7 +146,7 @@ export default function SearchForm({
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="roomId" className="mb-2 block text-sm font-medium">
+        <label htmlFor="roomId" className="text-sm text-gray-600 mb-1">
           Phòng
         </label>
         <select

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Repository
 public interface TimeSlotRepository extends JpaRepository<TimeSlot, Integer> {
+    List<TimeSlot> findAllByOrderByIdAsc();
     List<TimeSlot> findByDate(LocalDate date);
     List<TimeSlot> findByDefenseCommittee(DefenseCommittee defenseCommittee);
 }

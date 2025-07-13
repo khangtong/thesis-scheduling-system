@@ -4,6 +4,7 @@ import com.example.back_end.dto.DefenseCommitteeDTO;
 import com.example.back_end.entity.CommitteeRole;
 import com.example.back_end.entity.DefenseCommittee;
 import com.example.back_end.entity.Faculty;
+import com.example.back_end.service.CommitteeMemberService;
 import com.example.back_end.service.DefenseCommitteeService;
 import com.example.back_end.utils.SendError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,11 +21,13 @@ import java.util.List;
 @RequestMapping("/api/defense-committees")
 public class DefenseCommitteeController {
     private DefenseCommitteeService defenseCommitteeService;
+    private CommitteeMemberService committeeMemberService;
     private AuthController authController;
 
     @Autowired
-    public DefenseCommitteeController(DefenseCommitteeService defenseCommitteeService, AuthController authController) {
+    public DefenseCommitteeController(DefenseCommitteeService defenseCommitteeService, CommitteeMemberService committeeMemberService, AuthController authController) {
         this.defenseCommitteeService = defenseCommitteeService;
+        this.committeeMemberService = committeeMemberService;
         this.authController = authController;
     }
 
@@ -121,6 +124,7 @@ public class DefenseCommitteeController {
     public ResponseEntity<DefenseCommittee> updateDefenseCommitteeById(@PathVariable int id, @RequestBody DefenseCommitteeDTO defenseCommitteeDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
+                committeeMemberService.deleteCommitteeMembersByDefenseCommittee(id);
                 DefenseCommittee updatedDefenseCommittee = defenseCommitteeService.updateDefenseCommitteeById(id, defenseCommitteeDTO);
                 return ResponseEntity.ok(updatedDefenseCommittee);
             } else {

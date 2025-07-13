@@ -54,7 +54,6 @@ export default async function Page(props: {
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchDefenseCommittees(authToken, query);
   const rooms = await fetchRooms(authToken);
-  const timeSlots = await fetchTimeSlots(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
 
   // Paginate defense-committees based on ITEMS_PER_PAGE
@@ -75,11 +74,7 @@ export default async function Page(props: {
         <h1 className={`${lexend.className} text-2xl`}>Quản lý hội đồng</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
-        <SearchForm
-          rooms={rooms}
-          timeSlots={timeSlots}
-          defensePeriods={defensePeriods}
-        />
+        <SearchForm rooms={rooms} defensePeriods={defensePeriods} />
         <div className="flex gap-2">
           <ImportDefenseCommitteesButton />
           <Create singular="hội đồng" path="defense-committees" />

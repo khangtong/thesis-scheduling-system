@@ -45,14 +45,6 @@ export default function Table({
                       Phòng: {defenseCommittee?.room?.name || 'N/A'}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Khung giờ:{' '}
-                      {`${new Date(
-                        defenseCommittee?.timeSlot?.date || ''
-                      ).toLocaleDateString()} (${
-                        defenseCommittee?.timeSlot?.start
-                      } - ${defenseCommittee?.timeSlot?.end})`}
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-500">
                       Đợt bảo vệ:{' '}
                       {defenseCommittee?.defensePeriod?.name || 'N/A'}
                     </p>
@@ -84,9 +76,6 @@ export default function Table({
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
                   Phòng
-                </th>
-                <th scope="col" className="px-3 py-3 font-medium">
-                  Khung giờ
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
                   Đợt bảo vệ
@@ -123,13 +112,6 @@ export default function Table({
                   </td>
                   <td className="px-3 py-1">
                     {defenseCommittee?.room?.name || 'N/A'}
-                  </td>
-                  <td className="px-3 py-1">
-                    {`${new Date(
-                      defenseCommittee?.timeSlot?.date || ''
-                    ).toLocaleDateString()} (${
-                      defenseCommittee?.timeSlot?.start
-                    } - ${defenseCommittee?.timeSlot?.end})`}
                   </td>
                   <td className="px-3 py-1">
                     {defenseCommittee?.defensePeriod?.name || 'N/A'}

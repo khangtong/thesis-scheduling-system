@@ -48,51 +48,21 @@ public class CommitteeMemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommitteeMember> getCommitteeMembersByDefenseCommittee(CommitteeMemberDTO committeeMemberDTO) {
-        List<CommitteeMember> committeeMembers;
+    public List<CommitteeMember> getCommitteeMembersByDefenseCommittee(int id) {
+        DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(id).orElse(null);
+        if (defenseCommittee == null)
+            throw new Error("Không tìm thấy hội đồng");
 
-        if (committeeMemberDTO.getDefenseCommitteeId() != null) {
-            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(committeeMemberDTO.getDefenseCommitteeId()).orElse(null);
-            if (defenseCommittee == null)
-                throw new Error("Không tìm thấy hội đồng");
-            committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
-        } else {
-            throw new Error("Hội đồng không được là rỗng");
-        }
-
-        return committeeMembers;
+        return committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
     }
 
     @Transactional(readOnly = true)
-    public List<CommitteeMember> getCommitteeMembersByLecturer(CommitteeMemberDTO committeeMemberDTO) {
-        List<CommitteeMember> committeeMembers;
+    public List<CommitteeMember> getCommitteeMembersByLecturer(int id) {
+        Lecturer lecturer = lecturerRepository.findById(id).orElse(null);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
 
-        if (committeeMemberDTO.getLecturerId() != null) {
-            Lecturer lecturer = lecturerRepository.findById(committeeMemberDTO.getLecturerId()).orElse(null);
-            if (lecturer == null)
-                throw new Error("Không tìm thấy giảng viên");
-            committeeMembers = committeeMemberRepository.findByLecturer(lecturer);
-        } else {
-            throw new Error("Giảng viên không được là rỗng");
-        }
-
-        return committeeMembers;
-    }
-
-    @Transactional(readOnly = true)
-    public List<CommitteeMember> getCommitteeMembersByCommitteeRole(CommitteeMemberDTO committeeMemberDTO) {
-        List<CommitteeMember> committeeMembers;
-
-        if (committeeMemberDTO.getCommitteeRoleId() != null) {
-            CommitteeRole committeeRole = committeeRoleRepository.findById(committeeMemberDTO.getCommitteeRoleId()).orElse(null);
-            if (committeeRole == null)
-                throw new Error("Không tìm thấy vai trò hội đồng");
-            committeeMembers = committeeMemberRepository.findByCommitteeRole(committeeRole);
-        } else {
-            throw new Error("Vai trò hội đồng không được là rỗng");
-        }
-
-        return committeeMembers;
+        return committeeMemberRepository.findByLecturer(lecturer);
     }
 
     @Transactional
@@ -195,5 +165,14 @@ public class CommitteeMemberService {
         if (committeeMember == null)
             throw new Error("Không tìm thấy thành viên hội đồng");
         committeeMemberRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteCommitteeMembersByDefenseCommittee(int id) {
+        DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(id).orElse(null);
+        if (defenseCommittee == null)
+            throw new Error("Không tìm thấy hội đồng");
+        List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
+        committeeMemberRepository.deleteAll(committeeMembers);
     }
 }

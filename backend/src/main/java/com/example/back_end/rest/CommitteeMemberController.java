@@ -56,6 +56,20 @@ public class CommitteeMemberController {
         }
     }
 
+    @GetMapping("/defense-committee/{id}")
+    public ResponseEntity<List<CommitteeMember>> getCommitteeMembersByDefenseCommittee(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<CommitteeMember> committeeMembers = committeeMemberService.getCommitteeMembersByDefenseCommittee(id);
+                return ResponseEntity.ok(committeeMembers);
+            } else {
+                return new SendError<List<CommitteeMember>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<CommitteeMember>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<CommitteeMember> createCommitteeMember(@RequestBody CommitteeMemberDTO committeeMemberDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

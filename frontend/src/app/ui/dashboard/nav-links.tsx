@@ -15,6 +15,7 @@ import {
   TagIcon,
   ChartBarIcon,
   PencilSquareIcon,
+  RectangleGroupIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -38,12 +39,10 @@ export default function NavLinks({ role }: NavLinksProps) {
         href: '/dashboard/users',
         icon: UsersIcon,
       },
-      { name: 'Khoa', href: '/dashboard/faculties', icon: BookOpenIcon },
-      { name: 'Học vị', href: '/dashboard/degrees', icon: AcademicCapIcon },
       {
-        name: 'Chuyên môn',
-        href: '/dashboard/expertises',
-        icon: BriefcaseIcon,
+        name: 'Xếp lịch',
+        href: '/dashboard/thesis-schedules',
+        icon: RectangleGroupIcon,
       },
       { name: 'Luận văn', href: '/dashboard/theses', icon: DocumentTextIcon },
       {
@@ -65,6 +64,13 @@ export default function NavLinks({ role }: NavLinksProps) {
         name: 'Vai trò hội đồng',
         href: '/dashboard/committee-roles',
         icon: TagIcon,
+      },
+      { name: 'Khoa', href: '/dashboard/faculties', icon: BookOpenIcon },
+      { name: 'Học vị', href: '/dashboard/degrees', icon: AcademicCapIcon },
+      {
+        name: 'Chuyên môn',
+        href: '/dashboard/expertises',
+        icon: BriefcaseIcon,
       },
       {
         name: 'Phòng',

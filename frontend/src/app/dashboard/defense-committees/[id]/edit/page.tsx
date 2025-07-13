@@ -5,9 +5,13 @@ import {
   fetchDefenseCommitteeById,
   fetchRooms,
   fetchTimeSlots,
+  fetchCommitteeMembersByDefenseCommitteeId,
+  fetchLecturerByUserId,
+  fetchUsers,
 } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { Lecturer } from '@/app/lib/definitions';
 
 export const metadata: Metadata = {
   title: 'Cập nhật hội đồng',
@@ -21,6 +25,21 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const rooms = await fetchRooms(authToken);
   const timeSlots = await fetchTimeSlots(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
+  const committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
+    authToken,
+    id
+  );
+  const { users } = await fetchUsers(authToken);
+  let lecturers: Lecturer[] = [];
+  for (let i = 0; i < users.length; i++) {
+    if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {
+      const lecturer = await fetchLecturerByUserId(
+        authToken,
+        users[i]?.id + ''
+      );
+      lecturers.push(lecturer);
+    }
+  }
 
   return (
     <main>
@@ -43,6 +62,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         rooms={rooms}
         timeSlots={timeSlots}
         defensePeriods={defensePeriods}
+        committeeMembers={committeeMembers}
+        lecturers={lecturers}
       />
     </main>
   );

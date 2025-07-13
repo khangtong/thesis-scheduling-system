@@ -133,7 +133,9 @@ export default async function Page(props: {
         <h1 className={`${lexend.className} text-2xl`}>
           Đăng ký lịch bận
           {a.length > 0 && (
-            <span>Hạn đăng ký: {new Date(deadline).toLocaleDateString()}</span>
+            <span className="ml-2">
+              (Hạn đăng ký: {new Date(deadline).toLocaleDateString()})
+            </span>
           )}
         </h1>
       </div>

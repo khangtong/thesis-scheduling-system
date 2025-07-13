@@ -83,7 +83,6 @@ export default async function DashboardPage() {
         activeDefensePeriods.push(defensePeriods[0]);
       }
     }
-    console.log(activeDefensePeriods);
 
     // Get time slots from those defense periods
     const prioritySchedules = await fetchPrioritySchedules(authToken);

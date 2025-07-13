@@ -37,7 +37,6 @@ export function ImportDefenseCommitteesButton() {
 
           for (let i = 0; i < json.length; i++) {
             const row = json[i];
-            console.log(row);
             const validatedFields = DefenseCommitteeFormSchema.safeParse({
               name: row.name || '',
               roomId: Number(row.roomId),

@@ -41,7 +41,7 @@ export default async function Page(props: {
   const { data, totalPages } = await searchTimeSlots(authToken, query);
   const defenseCommittees = await fetchDefenseCommittees(authToken);
 
-  // Paginate defense-periods based on ITEMS_PER_PAGE
+  // Paginate time slots based on ITEMS_PER_PAGE
   const a = [];
   let j = 0;
   for (let i = 0; i < totalPages; i++) {

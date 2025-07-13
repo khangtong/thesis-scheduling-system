@@ -84,7 +84,7 @@ export default function SearchForm({
         <input
           type="date"
           id="date"
-          className="w-[160px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
+          className="w-[150px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
@@ -97,7 +97,7 @@ export default function SearchForm({
         <input
           type="time"
           id="start-time"
-          className="w-[160px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
+          className="w-[150px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
         />
@@ -110,7 +110,7 @@ export default function SearchForm({
         <input
           type="time"
           id="end-time"
-          className="w-[160px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
+          className="w-[150px] rounded-md border border-gray-200 py-[9px] px-3 text-sm"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
         />
@@ -126,7 +126,7 @@ export default function SearchForm({
         <select
           id="defenseCommitteeId"
           name="defenseCommitteeId"
-          className="w-full rounded-md border border-gray-200 py-[10px] text-sm"
+          className="w-[150px] rounded-md border border-gray-200 py-[10px] text-sm"
           aria-describedby="defenseCommitteeId-error"
           value={defenseCommitteeId}
           onChange={(e) => setDefenseCommitteeId(e.target.value)}

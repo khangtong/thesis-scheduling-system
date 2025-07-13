@@ -7,11 +7,9 @@ import { useState } from 'react';
 
 export default function SearchForm({
   rooms,
-  timeSlots,
   defensePeriods,
 }: {
   rooms: Room[];
-  timeSlots: TimeSlot[];
   defensePeriods: DefensePeriod[];
 }) {
   const searchParams = useSearchParams();
@@ -21,9 +19,6 @@ export default function SearchForm({
   const [name, setName] = useState(searchParams.get('name') || '');
   const [defensePeriodId, setDefensePeriodId] = useState(
     searchParams.get('defensePeriodId') || ''
-  );
-  const [timeSlotId, setTimeSlotId] = useState(
-    searchParams.get('timeSlotId') || ''
   );
   const [roomId, setRoomId] = useState(searchParams.get('roomId') || '');
 
@@ -46,13 +41,6 @@ export default function SearchForm({
       params.delete('defensePeriodId');
     }
 
-    // Set or delete time slot parameter
-    if (timeSlotId) {
-      params.set('timeSlotId', timeSlotId);
-    } else {
-      params.delete('timeSlotId');
-    }
-
     // Set or delete room parameter
     if (roomId) {
       params.set('roomId', roomId);
@@ -67,14 +55,12 @@ export default function SearchForm({
     // Reset state values
     setName('');
     setDefensePeriodId('');
-    setTimeSlotId('');
     setRoomId('');
 
     // Reset URL parameters
     const params = new URLSearchParams(searchParams);
     params.delete('name');
     params.delete('defensePeriodId');
-    params.delete('timeSlotId');
     params.delete('roomId');
     params.set('page', '1');
 
@@ -117,29 +103,6 @@ export default function SearchForm({
           {defensePeriods.map((defensePeriod) => (
             <option key={defensePeriod?.id} value={defensePeriod?.id}>
               {defensePeriod?.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col">
-        <label htmlFor="timeSlotId" className="text-sm text-gray-600 mb-1">
-          Khung giờ
-        </label>
-        <select
-          id="timeSlotId"
-          name="timeSlotId"
-          className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 text-sm placeholder:text-gray-500"
-          aria-describedby="timeSlotId-error"
-          value={timeSlotId}
-          onChange={(e) => setTimeSlotId(e.target.value)}
-        >
-          <option value="" disabled>
-            Chọn khung giờ
-          </option>
-          {timeSlots.map((timeSlot) => (
-            <option key={timeSlot?.id} value={timeSlot?.id}>
-              {`${timeSlot?.date} (${timeSlot?.start} - ${timeSlot?.end})`}
             </option>
           ))}
         </select>

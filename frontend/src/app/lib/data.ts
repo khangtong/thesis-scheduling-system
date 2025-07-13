@@ -929,3 +929,53 @@ export async function searchDefenseCommittees(
     throw new Error('Failed to fetch defense committees.');
   }
 }
+
+export async function fetchCommitteeMembers(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/committee-members`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch committee members.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching committee members:', error);
+    throw new Error('Failed to fetch committee members.');
+  }
+}
+
+export async function fetchCommitteeMembersByDefenseCommitteeId(
+  token: string | undefined,
+  id: string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL}/committee-members/defense-committee/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch committee members.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching committee members:', error);
+    throw new Error('Failed to fetch committee members.');
+  }
+}

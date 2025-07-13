@@ -311,7 +311,6 @@ export async function createUser(state: any, formData: FormData) {
     studentCode: formData.get('studentCode') || '',
     studentClass: formData.get('studentClass') || '',
   };
-  console.log('Form data object:', formDataObj);
 
   // 2. Validate form fields
   const validatedFields = UserFormSchema.safeParse(formDataObj);
@@ -1417,7 +1416,6 @@ export async function createTimeSlot(
         : null,
     timeLength: Number(formData.get('time-length') || -1),
   });
-  console.log(validatedFields.data);
 
   if (!validatedFields.success) {
     return {
@@ -1674,11 +1672,22 @@ export async function deletePrioritySchedule(id: number) {
 }
 
 export async function createDefenseCommittee(state: any, formData: FormData) {
+  if (formData.getAll('timeSlotIds').length == 0) {
+    return {
+      success: false,
+      message: 'Hội đồng phải có ít nhất 1 khung giờ',
+    };
+  }
+
   const validatedFields = DefenseCommitteeFormSchema.safeParse({
     name: formData.get('name'),
     roomId: Number(formData.get('roomId')),
-    timeSlotId: Number(formData.get('timeSlotId')),
     defensePeriodId: Number(formData.get('defensePeriodId')),
+    lecturerIds: formData.getAll('lecturerIds').map((id) => Number(id)),
+    committeeRoleIds: formData
+      .getAll('committeeRoleIds')
+      .map((id) => Number(id)),
+    timeSlotIds: formData.getAll('timeSlotIds').map((id) => Number(id)),
   });
 
   if (!validatedFields.success) {
@@ -1723,11 +1732,22 @@ export async function updateDefenseCommittee(
   state: any,
   formData: FormData
 ): Promise<{ success: boolean; message?: string; errors?: any }> {
+  if (formData.getAll('timeSlotIds').length == 0) {
+    return {
+      success: false,
+      message: 'Hội đồng phải có ít nhất 1 khung giờ',
+    };
+  }
+
   const validatedFields = DefenseCommitteeFormSchema.safeParse({
     name: formData.get('name'),
     roomId: Number(formData.get('roomId')),
-    timeSlotId: Number(formData.get('timeSlotId')),
     defensePeriodId: Number(formData.get('defensePeriodId')),
+    lecturerIds: formData.getAll('lecturerIds').map((id) => Number(id)),
+    committeeRoleIds: formData
+      .getAll('committeeRoleIds')
+      .map((id) => Number(id)),
+    timeSlotIds: formData.getAll('timeSlotIds').map((id) => Number(id)),
   });
 
   if (!validatedFields.success) {

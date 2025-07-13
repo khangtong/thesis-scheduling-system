@@ -32,7 +32,7 @@ public class TimeSlotService {
 
     @Transactional(readOnly = true)
     public List<TimeSlot> getAllTimeSlots() {
-        return timeSlotRepository.findAll();
+        return timeSlotRepository.findAllByOrderByIdAsc();
     }
 
     @Transactional(readOnly = true)

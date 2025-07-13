@@ -93,6 +93,13 @@ export type DefenseCommittee = {
   defensePeriod: DefensePeriod;
 } | null;
 
+export type CommitteeMember = {
+  id: number;
+  committee: DefenseCommittee;
+  committeeRole: CommitteeRole;
+  lecturer: Lecturer;
+} | null;
+
 export const ITEMS_PER_PAGE = 12;
 
 export const LoginFormSchema = z.object({
@@ -390,11 +397,17 @@ export const DefenseCommitteeFormSchema = z.object({
     .max(100, { message: 'Tên hội đồng không được quá 50 ký tự.' })
     .trim(),
   roomId: z.number({ message: 'Phòng không hợp lệ.' }).int().positive(),
-  timeSlotId: z.array(
+  timeSlotIds: z.array(
     z.number({ message: 'Khung giờ không hợp lệ.' }).int().positive()
   ),
   defensePeriodId: z
     .number({ message: 'Đợt bảo vệ không hợp lệ.' })
     .int()
     .positive(),
+  committeeRoleIds: z.array(
+    z.number({ message: 'Vai trò không hợp lệ.' }).int().positive()
+  ),
+  lecturerIds: z.array(
+    z.number({ message: 'Giảng viên không hợp lệ.' }).int().positive()
+  ),
 });

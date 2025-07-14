@@ -9,37 +9,70 @@ import {
 } from './definitions';
 import { ITEMS_PER_PAGE } from './definitions';
 
-export async function fetchUsers(
-  token: string | undefined,
-  query: string = ''
-) {
-  let users: User[] = [];
-  let totalPages = 1;
-
+export async function fetchUsers(token: string | undefined) {
   try {
-    const response = await fetch(
-      `${process.env.API_URL}/users/search?query=${query}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await fetch(`${process.env.API_URL}/users`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch users.');
     }
 
     const data = await response.json();
-    users = data;
-    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return data;
   } catch (error) {
     console.error('Error fetching users:', error);
   }
+}
 
-  return { users, totalPages };
+export async function searchUsers(token: string | undefined, query: string) {
+  try {
+    let url = `${process.env.API_URL}/users/search`;
+    const params = new URLSearchParams();
+
+    if (query.includes('query=') || query.includes('roleId=')) {
+      // Parse the query string
+      const queryParams = new URLSearchParams(query);
+
+      // Add each parameter to the URL params if it exists
+      if (queryParams.has('query'))
+        params.append('query', queryParams.get('query')!);
+      if (queryParams.has('roleId'))
+        params.append('roleId', queryParams.get('roleId')!);
+    } else if (query) {
+      // If it's a simple query string, use it as is
+      params.append('query', query);
+    }
+
+    // Append the parameters to the URL
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch users.');
+    }
+
+    const data = await response.json();
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return { data, totalPages };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Failed to fetch users.');
+  }
 }
 
 export async function fetchUserById(token: string | undefined, id: string) {

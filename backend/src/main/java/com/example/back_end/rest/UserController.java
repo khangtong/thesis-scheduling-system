@@ -67,7 +67,24 @@ public class UserController {
     public ResponseEntity<List<User>> searchUsers(HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
-                List<User> users = userService.searchUsers(request.getParameterMap().get("query")[0]);
+                List<User> users = userService.getAllUsers();
+
+                if (request.getParameterMap().get("query") != null) {
+                    String query = request.getParameterMap().get("query")[0];
+                    for (int i = users.size() - 1; i >= 0; i--) {
+                        if (!users.get(i).getUsername().contains(query) && !users.get(i).getEmail().contains(query) && !users.get(i).getFullname().contains(query))
+                            users.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("roleId") != null) {
+                    int roleId = Integer.parseInt(request.getParameterMap().get("roleId")[0]);
+                    for (int i = users.size() - 1; i >= 0; i--) {
+                        if (!users.get(i).getRole().getId().equals(roleId))
+                            users.remove(i);
+                    }
+                }
+
                 return ResponseEntity.ok(users);
             } else {
                 return new SendError<List<User>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

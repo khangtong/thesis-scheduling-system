@@ -44,7 +44,7 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                       {thesis?.lecturer?.user?.fullname || 'N/A'}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Hội đồng: {thesis?.defenseCommittee?.name || 'N/A'}
+                      Hội đồng: {thesis?.defenseCommittee?.name || 'Chưa có'}
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">

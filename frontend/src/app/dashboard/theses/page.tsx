@@ -54,7 +54,7 @@ export default async function Page(props: {
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchTheses(authToken, query);
   const defenseCommittees = await fetchDefenseCommittees(authToken);
-  const { users } = await fetchUsers(authToken);
+  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
     if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {

@@ -20,6 +20,7 @@ import {
   deleteRoom,
   deleteTimeSlot,
   deleteUser,
+  deleteThesis,
 } from '../lib/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -412,6 +413,41 @@ export function DeleteDefenseCommittee({ id }: { id: number }) {
             error: (error) => error.message,
           });
           router.push('/dashboard/defense-committees');
+        },
+      },
+    });
+  }
+
+  return (
+    <form onSubmit={handleDelete}>
+      <button
+        type="submit"
+        className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
+      >
+        <span className="sr-only">Xóa</span>
+        <TrashIcon className="w-5 text-red-600" />
+      </button>
+    </form>
+  );
+}
+
+export function DeleteThesis({ id }: { id: number }) {
+  const deleteThesisWithId = deleteThesis.bind(null, id);
+  const router = useRouter();
+
+  function handleDelete(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    toast('Bạn có chắc chắn muốn xóa luận văn này?', {
+      action: {
+        label: 'Xóa',
+        onClick: () => {
+          toast.promise(deleteThesisWithId(), {
+            loading: 'Đang xóa luận văn...',
+            success: 'Xóa luận văn thành công',
+            error: (error) => error.message,
+          });
+          router.push('/dashboard/theses');
         },
       },
     });

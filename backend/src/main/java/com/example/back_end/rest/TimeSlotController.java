@@ -68,7 +68,6 @@ public class TimeSlotController {
                         TimeSlot timeSlot = timeSlots.get(i);
                         if (!timeSlot.getDate().equals(date))
                             timeSlots.remove(i);
-
                     }
                 }
 

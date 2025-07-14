@@ -100,6 +100,17 @@ export type CommitteeMember = {
   lecturer: Lecturer;
 } | null;
 
+export type Thesis = {
+  id: number;
+  title: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  student: Student;
+  lecturer: Lecturer;
+  defenseCommittee: DefenseCommittee | null;
+} | null;
+
 export const ITEMS_PER_PAGE = 12;
 
 export const LoginFormSchema = z.object({
@@ -410,4 +421,17 @@ export const DefenseCommitteeFormSchema = z.object({
   lecturerIds: z.array(
     z.number({ message: 'Giảng viên không hợp lệ.' }).int().positive()
   ),
+});
+
+export const ThesisFormSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: 'Tên đề tài không được để trống.' })
+    .max(100, { message: 'Tên đề tài không được quá 100 ký tự.' })
+    .trim(),
+  studentId: z.number({ message: 'Sinh viên không hợp lệ.' }).int().positive(),
+  lecturerId: z
+    .number({ message: 'Giảng viên hướng dẫn không hợp lệ.' })
+    .int()
+    .positive(),
 });

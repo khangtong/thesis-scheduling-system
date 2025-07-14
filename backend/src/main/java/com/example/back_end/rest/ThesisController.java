@@ -53,6 +53,54 @@ public class ThesisController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Thesis>> searchTheses(HttpServletResponse response, HttpServletRequest request) {
+        try {
+            User user = authController.authenticate(response, request);
+            List<Thesis> theses = thesisService.getAllTheses(user);
+
+            if (request.getParameterMap().get("title") != null) {
+                String title = request.getParameterMap().get("title")[0];
+                for (int i = theses.size() - 1; i >= 0; i--) {
+                    Thesis thesis = theses.get(i);
+                    if (!thesis.getTitle().contains(title))
+                        theses.remove(i);
+                }
+            }
+
+            if (request.getParameterMap().get("status") != null) {
+                String status = request.getParameterMap().get("status")[0];
+                for (int i = theses.size() - 1; i >= 0; i--) {
+                    Thesis thesis = theses.get(i);
+                    if (!thesis.getStatus().equals(status))
+                        theses.remove(i);
+                }
+            }
+
+            if (request.getParameterMap().get("lecturerId") != null) {
+                int lecturerId = Integer.parseInt(request.getParameterMap().get("lecturerId")[0]);
+                for (int i = theses.size() - 1; i >= 0; i--) {
+                    Thesis thesis = theses.get(i);
+                    if (!thesis.getLecturer().getId().equals(lecturerId))
+                        theses.remove(i);
+                }
+            }
+
+            if (request.getParameterMap().get("defenseCommitteeId") != null) {
+                int defenseCommitteeId = Integer.parseInt(request.getParameterMap().get("defenseCommitteeId")[0]);
+                for (int i = theses.size() - 1; i >= 0; i--) {
+                    Thesis thesis = theses.get(i);
+                    if (thesis.getDefenseCommittee() == null || !thesis.getDefenseCommittee().getId().equals(defenseCommitteeId))
+                        theses.remove(i);
+                }
+            }
+
+            return ResponseEntity.ok(theses);
+        } catch (Error error) {
+            return new SendError<List<Thesis>>().sendUnauthorized(error.getMessage(), response);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Thesis> createThesis(@RequestBody ThesisDTO thesisDTO, HttpServletResponse response, HttpServletRequest request) {
         try {

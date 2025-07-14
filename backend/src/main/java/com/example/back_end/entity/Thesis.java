@@ -26,7 +26,7 @@ public class Thesis {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "\"LV_SinhVien\"")
+    @JoinColumn(name = "\"LV_SinhVien\"", unique = true)
     private Student student;
 
     @ManyToOne

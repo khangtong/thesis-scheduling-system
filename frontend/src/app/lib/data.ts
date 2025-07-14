@@ -904,7 +904,6 @@ export async function searchDefenseCommittees(
     }
 
     // Append the parameters to the URL
-    console.log(params.toString());
     if (params.toString()) {
       url += `?${params.toString()}`;
     }
@@ -977,5 +976,106 @@ export async function fetchCommitteeMembersByDefenseCommitteeId(
   } catch (error) {
     console.error('Error fetching committee members:', error);
     throw new Error('Failed to fetch committee members.');
+  }
+}
+
+export async function fetchTheses(token: string | undefined) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/theses`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch theses.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching theses:', error);
+    throw new Error('Failed to fetch theses.');
+  }
+}
+
+export async function fetchThesisById(token: string | undefined, id: string) {
+  try {
+    const response = await fetch(`${process.env.API_URL}/theses/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch thesis.');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching thesis:', error);
+    throw new Error('Failed to fetch thesis.');
+  }
+}
+
+export async function searchTheses(token: string | undefined, query: string) {
+  try {
+    let url = `${process.env.API_URL}/theses/search`;
+    const params = new URLSearchParams();
+
+    if (
+      query.includes('title=') ||
+      query.includes('status=') ||
+      query.includes('lecturerId=') ||
+      query.includes('defenseCommitteeId=')
+    ) {
+      // Parse the query string
+      const queryParams = new URLSearchParams(query);
+
+      // Add each parameter to the URL params if it exists
+      if (queryParams.has('title'))
+        params.append('title', queryParams.get('title')!);
+      if (queryParams.has('status'))
+        params.append('status', queryParams.get('status')!);
+      if (queryParams.has('lecturerId'))
+        params.append('lecturerId', queryParams.get('lecturerId')!);
+      if (queryParams.has('defenseCommitteeId'))
+        params.append(
+          'defenseCommitteeId',
+          queryParams.get('defenseCommitteeId')!
+        );
+    } else if (query) {
+      // If it's a simple query string, use it as is
+      params.append('query', query);
+    }
+
+    // Append the parameters to the URL
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch theses.');
+    }
+
+    const data = await response.json();
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return { data, totalPages };
+  } catch (error) {
+    console.error('Error fetching theses:', error);
+    throw new Error('Failed to fetch theses.');
   }
 }

@@ -23,6 +23,7 @@ import {
   User,
   UserFormSchema,
   VerifyResetCodeSchema,
+  ThesisFormSchema,
 } from './definitions';
 
 export async function login(state: any, formData: FormData) {
@@ -1808,6 +1809,119 @@ export async function deleteDefenseCommittee(id: number) {
     }
   } catch (error: any) {
     console.error('Delete defense committee error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function createThesis(state: any, formData: FormData) {
+  const validatedFields = ThesisFormSchema.safeParse({
+    title: formData.get('title'),
+    studentId: Number(formData.get('studentId')),
+    lecturerId: Number(formData.get('lecturerId')),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/theses`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return { success: true, message: 'Luận văn đã được tạo thành công' };
+    } else {
+      return { success: false, message: 'Không thể tạo luận văn' };
+    }
+  } catch (error: any) {
+    console.error('Create thesis error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function updateThesis(id: number, state: any, formData: FormData) {
+  const validatedFields = ThesisFormSchema.safeParse({
+    title: formData.get('title'),
+    studentId: Number(formData.get('studentId')),
+    lecturerId: Number(formData.get('lecturerId')),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/theses/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return { success: true, message: 'Luận văn đã được cập nhật thành công' };
+    } else {
+      return { success: false, message: 'Không thể cập nhật luận văn' };
+    }
+  } catch (error: any) {
+    console.error('Update thesis error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
+  }
+}
+
+export async function deleteThesis(id: number) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.delete(`${process.env.API_URL}/theses/${id}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 204) {
+      return { success: true, message: 'Luận văn đã được xóa thành công' };
+    } else {
+      throw new Error('Không thể xóa luận văn');
+    }
+  } catch (error: any) {
+    console.error('Delete thesis error:', error);
     return {
       success: false,
       message: error?.response?.data?.message || 'Có lỗi xảy ra',

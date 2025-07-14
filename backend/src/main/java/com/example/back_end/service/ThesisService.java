@@ -63,10 +63,6 @@ public class ThesisService {
             throw new Error("Tên đề tài luận văn không được là rỗng");
         thesis.setTitle(thesisDTO.getTitle());
 
-        if ("".equals(thesisDTO.getStatus()))
-            throw new Error("Trạng thái luận văn không được là rỗng");
-        thesis.setStatus(thesisDTO.getStatus());
-
         if (thesisDTO.getStudentId() != null) {
             Student student = studentRepository.findById(thesisDTO.getStudentId()).orElse(null);
             if (student == null)
@@ -85,15 +81,8 @@ public class ThesisService {
             throw new Error("Giảng viên không được là rỗng");
         }
 
-        if (thesisDTO.getDefenseCommitteeId() != null) {
-            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(thesisDTO.getDefenseCommitteeId()).orElse(null);
-            if (defenseCommittee == null)
-                throw new Error("Không tìm thấy hội đồng");
-            thesis.setDefenseCommittee(defenseCommittee);
-        } else {
-            throw new Error("Hội đồng không được là rỗng");
-        }
-
+        thesis.setStatus("Chưa xếp lịch");
+        thesis.setDefenseCommittee(null);
         thesis.setCreatedAt(LocalDateTime.now());
         thesis.setUpdatedAt(LocalDateTime.now());
         return thesisRepository.save(thesis);
@@ -109,15 +98,12 @@ public class ThesisService {
             throw new Error("Tên đề tài luận văn không được là rỗng");
         thesis.setTitle(thesisDTO.getTitle());
 
-        if ("".equals(thesisDTO.getStatus()))
-            throw new Error("Trạng thái luận văn không được là rỗng");
-        thesis.setStatus(thesisDTO.getStatus());
-
         if (thesisDTO.getStudentId() != null) {
             Student student = studentRepository.findById(thesisDTO.getStudentId()).orElse(null);
             if (student == null)
                 throw new Error("Không tìm thấy sinh viên");
-            thesis.setStudent(student);
+            if (!thesis.getStudent().equals(student))
+                thesis.setStudent(student);
         } else {
             throw new Error("Sinh viên không được là rỗng");
         }
@@ -129,15 +115,6 @@ public class ThesisService {
             thesis.setLecturer(lecturer);
         } else {
             throw new Error("Giảng viên không được là rỗng");
-        }
-
-        if (thesisDTO.getDefenseCommitteeId() != null) {
-            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(thesisDTO.getDefenseCommitteeId()).orElse(null);
-            if (defenseCommittee == null)
-                throw new Error("Không tìm thấy hội đồng");
-            thesis.setDefenseCommittee(defenseCommittee);
-        } else {
-            throw new Error("Hội đồng không được là rỗng");
         }
 
         thesis.setUpdatedAt(LocalDateTime.now());

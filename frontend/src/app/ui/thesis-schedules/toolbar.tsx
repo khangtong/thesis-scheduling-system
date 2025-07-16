@@ -1,6 +1,7 @@
 'use client';
 
 import { DefensePeriod, Faculty } from '@/app/lib/definitions';
+import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
 import { useState } from 'react';
 
 export default function Toolbar({
@@ -10,11 +11,16 @@ export default function Toolbar({
   defensePeriods: DefensePeriod[];
   faculties: Faculty[];
 }) {
-  const [defensePeriodId, setDefensePeriodId] = useState<string>('');
+  const defensePeriodId = useDefensePeriodIdStore(
+    (state) => state.defensePeriodId
+  );
+  const setDefensePeriodId = useDefensePeriodIdStore(
+    (state) => state.setDefensePeriodId
+  );
   const [facultyId, setFacultyId] = useState<string>('');
 
   return (
-    <div className="flex items-end gap-3">
+    <div className="flex items-end gap-3 pb-3 border-b-2 border-neutral-500">
       <select
         id="defensePeriodId"
         name="defensePeriodId"
@@ -26,11 +32,14 @@ export default function Toolbar({
         <option value="" disabled>
           Chọn đợt bảo vệ
         </option>
-        {defensePeriods.map((defensePeriod) => (
-          <option key={defensePeriod?.id} value={defensePeriod?.id}>
-            {defensePeriod?.name}
-          </option>
-        ))}
+        {defensePeriods.map(
+          (defensePeriod) =>
+            defensePeriod?.active && (
+              <option key={defensePeriod?.id} value={defensePeriod?.id}>
+                {defensePeriod?.name}
+              </option>
+            )
+        )}
       </select>
       <select
         id="defensePeriodId"

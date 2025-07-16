@@ -1,12 +1,12 @@
 'use client';
-import { useScheduleStore } from '@/stores/scheduleStore';
-import { ScheduledSession } from './mock-data';
-import ConflictCheckItem from './conflict-check-item';
+import { useDefenseCommitteeStore } from '@/stores/defenseCommitteeStore';
 
 export default function DetailsPanel() {
-  const selectedSession = useScheduleStore((state) => state.selectedSession);
+  const selectedDefenseCommittee = useDefenseCommitteeStore(
+    (state) => state.selectedDefenseCommittee
+  );
 
-  if (!selectedSession) {
+  if (!selectedDefenseCommittee) {
     return (
       <div className="bg-white p-4 rounded-lg shadow-md h-full flex items-center justify-center">
         <p className="text-gray-500">Chọn một buổi bảo vệ để xem chi tiết</p>
@@ -20,25 +20,22 @@ export default function DetailsPanel() {
       <div className="border-b pb-4 mb-4">
         <h3 className="font-bold text-lg text-gray-800">Thông tin chi tiết</h3>
         <p className="text-sm mt-2">
-          <span className="font-semibold">Sinh viên:</span>{' '}
-          {selectedSession.studentName}
+          <span className="font-semibold">Sinh viên:</span> Tong Duy Khang
         </p>
         <p className="text-sm">
-          <span className="font-semibold">Đề tài:</span>{' '}
-          {selectedSession.thesisTitle}
+          <span className="font-semibold">Đề tài:</span> Ten de tai
         </p>
         <p className="text-sm">
-          <span className="font-semibold">GVHD:</span>{' '}
-          {selectedSession.advisorName}
+          <span className="font-semibold">GVHD:</span> Giang vien 1
         </p>
         <p className="text-sm">
-          <span className="font-semibold">Lịch:</span>{' '}
-          {selectedSession.timeSlot} tại {selectedSession.room}
+          <span className="font-semibold">Lịch:</span> 07:00 - 07:45 tại{' '}
+          {selectedDefenseCommittee?.room?.name}
         </p>
       </div>
 
       {/* Section: Hội đồng */}
-      <div className="border-b pb-4 mb-4">
+      {/* <div className="border-b pb-4 mb-4">
         <h3 className="font-bold text-lg text-gray-800">Hội đồng</h3>
         <ul className="mt-2 space-y-1 text-sm">
           {selectedSession.committee.map((member) => (
@@ -48,17 +45,17 @@ export default function DetailsPanel() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
 
       {/* Section: Kiểm tra Xung đột */}
-      <div>
+      {/* <div>
         <h3 className="font-bold text-lg text-gray-800">Kiểm tra Xung đột</h3>
         <ul className="mt-2 divide-y divide-gray-200">
           {selectedSession.conflicts.map((conflict) => (
             <ConflictCheckItem key={conflict.resource} conflict={conflict} />
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 }

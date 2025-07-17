@@ -22,7 +22,7 @@ export default async function Page() {
   const timeSlots = await fetchTimeSlots(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
   const committeeRoles = await fetchCommitteeRoles(authToken);
-  const { users } = await fetchUsers(authToken);
+  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
     if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {

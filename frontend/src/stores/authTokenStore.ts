@@ -5,7 +5,7 @@ interface AuthTokenState {
   setAuthToken: (authToken: string | undefined) => void;
 }
 
-export const useAuthTokenStore = create<AuthTokenState>((set) => ({
+export const useAuthTokenStore = create<AuthTokenState>()((set) => ({
   authToken: '',
   setAuthToken: (authToken: string | undefined) => set({ authToken }),
 }));

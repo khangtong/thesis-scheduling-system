@@ -122,6 +122,24 @@ public class ThesisService {
     }
 
     @Transactional
+    public Thesis assignDefenseCommittee(int id, ThesisDTO thesisDTO) {
+        Thesis thesis = thesisRepository.findById(id).orElse(null);
+        if (thesis == null)
+            throw new Error("Không tìm thấy luận văn");
+
+        if (thesisDTO.getDefenseCommitteeId() != null) {
+            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(thesisDTO.getDefenseCommitteeId()).orElse(null);
+            if (defenseCommittee == null)
+                throw new Error("Không tìm thấy hội đồng");
+            thesis.setDefenseCommittee(defenseCommittee);
+            thesis.setStatus("Đã xếp lịch");
+            thesis.setUpdatedAt(LocalDateTime.now());
+        }
+
+        return thesisRepository.save(thesis);
+    }
+
+    @Transactional
     public void deleteThesisById(int id) {
         Thesis thesis = thesisRepository.findById(id).orElse(null);
         if (thesis == null)

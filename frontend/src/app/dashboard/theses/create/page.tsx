@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const authToken = (await cookies()).get('session')?.value;
-  const { users } = await fetchUsers(authToken);
+  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   let students: Student[] = [];
   for (let i = 0; i < users.length; i++) {

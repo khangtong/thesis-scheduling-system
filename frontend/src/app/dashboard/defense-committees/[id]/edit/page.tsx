@@ -29,7 +29,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     authToken,
     id
   );
-  const { users } = await fetchUsers(authToken);
+  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
     if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {

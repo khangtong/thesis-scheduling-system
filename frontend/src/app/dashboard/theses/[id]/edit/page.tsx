@@ -19,7 +19,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const id = params.id;
   const authToken = (await cookies()).get('session')?.value;
   const thesis = await fetchThesisById(authToken, id);
-  const { users } = await fetchUsers(authToken);
+  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   let students: Student[] = [];
   for (let i = 0; i < users.length; i++) {

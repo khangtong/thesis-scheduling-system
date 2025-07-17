@@ -129,6 +129,20 @@ public class ThesisController {
         }
     }
 
+    @PutMapping("assign-committee/{id}")
+    public ResponseEntity<Thesis> assignDefenseCommittee(@PathVariable int id, @RequestBody ThesisDTO thesisDTO, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                Thesis updatedThesis = thesisService.assignDefenseCommittee(id, thesisDTO);
+                return ResponseEntity.ok(updatedThesis);
+            } else {
+                return new SendError<Thesis>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<Thesis>().sendBadRequest(error.getMessage(), response);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteThesisById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {

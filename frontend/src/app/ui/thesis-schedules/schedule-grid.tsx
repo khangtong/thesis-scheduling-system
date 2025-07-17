@@ -1,4 +1,4 @@
-import { useDefenseCommitteeStore } from '@/stores/defenseCommitteeStore';
+import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import ScheduleCard from './schedule-card';
 import { TimeSlot, DefensePeriod, Thesis } from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
@@ -14,18 +14,14 @@ export default function ScheduleGrid({
     timeSlots: TimeSlot[];
   }[];
 }) {
-  const {
-    defenseCommittees,
-    selectedDefenseCommittee,
-    selectDefenseCommittee,
-  } = useDefenseCommitteeStore();
-  const selectedDefenseCommitteeId = selectedDefenseCommittee?.id;
+  const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
+  const selectedTimeSlotId = selectedTimeSlot?.id;
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [dayList, setDayList] = useState<
     { day: string; timeSlotsOnDay: TimeSlot[] }[]
   >([]);
   const theses = useThesisStore((state) => state.theses).filter(
-    (thesis) => thesis?.defenseCommittee?.id === selectedDefenseCommitteeId
+    (thesis) => thesis?.timeSlot?.id === selectedTimeSlotId
   );
   // Get the defense period id from the select of toolbar using zustand
   const defensePeriodId = useDefensePeriodIdStore(
@@ -139,7 +135,7 @@ export default function ScheduleGrid({
                         defenseCommittee={matchTimeSlot?.defenseCommittee}
                         isSelected={
                           matchTimeSlot?.defenseCommittee.id ===
-                          selectedDefenseCommitteeId
+                          selectedTimeSlotId
                         }
                         timeSlot={matchTimeSlot}
                         day={day}

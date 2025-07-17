@@ -1929,16 +1929,16 @@ export async function deleteThesis(id: number) {
   }
 }
 
-export async function assignDefenseCommittee(
+export async function scheduling(
   id: number | undefined,
-  defenseCommitteeId: number | undefined
+  timeSlotId: number | undefined
 ) {
   try {
     const authToken = (await cookies()).get('session')?.value;
 
     const response = await axios.put(
-      `${process.env.API_URL}/theses/assign-committee/${id}`,
-      JSON.stringify({ defenseCommitteeId }),
+      `${process.env.API_URL}/theses/scheduling/${id}`,
+      JSON.stringify({ timeSlotId }),
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -1953,7 +1953,7 @@ export async function assignDefenseCommittee(
       return { success: false, message: 'Không thể xếp lịch luận văn' };
     }
   } catch (error: any) {
-    console.error('Assign defense committee error:', error);
+    console.error('Scheduling error:', error);
     return {
       success: false,
       message: error?.response?.data?.message || 'Có lỗi xảy ra',

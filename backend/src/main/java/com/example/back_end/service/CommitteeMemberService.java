@@ -80,7 +80,7 @@ public class CommitteeMemberService {
                 throw new Error("Không tìm thấy hội đồng");
             committeeMember.setDefenseCommittee(defenseCommittee);
             defenseCommitteeName = defenseCommittee.getName();
-            assignedTheses = thesisRepository.findByDefenseCommittee(defenseCommittee);
+//            assignedTheses = thesisRepository.findByDefenseCommittee(defenseCommittee);
         } else {
             throw new Error("Hội đồng không được là rỗng");
         }
@@ -112,7 +112,7 @@ public class CommitteeMemberService {
         context.setVariable("lecturerFullName", lecturerFullName);
         context.setVariable("committeeRoleName", committeeRoleName);
         context.setVariable("defenseCommitteeName", defenseCommitteeName);
-        context.setVariable("assignedTheses", assignedTheses);
+//        context.setVariable("assignedTheses", assignedTheses);
 
         String htmlContent = templateEngine.process("emails/committee-assignment", context);
         notification.setContent(htmlContent);

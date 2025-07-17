@@ -108,7 +108,7 @@ export type Thesis = {
   updatedAt: Date;
   student: Student;
   lecturer: Lecturer;
-  defenseCommittee: DefenseCommittee | null;
+  timeSlot: TimeSlot | null;
 } | null;
 
 export const ITEMS_PER_PAGE = 12;

@@ -6,7 +6,7 @@ public class ThesisDTO {
     private String status;
     private Integer studentId;
     private Integer lecturerId;
-    private Integer defenseCommitteeId;
+    private Integer timeSlotId;
 
     public ThesisDTO() {}
 
@@ -50,11 +50,11 @@ public class ThesisDTO {
         this.lecturerId = lecturerId;
     }
 
-    public Integer getDefenseCommitteeId() {
-        return defenseCommitteeId;
+    public Integer getTimeSlotId() {
+        return timeSlotId;
     }
 
-    public void setDefenseCommitteeId(Integer defenseCommitteeId) {
-        this.defenseCommitteeId = defenseCommitteeId;
+    public void setTimeSlotId(Integer timeSlotId) {
+        this.timeSlotId = timeSlotId;
     }
 }

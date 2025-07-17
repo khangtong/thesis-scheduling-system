@@ -1,16 +1,16 @@
 'use client';
 
-import { Lecturer, DefenseCommittee } from '@/app/lib/definitions';
+import { Lecturer, TimeSlot } from '@/app/lib/definitions';
 import { MagnifyingGlassIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export default function SearchForm({
   lecturers,
-  defenseCommittees,
+  timeSlots,
 }: {
   lecturers: Lecturer[];
-  defenseCommittees: DefenseCommittee[];
+  timeSlots: TimeSlot[];
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -18,8 +18,8 @@ export default function SearchForm({
 
   const [title, setTitle] = useState(searchParams.get('title') || '');
   const [status, setStatus] = useState(searchParams.get('status') || '');
-  const [defenseCommitteeId, setDefenseCommitteeId] = useState(
-    searchParams.get('defenseCommitteeId') || ''
+  const [timeSlotId, setTimeSlotId] = useState(
+    searchParams.get('timeSlotId') || ''
   );
   const [lecturerId, setLecturerId] = useState(
     searchParams.get('lecturerId') || ''
@@ -44,11 +44,11 @@ export default function SearchForm({
       params.delete('status');
     }
 
-    // Set or delete defense period parameter
-    if (defenseCommitteeId) {
-      params.set('defenseCommitteeId', defenseCommitteeId);
+    // Set or delete time slot parameter
+    if (timeSlotId) {
+      params.set('timeSlotId', timeSlotId);
     } else {
-      params.delete('defenseCommitteeId');
+      params.delete('timeSlotId');
     }
 
     // Set or delete room parameter
@@ -65,14 +65,14 @@ export default function SearchForm({
     // Reset state values
     setTitle('');
     setStatus('');
-    setDefenseCommitteeId('');
+    setTimeSlotId('');
     setLecturerId('');
 
     // Reset URL parameters
     const params = new URLSearchParams(searchParams);
     params.delete('title');
     params.delete('status');
-    params.delete('defenseCommitteeId');
+    params.delete('timeSlotId');
     params.delete('lecturerId');
     params.set('page', '1');
 
@@ -144,26 +144,25 @@ export default function SearchForm({
       </div>
 
       <div className="flex flex-col">
-        <label
-          htmlFor="defenseCommitteeId"
-          className="text-sm text-gray-600 mb-1"
-        >
-          Hội đồng
+        <label htmlFor="timeSlotId" className="text-sm text-gray-600 mb-1">
+          Khung giờ
         </label>
         <select
-          id="defenseCommitteeId"
-          name="defenseCommitteeId"
+          id="timeSlotId"
+          name="timeSlotId"
           className="w-[150px] peer block bg-white cursor-pointer rounded-md border border-gray-200 py-2 text-sm placeholder:text-gray-500"
-          aria-describedby="defenseCommitteeId-error"
-          value={defenseCommitteeId}
-          onChange={(e) => setDefenseCommitteeId(e.target.value)}
+          aria-describedby="timeSlotId-error"
+          value={timeSlotId}
+          onChange={(e) => setTimeSlotId(e.target.value)}
         >
           <option value="" disabled>
-            Chọn hội đồng
+            Chọn khung giờ
           </option>
-          {defenseCommittees.map((defenseCommittee) => (
-            <option key={defenseCommittee?.id} value={defenseCommittee?.id}>
-              {defenseCommittee?.name}
+          {timeSlots.map((timeSlot) => (
+            <option key={timeSlot?.id} value={timeSlot?.id}>
+              {`${timeSlot?.date.toString().split('-').reverse().join('/')} (${
+                timeSlot?.start
+              } - ${timeSlot?.end})`}
             </option>
           ))}
         </select>

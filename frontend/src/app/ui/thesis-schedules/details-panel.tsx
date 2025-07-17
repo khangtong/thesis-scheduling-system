@@ -1,12 +1,10 @@
 'use client';
-import { useDefenseCommitteeStore } from '@/stores/defenseCommitteeStore';
+import { useTimeSlotStore } from '@/stores/timeSlotStore';
 
 export default function DetailsPanel() {
-  const selectedDefenseCommittee = useDefenseCommitteeStore(
-    (state) => state.selectedDefenseCommittee
-  );
+  const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
 
-  if (!selectedDefenseCommittee) {
+  if (!selectedTimeSlot) {
     return (
       <div className="bg-white p-4 rounded-lg shadow-md h-full flex items-center justify-center">
         <p className="text-gray-500">Chọn một buổi bảo vệ để xem chi tiết</p>
@@ -30,7 +28,7 @@ export default function DetailsPanel() {
         </p>
         <p className="text-sm">
           <span className="font-semibold">Lịch:</span> 07:00 - 07:45 tại{' '}
-          {selectedDefenseCommittee?.room?.name}
+          {selectedTimeSlot?.defenseCommittee?.room?.name}
         </p>
       </div>
 

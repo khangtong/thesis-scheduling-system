@@ -6,7 +6,7 @@ import { Create } from '@/app/ui/buttons';
 import { ImportThesesButton } from '@/app/ui/theses/import-theses-button';
 import {
   searchTheses,
-  fetchDefenseCommittees,
+  fetchTimeSlots,
   fetchUsers,
   fetchLecturerByUserId,
 } from '@/app/lib/data';
@@ -24,7 +24,7 @@ export default async function Page(props: {
     title?: string;
     status?: string;
     lecturerId?: string;
-    defenseCommitteeId?: string;
+    timeSlotId?: string;
     page?: string;
   }>;
 }) {
@@ -37,15 +37,15 @@ export default async function Page(props: {
     searchParams?.title ||
     searchParams?.status ||
     searchParams?.lecturerId ||
-    searchParams?.defenseCommitteeId
+    searchParams?.timeSlotId
   ) {
     const params = new URLSearchParams();
     if (searchParams?.title) params.append('title', searchParams.title);
     if (searchParams?.status) params.append('status', searchParams.status);
     if (searchParams?.lecturerId)
       params.append('lecturerId', searchParams.lecturerId);
-    if (searchParams?.defenseCommitteeId)
-      params.append('defenseCommitteeId', searchParams.defenseCommitteeId);
+    if (searchParams?.timeSlotId)
+      params.append('timeSlotId', searchParams.timeSlotId);
     query = params.toString();
   } else if (searchParams?.query) {
     query = searchParams.query;
@@ -53,7 +53,7 @@ export default async function Page(props: {
 
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchTheses(authToken, query);
-  const defenseCommittees = await fetchDefenseCommittees(authToken);
+  const timeSlots = await fetchTimeSlots(authToken);
   const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
@@ -84,10 +84,7 @@ export default async function Page(props: {
         <h1 className={`${lexend.className} text-2xl`}>Quản lý luận văn</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
-        <SearchForm
-          lecturers={lecturers}
-          defenseCommittees={defenseCommittees}
-        />
+        <SearchForm lecturers={lecturers} timeSlots={timeSlots} />
         <div className="flex gap-2">
           <ImportThesesButton />
           <Create singular="luận văn" path="theses" />

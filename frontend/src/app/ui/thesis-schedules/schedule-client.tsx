@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useDefenseCommitteeStore } from '@/stores/defenseCommitteeStore'; // Import store
+import { useTimeSlotStore } from '@/stores/timeSlotStore'; // Import store
 import ScheduleGrid from './schedule-grid';
 import DetailsPanel from './details-panel';
 import { ScheduledSession } from './mock-data';
@@ -32,16 +32,16 @@ export default function ScheduleClient({
   defensePeriodAndTimeSlots,
 }: ScheduleClientProps) {
   // Lấy hàm initialize từ store
-  const initializeDefenseCommittees = useDefenseCommitteeStore(
-    (state) => state.initializeDefenseCommittees
+  const initializeTimeSlots = useTimeSlotStore(
+    (state) => state.initializeTimeSlots
   );
   const setTheses = useThesisStore((state) => state.setTheses);
 
   // Sử dụng useEffect để khởi tạo dữ liệu cho store chỉ một lần khi component được mount
   useEffect(() => {
-    initializeDefenseCommittees([]);
+    initializeTimeSlots([]);
     setTheses(theses);
-  }, [initializeDefenseCommittees]);
+  }, [initializeTimeSlots]);
 
   return (
     <>

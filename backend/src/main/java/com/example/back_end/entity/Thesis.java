@@ -34,12 +34,12 @@ public class Thesis {
     private Lecturer lecturer;
 
     @ManyToOne
-    @JoinColumn(name = "\"LV_HoiDong\"")
-    private DefenseCommittee defenseCommittee;
+    @JoinColumn(name = "\"LV_KhungGio\"")
+    private TimeSlot timeSlot;
 
     public Thesis() {}
 
-    public Thesis(Integer id, String title, String status, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Lecturer lecturer, DefenseCommittee defenseCommittee) {
+    public Thesis(Integer id, String title, String status, LocalDateTime createdAt, LocalDateTime updatedAt, Student student, Lecturer lecturer, TimeSlot timeSlot) {
         this.id = id;
         this.title = title;
         this.status = status;
@@ -47,7 +47,7 @@ public class Thesis {
         this.updatedAt = updatedAt;
         this.student = student;
         this.lecturer = lecturer;
-        this.defenseCommittee = defenseCommittee;
+        this.timeSlot = timeSlot;
     }
 
     public Integer getId() {
@@ -106,12 +106,12 @@ public class Thesis {
         this.lecturer = lecturer;
     }
 
-    public DefenseCommittee getDefenseCommittee() {
-        return defenseCommittee;
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
     }
 
-    public void setDefenseCommittee(DefenseCommittee defenseCommittee) {
-        this.defenseCommittee = defenseCommittee;
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class Thesis {
                 ", updatedAt=" + updatedAt +
                 ", student=" + student +
                 ", lecturer=" + lecturer +
-                ", defenseCommittee=" + defenseCommittee +
+                ", timeSlot=" + timeSlot +
                 '}';
     }
 }

@@ -44,7 +44,14 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                       {thesis?.lecturer?.user?.fullname || 'N/A'}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Hội đồng: {thesis?.defenseCommittee?.name || 'Chưa có'}
+                      Khung giờ:{' '}
+                      {`${thesis?.timeSlot?.date
+                        .toString()
+                        .split('-')
+                        .reverse()
+                        .join('/')} (${thesis?.timeSlot?.start} - ${
+                        thesis?.timeSlot?.end
+                      })` || 'Chưa có'}
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">
@@ -77,7 +84,7 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                   Giảng viên hướng dẫn
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
-                  Hội đồng
+                  Khung giờ
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
@@ -113,7 +120,13 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                     {thesis?.lecturer?.user?.fullname || 'N/A'}
                   </td>
                   <td className="px-3 py-1">
-                    {thesis?.defenseCommittee?.name || 'Chưa có'}
+                    {`${thesis?.timeSlot?.date
+                      .toString()
+                      .split('-')
+                      .reverse()
+                      .join('/')} (${thesis?.timeSlot?.start} - ${
+                      thesis?.timeSlot?.end
+                    })` || 'Chưa có'}
                   </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

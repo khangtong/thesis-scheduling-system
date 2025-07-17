@@ -86,11 +86,11 @@ public class ThesisController {
                 }
             }
 
-            if (request.getParameterMap().get("defenseCommitteeId") != null) {
-                int defenseCommitteeId = Integer.parseInt(request.getParameterMap().get("defenseCommitteeId")[0]);
+            if (request.getParameterMap().get("timeSlotId") != null) {
+                int timeSlotId = Integer.parseInt(request.getParameterMap().get("timeSlotId")[0]);
                 for (int i = theses.size() - 1; i >= 0; i--) {
                     Thesis thesis = theses.get(i);
-                    if (thesis.getDefenseCommittee() == null || !thesis.getDefenseCommittee().getId().equals(defenseCommitteeId))
+                    if (thesis.getTimeSlot() == null || !thesis.getTimeSlot().getId().equals(timeSlotId))
                         theses.remove(i);
                 }
             }
@@ -129,11 +129,11 @@ public class ThesisController {
         }
     }
 
-    @PutMapping("assign-committee/{id}")
-    public ResponseEntity<Thesis> assignDefenseCommittee(@PathVariable int id, @RequestBody ThesisDTO thesisDTO, HttpServletResponse response, HttpServletRequest request) {
+    @PutMapping("scheduling/{id}")
+    public ResponseEntity<Thesis> scheduling(@PathVariable int id, @RequestBody ThesisDTO thesisDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
-                Thesis updatedThesis = thesisService.assignDefenseCommittee(id, thesisDTO);
+                Thesis updatedThesis = thesisService.assignTimeSlot(id, thesisDTO);
                 return ResponseEntity.ok(updatedThesis);
             } else {
                 return new SendError<Thesis>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

@@ -1,8 +1,8 @@
-import { useDefenseCommitteeStore } from '@/stores/defenseCommitteeStore';
+import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import { DefenseCommittee, Thesis } from '@/app/lib/definitions';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { assignDefenseCommittee } from '@/app/lib/actions';
+import { scheduling } from '@/app/lib/actions';
 
 interface ScheduleCardProps {
   defenseCommittee: DefenseCommittee;
@@ -23,9 +23,7 @@ export default function ScheduleCard({
   timeSlot,
   day,
 }: ScheduleCardProps) {
-  const selectDefenseCommittee = useDefenseCommitteeStore(
-    (state) => state.selectDefenseCommittee
-  );
+  const selectTimeSlot = useTimeSlotStore((state) => state.selectTimeSlot);
   const selectedStyle = isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : '';
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -49,8 +47,8 @@ export default function ScheduleCard({
       const thesis: Thesis = thesisData;
 
       // Assign defense committee to the thesis
-      toast.promise(assignDefenseCommittee(thesis?.id, defenseCommittee?.id), {
-        loading: 'Đang gán hội đồng...',
+      toast.promise(scheduling(thesis?.id, timeSlot?.id), {
+        loading: 'Đang xếp lịch...',
         success: 'Luận văn đã được xếp lịch thành công',
         error: (error) => error.message,
       });
@@ -61,7 +59,7 @@ export default function ScheduleCard({
 
   return (
     <div
-      onClick={() => selectDefenseCommittee(defenseCommittee)}
+      onClick={() => selectTimeSlot(timeSlot)}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

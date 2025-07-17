@@ -16,14 +16,14 @@ public class ThesisService {
     private ThesisRepository thesisRepository;
     private StudentRepository studentRepository;
     private LecturerRepository lecturerRepository;
-    private DefenseCommitteeRepository defenseCommitteeRepository;
+    private TimeSlotRepository timeSlotRepository;
 
     @Autowired
-    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, DefenseCommitteeRepository defenseCommitteeRepository) {
+    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository) {
         this.thesisRepository = thesisRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
-        this.defenseCommitteeRepository = defenseCommitteeRepository;
+        this.timeSlotRepository = timeSlotRepository;
     }
 
     @Transactional(readOnly = true)
@@ -82,7 +82,7 @@ public class ThesisService {
         }
 
         thesis.setStatus("Chưa xếp lịch");
-        thesis.setDefenseCommittee(null);
+        thesis.setTimeSlot(null);
         thesis.setCreatedAt(LocalDateTime.now());
         thesis.setUpdatedAt(LocalDateTime.now());
         return thesisRepository.save(thesis);
@@ -122,16 +122,16 @@ public class ThesisService {
     }
 
     @Transactional
-    public Thesis assignDefenseCommittee(int id, ThesisDTO thesisDTO) {
+    public Thesis assignTimeSlot(int id, ThesisDTO thesisDTO) {
         Thesis thesis = thesisRepository.findById(id).orElse(null);
         if (thesis == null)
             throw new Error("Không tìm thấy luận văn");
 
-        if (thesisDTO.getDefenseCommitteeId() != null) {
-            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(thesisDTO.getDefenseCommitteeId()).orElse(null);
-            if (defenseCommittee == null)
-                throw new Error("Không tìm thấy hội đồng");
-            thesis.setDefenseCommittee(defenseCommittee);
+        if (thesisDTO.getTimeSlotId() != null) {
+            TimeSlot timeSlot = timeSlotRepository.findById(thesisDTO.getTimeSlotId()).orElse(null);
+            if (timeSlot == null)
+                throw new Error("Không tìm thấy khung giờ");
+            thesis.setTimeSlot(timeSlot);
             thesis.setStatus("Đã xếp lịch");
             thesis.setUpdatedAt(LocalDateTime.now());
         }

@@ -740,7 +740,8 @@ export async function searchTimeSlots(
     if (
       query.includes('date=') ||
       query.includes('start=') ||
-      query.includes('end=')
+      query.includes('end=') ||
+      query.includes('defenseCommitteeId=')
     ) {
       // Parse the query string
       const queryParams = new URLSearchParams(query);
@@ -751,6 +752,11 @@ export async function searchTimeSlots(
       if (queryParams.has('start'))
         params.append('start', queryParams.get('start')!);
       if (queryParams.has('end')) params.append('end', queryParams.get('end')!);
+      if (queryParams.has('defenseCommitteeId'))
+        params.append(
+          'defenseCommitteeId',
+          queryParams.get('defenseCommitteeId')!
+        );
     } else if (query) {
       // If it's a simple query string, use it as is
       params.append('query', query);

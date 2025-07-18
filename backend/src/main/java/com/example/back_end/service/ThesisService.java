@@ -161,6 +161,15 @@ public class ThesisService {
     }
 
     @Transactional
+    public Thesis removeTimeSlot(int id) {
+        Thesis thesis = thesisRepository.findById(id).orElse(null);
+        if (thesis == null)
+            throw new Error("Không tìm thấy luận văn");
+        thesis.setTimeSlot(null);
+        return thesisRepository.save(thesis);
+    }
+
+    @Transactional
     public void deleteThesisById(int id) {
         Thesis thesis = thesisRepository.findById(id).orElse(null);
         if (thesis == null)

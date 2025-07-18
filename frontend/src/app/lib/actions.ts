@@ -1464,6 +1464,7 @@ export async function updateTimeSlot(
     date: new Date(formData.get('date') + ''),
     start: formData.get('start'),
     end: formData.get('end'),
+    defenseCommitteeId: Number(formData.get('defenseCommitteeId')) || null,
   });
 
   if (!validatedFields.success) {
@@ -1956,6 +1957,36 @@ export async function scheduling(
     console.error('Scheduling error:', error);
     throw new Error(
       error?.response?.data?.message || 'Không thể xếp lịch luận văn'
+    );
+  }
+}
+
+export async function unscheduled(id: number | undefined) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/theses/unscheduled/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Luận văn đã được gỡ xếp lịch thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể gỡ xếp lịch luận văn' };
+    }
+  } catch (error: any) {
+    console.error('Scheduling error:', error);
+    throw new Error(
+      error?.response?.data?.message || 'Không thể gỡ xếp lịch luận văn'
     );
   }
 }

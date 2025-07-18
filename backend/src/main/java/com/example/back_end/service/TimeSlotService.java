@@ -1,12 +1,8 @@
 package com.example.back_end.service;
 
-import com.example.back_end.dao.DefenseCommitteeRepository;
-import com.example.back_end.dao.DefensePeriodRepository;
-import com.example.back_end.dao.TimeSlotRepository;
+import com.example.back_end.dao.*;
 import com.example.back_end.dto.TimeSlotDTO;
-import com.example.back_end.entity.DefenseCommittee;
-import com.example.back_end.entity.DefensePeriod;
-import com.example.back_end.entity.TimeSlot;
+import com.example.back_end.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +18,16 @@ public class TimeSlotService {
     private TimeSlotRepository timeSlotRepository;
     private DefensePeriodRepository defensePeriodRepository;
     private DefenseCommitteeRepository defenseCommitteeRepository;
+    private CommitteeMemberRepository committeeMemberRepository;
+    private PriorityScheduleRepository priorityScheduleRepository;
 
     @Autowired
-    public TimeSlotService(TimeSlotRepository timeSlotRepository, DefensePeriodRepository defensePeriodRepository, DefenseCommitteeRepository defenseCommitteeRepository) {
+    public TimeSlotService(TimeSlotRepository timeSlotRepository, DefensePeriodRepository defensePeriodRepository, DefenseCommitteeRepository defenseCommitteeRepository, CommitteeMemberRepository committeeMemberRepository, PriorityScheduleRepository priorityScheduleRepository) {
         this.timeSlotRepository = timeSlotRepository;
         this.defensePeriodRepository = defensePeriodRepository;
         this.defenseCommitteeRepository = defenseCommitteeRepository;
+        this.committeeMemberRepository = committeeMemberRepository;
+        this.priorityScheduleRepository = priorityScheduleRepository;
     }
 
     @Transactional(readOnly = true)
@@ -113,8 +113,23 @@ public class TimeSlotService {
 
         dbTimeSlot.setStart(timeSlotDTO.getStart());
         dbTimeSlot.setEnd(timeSlotDTO.getEnd());
-        DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(timeSlotDTO.getDefenseCommitteeId()).orElse(null);
-        dbTimeSlot.setDefenseCommittee(defenseCommittee);
+
+        if (timeSlotDTO.getDefenseCommitteeId() != null) {
+            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(timeSlotDTO.getDefenseCommitteeId()).orElse(null);
+
+            // Check if all committee members are available at this time slot
+            List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
+            for (CommitteeMember committeeMember : committeeMembers) {
+                List<PrioritySchedule> prioritySchedules = priorityScheduleRepository.findByLecturer(committeeMember.getLecturer());
+                for (PrioritySchedule prioritySchedule : prioritySchedules) {
+                    if (prioritySchedule.getTimeSlot().equals(dbTimeSlot))
+                        throw new Error("Giảng viên " + committeeMember.getLecturer().getUser().getFullname() + " đã có lịch bận trong khung giờ này");
+                }
+            }
+
+            dbTimeSlot.setDefenseCommittee(defenseCommittee);
+        }
+
         return timeSlotRepository.save(dbTimeSlot);
     }
 

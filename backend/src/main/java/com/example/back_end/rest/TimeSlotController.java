@@ -90,6 +90,15 @@ public class TimeSlotController {
                     }
                 }
 
+                if (request.getParameterMap().get("defenseCommitteeId") != null) {
+                    int defenseCommitteeId = Integer.parseInt(request.getParameterMap().get("defenseCommitteeId")[0]);
+                    for (int i = timeSlots.size() - 1; i >= 0; i--) {
+                        TimeSlot timeSlot = timeSlots.get(i);
+                        if (timeSlot.getDefenseCommittee() == null || !timeSlot.getDefenseCommittee().getId().equals(defenseCommitteeId))
+                            timeSlots.remove(i);
+                    }
+                }
+
                 return ResponseEntity.ok(timeSlots);
             } else {
                 return new SendError<List<TimeSlot>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

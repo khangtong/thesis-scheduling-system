@@ -1,7 +1,10 @@
 'use client';
+import { unscheduled } from '@/app/lib/actions';
 import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
 import { useThesisStore } from '@/stores/thesisStore';
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function DetailsPanel() {
   const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
@@ -10,6 +13,7 @@ export default function DetailsPanel() {
   const committeeMembers = useCommitteeMemberStore(
     (state) => state.committeeMembers
   );
+  const router = useRouter();
 
   if (!selectedTimeSlot) {
     return (
@@ -17,6 +21,15 @@ export default function DetailsPanel() {
         <p className="text-gray-500">Chọn một buổi bảo vệ để xem chi tiết</p>
       </div>
     );
+  }
+
+  function handleUnscheduled() {
+    toast.promise(unscheduled(thesis?.id), {
+      loading: 'Đang gỡ xếp lịch...',
+      success: 'Gỡ xếp lịch thành công',
+      error: (error) => error.message,
+    });
+    router.push('/dashboard/thesis-schedules');
   }
 
   return (
@@ -65,6 +78,12 @@ export default function DetailsPanel() {
           ))}
         </ul>
       </div>
+      <button
+        onClick={handleUnscheduled}
+        className="flex items-center rounded-lg bg-red-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+      >
+        Gỡ xếp lịch
+      </button>
 
       {/* Section: Kiểm tra Xung đột */}
       {/* <div>

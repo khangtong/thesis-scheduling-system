@@ -99,7 +99,7 @@ public class ThesisController {
                 String query = request.getParameterMap().get("query")[0];
                 for (int i = theses.size() - 1; i >= 0; i--) {
                     Thesis thesis = theses.get(i);
-                    if (!thesis.getTitle().contains(query) && !thesis.getStudent().getUser().getFullname().contains(query) && !thesis.getLecturer().getUser().getFullname().contains(query))
+                    if (!thesis.getTitle().contains(query) && !thesis.getStudent().getUser().getFullname().contains(query) && !thesis.getLecturer().getUser().getFullname().contains(query) && !thesis.getLecturer().getFaculty().getName().contains(query))
                         theses.remove(i);
                 }
             }
@@ -143,6 +143,20 @@ public class ThesisController {
         try {
             if ("ADMIN".equals(authController.authorize(response, request))) {
                 Thesis updatedThesis = thesisService.assignTimeSlot(id, thesisDTO);
+                return ResponseEntity.ok(updatedThesis);
+            } else {
+                return new SendError<Thesis>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<Thesis>().sendBadRequest(error.getMessage(), response);
+        }
+    }
+
+    @PutMapping("unscheduled/{id}")
+    public ResponseEntity<Thesis> unscheduled(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                Thesis updatedThesis = thesisService.removeTimeSlot(id);
                 return ResponseEntity.ok(updatedThesis);
             } else {
                 return new SendError<Thesis>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

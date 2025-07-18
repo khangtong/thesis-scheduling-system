@@ -19,6 +19,7 @@ export default async function Page(props: {
     date?: string;
     start?: string;
     end?: string;
+    defenseCommitteeId?: string;
     page?: string;
   }>;
 }) {
@@ -27,11 +28,18 @@ export default async function Page(props: {
 
   // Construct query string from search parameters
   let query = '';
-  if (searchParams?.date || searchParams?.start || searchParams?.end) {
+  if (
+    searchParams?.date ||
+    searchParams?.start ||
+    searchParams?.end ||
+    searchParams?.defenseCommitteeId
+  ) {
     const params = new URLSearchParams();
     if (searchParams?.date) params.append('date', searchParams.date);
     if (searchParams?.start) params.append('start', searchParams.start);
     if (searchParams?.end) params.append('end', searchParams.end);
+    if (searchParams?.defenseCommitteeId)
+      params.append('defenseCommitteeId', searchParams.defenseCommitteeId);
     query = params.toString();
   } else if (searchParams?.query) {
     query = searchParams.query;

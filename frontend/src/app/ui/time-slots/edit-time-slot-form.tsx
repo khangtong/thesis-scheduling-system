@@ -120,7 +120,6 @@ export default function Form({
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
               defaultValue={timeSlot?.defenseCommittee?.id || ''}
               aria-describedby="defenseCommitteeId-error"
-              required
             >
               <option value="" disabled>
                 Chọn hội đồng

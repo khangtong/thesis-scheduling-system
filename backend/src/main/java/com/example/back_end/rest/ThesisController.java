@@ -95,6 +95,15 @@ public class ThesisController {
                 }
             }
 
+            if (request.getParameterMap().get("query") != null) {
+                String query = request.getParameterMap().get("query")[0];
+                for (int i = theses.size() - 1; i >= 0; i--) {
+                    Thesis thesis = theses.get(i);
+                    if (!thesis.getTitle().contains(query) && !thesis.getStudent().getUser().getFullname().contains(query) && !thesis.getLecturer().getUser().getFullname().contains(query))
+                        theses.remove(i);
+                }
+            }
+
             return ResponseEntity.ok(theses);
         } catch (Error error) {
             return new SendError<List<Thesis>>().sendUnauthorized(error.getMessage(), response);

@@ -17,13 +17,15 @@ public class ThesisService {
     private StudentRepository studentRepository;
     private LecturerRepository lecturerRepository;
     private TimeSlotRepository timeSlotRepository;
+    private CommitteeMemberRepository committeeMemberRepository;
 
     @Autowired
-    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository) {
+    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository, CommitteeMemberRepository committeeMemberRepository) {
         this.thesisRepository = thesisRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
         this.timeSlotRepository = timeSlotRepository;
+        this.committeeMemberRepository = committeeMemberRepository;
     }
 
     @Transactional(readOnly = true)
@@ -128,12 +130,31 @@ public class ThesisService {
             throw new Error("Không tìm thấy luận văn");
 
         if (thesisDTO.getTimeSlotId() != null) {
+            // Check if this thesis was assigned to this time slot before
+            if (thesis.getTimeSlot() != null && thesis.getTimeSlot().getId().equals(thesisDTO.getTimeSlotId()))
+                throw new Error("Luận văn đã được xếp vào khung giờ này trước đó");
+
             TimeSlot timeSlot = timeSlotRepository.findById(thesisDTO.getTimeSlotId()).orElse(null);
             if (timeSlot == null)
                 throw new Error("Không tìm thấy khung giờ");
+
+            // Check if another thesis was assigned to this time slot
+            Thesis thesis1 = thesisRepository.findByTimeSlot(timeSlot);
+            if (thesis1 != null)
+                throw new Error("Đã có luận văn khác trong khung giờ này");
+
+            // Check if the thesis's advisor is a secretary of the defense committee
+            List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(timeSlot.getDefenseCommittee());
+            for (CommitteeMember committeeMember : committeeMembers) {
+                if (committeeMember.getCommitteeRole().getName().equals("Thư ký") && !committeeMember.getLecturer().equals(thesis.getLecturer()))
+                    throw new Error("Thư ký của hội đồng phải là giảng viên hướng dẫn luận văn");
+            }
+
             thesis.setTimeSlot(timeSlot);
             thesis.setStatus("Đã xếp lịch");
             thesis.setUpdatedAt(LocalDateTime.now());
+        } else {
+            throw new Error("Khung giờ không hợp lệ");
         }
 
         return thesisRepository.save(thesis);

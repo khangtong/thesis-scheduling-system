@@ -17,7 +17,7 @@ export default function Toolbar({
   );
 
   return (
-    <div className="flex items-end gap-3 pb-3 border-b-2 border-neutral-500">
+    <div className="flex items-end gap-3 pb-3 border-b-2 border-gray-300">
       <select
         id="defensePeriodId"
         name="defensePeriodId"

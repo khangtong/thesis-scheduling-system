@@ -1065,7 +1065,8 @@ export async function searchTheses(token: string | undefined, query: string) {
       query.includes('title=') ||
       query.includes('status=') ||
       query.includes('lecturerId=') ||
-      query.includes('timeSlotId=')
+      query.includes('timeSlotId=') ||
+      query.includes('query=')
     ) {
       // Parse the query string
       const queryParams = new URLSearchParams(query);
@@ -1079,6 +1080,8 @@ export async function searchTheses(token: string | undefined, query: string) {
         params.append('lecturerId', queryParams.get('lecturerId')!);
       if (queryParams.has('timeSlotId'))
         params.append('timeSlotId', queryParams.get('timeSlotId')!);
+      if (queryParams.has('query'))
+        params.append('query', queryParams.get('query')!);
     } else if (query) {
       // If it's a simple query string, use it as is
       params.append('query', query);

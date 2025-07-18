@@ -120,13 +120,15 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                     {thesis?.lecturer?.user?.fullname || 'N/A'}
                   </td>
                   <td className="px-3 py-1">
-                    {`${thesis?.timeSlot?.date
-                      .toString()
-                      .split('-')
-                      .reverse()
-                      .join('/')} (${thesis?.timeSlot?.start} - ${
-                      thesis?.timeSlot?.end
-                    })` || 'Chưa có'}
+                    {thesis?.timeSlot
+                      ? `${thesis?.timeSlot?.date
+                          .toString()
+                          .split('-')
+                          .reverse()
+                          .join('/')} (${thesis?.timeSlot?.start} - ${
+                          thesis?.timeSlot?.end
+                        })`
+                      : 'Chưa có'}
                   </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

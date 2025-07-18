@@ -1,10 +1,14 @@
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import ScheduleCard from './schedule-card';
-import { TimeSlot, DefensePeriod, Thesis } from '@/app/lib/definitions';
+import {
+  TimeSlot,
+  DefensePeriod,
+  CommitteeMember,
+} from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
 import { useEffect, useState } from 'react';
 import EmptyCell from './empty-cell';
-import { useThesisStore } from '@/stores/thesisStore';
+import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
 
 export default function ScheduleGrid({
   defensePeriodAndTimeSlots,
@@ -20,9 +24,6 @@ export default function ScheduleGrid({
   const [dayList, setDayList] = useState<
     { day: string; timeSlotsOnDay: TimeSlot[] }[]
   >([]);
-  const theses = useThesisStore((state) => state.theses).filter(
-    (thesis) => thesis?.timeSlot?.id === selectedTimeSlotId
-  );
   // Get the defense period id from the select of toolbar using zustand
   const defensePeriodId = useDefensePeriodIdStore(
     (state) => state.defensePeriodId
@@ -89,7 +90,7 @@ export default function ScheduleGrid({
   }, [defensePeriodId]);
 
   return (
-    <div className="px-3 max-h-[650px] overflow-auto border-x-2 border-neutral-500">
+    <div className="px-3 max-h-[650px] overflow-auto border-x-2 border-gray-300">
       <div
         className="grid"
         style={{
@@ -112,9 +113,9 @@ export default function ScheduleGrid({
             <div key={timeSlot?.id} className="contents">
               {/* Time Slot Label */}
               <div className="flex flex-col items-center justify-center text-sm font-semibold text-gray-500 p-2 border-r border-gray-200">
-                <span>{timeSlot?.start}</span>
+                <span>{timeSlot?.start.slice(0, -3)}</span>
                 <span>-</span>
-                <span>{timeSlot?.end}</span>
+                <span>{timeSlot?.end.slice(0, -3)}</span>
               </div>
               {/* Session Cells */}
               {dayList.map(({ day, timeSlotsOnDay }, i) => {
@@ -132,13 +133,8 @@ export default function ScheduleGrid({
                   >
                     {matchTimeSlot?.defenseCommittee ? (
                       <ScheduleCard
-                        defenseCommittee={matchTimeSlot?.defenseCommittee}
-                        isSelected={
-                          matchTimeSlot?.defenseCommittee.id ===
-                          selectedTimeSlotId
-                        }
+                        isSelected={matchTimeSlot?.id === selectedTimeSlotId}
                         timeSlot={matchTimeSlot}
-                        day={day}
                       />
                     ) : (
                       // Empty cell with drop functionality

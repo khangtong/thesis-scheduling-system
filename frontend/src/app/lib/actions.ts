@@ -1954,9 +1954,8 @@ export async function scheduling(
     }
   } catch (error: any) {
     console.error('Scheduling error:', error);
-    return {
-      success: false,
-      message: error?.response?.data?.message || 'Có lỗi xảy ra',
-    };
+    throw new Error(
+      error?.response?.data?.message || 'Không thể xếp lịch luận văn'
+    );
   }
 }

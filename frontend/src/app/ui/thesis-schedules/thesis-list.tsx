@@ -1,9 +1,7 @@
 import { Thesis } from '@/app/lib/definitions';
 import { useThesisStore } from '@/stores/thesisStore';
 
-export default function ThesisList() {
-  const theses = useThesisStore((state) => state.theses);
-
+export default function ThesisList({ theses }: { theses: Thesis[] }) {
   const handleDragStart = (e: React.DragEvent, thesis: Thesis) => {
     // Store the thesis data in the drag event
     e.dataTransfer.setData('application/json', JSON.stringify(thesis));
@@ -20,7 +18,17 @@ export default function ThesisList() {
           onDragStart={(e) => handleDragStart(e, thesis)}
         >
           <span className="font-medium text-sm">{thesis?.title}</span>
-          <span className="text-xs">Trạng thái: {thesis?.status}</span>
+          <span
+            className={`${
+              thesis?.status === 'Đã xếp lịch'
+                ? 'text-green-400'
+                : thesis?.status === 'Chưa xếp lịch'
+                ? 'text-yellow-400'
+                : 'text-red-400'
+            } text-xs`}
+          >
+            {thesis?.status}
+          </span>
           <span className="text-xs">
             Sinh viên: {thesis?.student?.user?.fullname}
           </span>

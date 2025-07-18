@@ -3,12 +3,12 @@ import { DefenseCommittee, Thesis } from '@/app/lib/definitions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { scheduling } from '@/app/lib/actions';
+import { useThesisStore } from '@/stores/thesisStore';
+import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
 
 interface ScheduleCardProps {
-  defenseCommittee: DefenseCommittee;
   isSelected: boolean;
   timeSlot?: any; // Add timeSlot prop for context
-  day?: string; // Add day prop for context
 }
 
 const statusStyles = {
@@ -18,14 +18,16 @@ const statusStyles = {
 };
 
 export default function ScheduleCard({
-  defenseCommittee,
   isSelected,
   timeSlot,
-  day,
 }: ScheduleCardProps) {
   const selectTimeSlot = useTimeSlotStore((state) => state.selectTimeSlot);
-  const selectedStyle = isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : '';
+  const selectedStyle = isSelected ? 'ring-2 ring-blue-500' : '';
   const [isDragOver, setIsDragOver] = useState(false);
+  const theses = useThesisStore((state) => state.theses);
+  const setCommitteeMembers = useCommitteeMemberStore(
+    (state) => state.setCommitteeMembers
+  );
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -59,17 +61,32 @@ export default function ScheduleCard({
 
   return (
     <div
-      onClick={() => selectTimeSlot(timeSlot)}
+      onClick={() => {
+        selectTimeSlot(timeSlot);
+        setCommitteeMembers(timeSlot.committeeMembers);
+      }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`p-2 h-full rounded-md border cursor-pointer flex flex-col justify-between text-sm ${selectedStyle} ${
-        isDragOver ? 'bg-blue-100 border-blue-400' : ''
+      className={`p-2 h-full rounded-md border cursor-pointer flex flex-col justify-center text-sm ${selectedStyle} ${
+        isDragOver ? 'bg-blue-100! border-blue-400!' : ''
+      } ${
+        theses.some((thesis) => thesis?.timeSlot?.id === timeSlot?.id) &&
+        statusStyles.OK
       }`}
     >
       <div>
-        <p className="font-bold text-gray-800">{defenseCommittee?.name}</p>
-        <p className="text-gray-600 truncate">{defenseCommittee?.room?.name}</p>
+        <p className="font-bold text-gray-800">
+          {timeSlot?.defenseCommittee?.name}
+        </p>
+        <p className="text-gray-600 truncate">
+          Phòng: {timeSlot?.defenseCommittee?.room?.name}
+        </p>
+        <p className="text-gray-600 truncate">
+          {theses.some((thesis) => thesis?.timeSlot?.id === timeSlot?.id)
+            ? 'Đã xếp lịch'
+            : 'Đang trống'}
+        </p>
       </div>
     </div>
   );

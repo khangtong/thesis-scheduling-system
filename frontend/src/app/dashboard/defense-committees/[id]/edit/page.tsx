@@ -8,6 +8,7 @@ import {
   fetchCommitteeMembersByDefenseCommitteeId,
   fetchLecturerByUserId,
   fetchUsers,
+  fetchPrioritySchedules,
 } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
@@ -29,6 +30,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     authToken,
     id
   );
+  const prioritySchedules = await fetchPrioritySchedules(authToken);
   const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
@@ -64,6 +66,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         defensePeriods={defensePeriods}
         committeeMembers={committeeMembers}
         lecturers={lecturers}
+        prioritySchedules={prioritySchedules}
       />
     </main>
   );

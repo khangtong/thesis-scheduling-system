@@ -1,8 +1,11 @@
 'use client';
 
+import { autoScheduling } from '@/app/lib/actions';
 import { DefensePeriod } from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Toolbar({
   defensePeriods,
@@ -15,6 +18,20 @@ export default function Toolbar({
   const setDefensePeriodId = useDefensePeriodIdStore(
     (state) => state.setDefensePeriodId
   );
+  const router = useRouter();
+
+  function handleAutoScheduling() {
+    if (defensePeriodId) {
+      toast.promise(autoScheduling(defensePeriodId), {
+        loading: 'Đang xếp lịch tự động...',
+        success: 'Xếp lịch tự động thành công',
+        error: (error) => error.message,
+      });
+      router.push('/dashboard/thesis-schedules');
+    } else {
+      toast.error('Phải chọn một đợt bảo vệ để xếp lịch tự động');
+    }
+  }
 
   return (
     <div className="flex items-end gap-3 pb-3 border-b-2 border-gray-300">
@@ -38,7 +55,10 @@ export default function Toolbar({
             )
         )}
       </select>
-      <button className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+      <button
+        onClick={handleAutoScheduling}
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+      >
         Xếp lịch tự động
       </button>
       <button className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">

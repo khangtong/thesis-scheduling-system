@@ -1967,6 +1967,7 @@ export async function unscheduled(id: number | undefined) {
 
     const response = await axios.put(
       `${process.env.API_URL}/theses/unscheduled/${id}`,
+      JSON.stringify({}),
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -1987,6 +1988,37 @@ export async function unscheduled(id: number | undefined) {
     console.error('Scheduling error:', error);
     throw new Error(
       error?.response?.data?.message || 'Không thể gỡ xếp lịch luận văn'
+    );
+  }
+}
+
+export async function autoScheduling(defensePeriodId: string) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.put(
+      `${process.env.API_URL}/theses/auto-scheduling/${defensePeriodId}`,
+      JSON.stringify({}),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Xếp lịch tự động thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể xếp lịch tự động' };
+    }
+  } catch (error: any) {
+    console.error('Auto scheduling error:', error);
+    throw new Error(
+      error?.response?.data?.message || 'Không thể xếp lịch tự động'
     );
   }
 }

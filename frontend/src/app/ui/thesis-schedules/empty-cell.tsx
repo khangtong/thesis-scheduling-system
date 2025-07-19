@@ -31,7 +31,10 @@ export default function EmptyCell({
       const thesis: Thesis = thesisData;
 
       toast.info(
-        `Khung giờ ${timeSlot?.start}-${timeSlot?.end} ngày ${day} chưa có hội đồng`
+        `Khung giờ ${timeSlot?.start.slice(0, -3)}-${timeSlot?.end.slice(
+          0,
+          -3
+        )} ngày ${day} chưa có hội đồng`
       );
     } catch (error) {
       console.error('Error parsing dropped thesis data:', error);

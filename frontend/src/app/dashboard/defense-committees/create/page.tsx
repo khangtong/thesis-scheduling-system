@@ -5,6 +5,7 @@ import {
   fetchCommitteeRoles,
   fetchDefensePeriods,
   fetchLecturerByUserId,
+  fetchPrioritySchedules,
   fetchRooms,
   fetchTimeSlots,
   fetchUsers,
@@ -22,6 +23,7 @@ export default async function Page() {
   const timeSlots = await fetchTimeSlots(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
   const committeeRoles = await fetchCommitteeRoles(authToken);
+  const prioritySchedules = await fetchPrioritySchedules(authToken);
   const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
   for (let i = 0; i < users.length; i++) {
@@ -56,6 +58,7 @@ export default async function Page() {
         defensePeriods={defensePeriods}
         committeeRoles={committeeRoles}
         lecturers={lecturers}
+        prioritySchedules={prioritySchedules}
       />
     </main>
   );

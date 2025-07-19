@@ -16,6 +16,7 @@ import {
   CommitteeRole,
   DefensePeriod,
   Lecturer,
+  PrioritySchedule,
   Room,
   TimeSlot,
 } from '@/app/lib/definitions';
@@ -26,12 +27,14 @@ export default function Form({
   defensePeriods,
   committeeRoles,
   lecturers,
+  prioritySchedules,
 }: {
   rooms: Room[];
   timeSlots: TimeSlot[];
   defensePeriods: DefensePeriod[];
   committeeRoles: CommitteeRole[];
   lecturers: Lecturer[];
+  prioritySchedules: PrioritySchedule[];
 }) {
   const [state, action, isPending] = useActionState(
     createDefenseCommittee,
@@ -39,6 +42,71 @@ export default function Form({
   );
   const router = useRouter();
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<number[]>([]);
+  const [filteredTimeSlots, setFilteredTimeSlots] =
+    useState<TimeSlot[]>(timeSlots);
+  const [selectedLecturerIds, setSelectedLecturerIds] = useState<string[]>([]);
+  const [selectedDefensePeriodId, setSelectedDefensePeriodId] =
+    useState<string>('');
+
+  // Function to get all currently selected lecturer IDs from all select inputs
+  const getAllSelectedLecturerIds = () => {
+    const ids: string[] = [];
+    committeeRoles.forEach((role) => {
+      const selectElement = document.getElementById(
+        `lecturerId-${role?.id}`
+      ) as HTMLSelectElement;
+      if (selectElement && selectElement.value) {
+        ids.push(selectElement.value);
+      }
+    });
+    return ids;
+  };
+
+  useEffect(() => {
+    // If no defense period is selected, show empty time slots
+    if (!selectedDefensePeriodId) {
+      setFilteredTimeSlots([]);
+      return;
+    }
+
+    let availableTimeSlots = timeSlots;
+
+    // Filter by defense period date range
+    const selectedDefensePeriod = defensePeriods.find(
+      (dp) => dp?.id?.toString() === selectedDefensePeriodId
+    );
+
+    if (selectedDefensePeriod) {
+      const startDate = new Date(
+        `${selectedDefensePeriod.start}`.split('T')[0]
+      );
+      const endDate = new Date(`${selectedDefensePeriod.end}`.split('T')[0]);
+
+      availableTimeSlots = availableTimeSlots.filter((ts) => {
+        const timeSlotDate = new Date(ts?.date + '');
+        return timeSlotDate >= startDate && timeSlotDate <= endDate;
+      });
+    }
+
+    // Filter by lecturer schedules
+    if (selectedLecturerIds.length > 0) {
+      const lecturerSchedules = prioritySchedules.filter((ps) =>
+        selectedLecturerIds.some((id) => ps?.lecturer?.id === +id)
+      );
+
+      availableTimeSlots = availableTimeSlots.filter(
+        (ts) => !lecturerSchedules.some((ls) => ls?.timeSlot?.id === ts?.id)
+      );
+    }
+
+    setFilteredTimeSlots(availableTimeSlots);
+  }, [
+    selectedLecturerIds,
+    selectedDefensePeriodId,
+    timeSlots,
+    prioritySchedules,
+    defensePeriods,
+  ]);
 
   useEffect(() => {
     if (isPending) {
@@ -66,6 +134,29 @@ export default function Form({
         return prev.filter((id) => id !== timeSlotId);
       } else {
         return [...prev, timeSlotId];
+      }
+    });
+  };
+
+  const handleLecturerChange = () => {
+    // Get all currently selected lecturer IDs from all select inputs
+    const allSelectedIds = getAllSelectedLecturerIds();
+    setSelectedLecturerIds(allSelectedIds);
+  };
+
+  const handleDefensePeriodChange = (defensePeriodId: string) => {
+    setSelectedDefensePeriodId(defensePeriodId);
+    // Clear selected time slots when defense period changes
+    setSelectedTimeSlots([]);
+    // Clear all lecturer selections when defense period changes
+    setSelectedLecturerIds([]);
+    // Clear all lecturer select inputs
+    committeeRoles.forEach((role) => {
+      const selectElement = document.getElementById(
+        `lecturerId-${role?.id}`
+      ) as HTMLSelectElement;
+      if (selectElement) {
+        selectElement.value = '';
       }
     });
   };
@@ -110,6 +201,7 @@ export default function Form({
               name="defensePeriodId"
               className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
               defaultValue=""
+              onChange={(e) => handleDefensePeriodChange(e.target.value)}
               aria-describedby="defensePeriodId-error"
               required
             >
@@ -179,6 +271,7 @@ export default function Form({
                         name="lecturerIds"
                         className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-3 text-sm placeholder:text-gray-500"
                         defaultValue=""
+                        onChange={handleLecturerChange}
                         aria-describedby={`lecturerId-${committeeRole?.id}-error`}
                         required
                       >
@@ -203,9 +296,9 @@ export default function Form({
             Chọn khung giờ
           </label>
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            {timeSlots.length > 0 ? (
+            {filteredTimeSlots.length > 0 ? (
               <div className="space-y-2 max-h-40 overflow-y-auto">
-                {timeSlots.map((timeSlot) => (
+                {filteredTimeSlots.map((timeSlot) => (
                   <div key={timeSlot?.id} className="flex items-center">
                     <input
                       type="checkbox"
@@ -230,7 +323,11 @@ export default function Form({
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">Không có khung giờ nào</p>
+              <p className="text-sm text-gray-500">
+                {!selectedDefensePeriodId
+                  ? 'Vui lòng chọn đợt bảo vệ trước'
+                  : 'Không có khung giờ nào'}
+              </p>
             )}
           </div>
           {selectedTimeSlots.length > 0 && (

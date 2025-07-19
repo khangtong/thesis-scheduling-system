@@ -9,7 +9,7 @@ export default function ThesisList({ theses }: { theses: Thesis[] }) {
   };
 
   return (
-    <div className="flex flex-col gap-3 mt-3">
+    <div className="max-h-[600px] overflow-auto flex flex-col gap-3 mt-3">
       {theses.map((thesis) => (
         <div
           key={thesis?.id}

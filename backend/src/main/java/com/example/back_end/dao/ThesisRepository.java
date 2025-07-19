@@ -11,4 +11,5 @@ public interface ThesisRepository extends JpaRepository<Thesis, Integer> {
     Thesis findByStudent(Student student);
     List<Thesis> findByLecturer(Lecturer lecturer);
     Thesis findByTimeSlot(TimeSlot timeSlot);
+    List<Thesis> findByStatus(String status);
 }

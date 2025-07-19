@@ -166,6 +166,20 @@ public class ThesisController {
         }
     }
 
+    @PutMapping("auto-scheduling/{id}")
+    public ResponseEntity<List<Thesis>> autoScheduling(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Thesis> theses = thesisService.autoScheduling(id);
+                return ResponseEntity.ok(theses);
+            } else {
+                return new SendError<List<Thesis>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Thesis>>().sendBadRequest(error.getMessage(), response);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteThesisById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {

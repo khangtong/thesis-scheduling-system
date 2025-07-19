@@ -20,7 +20,7 @@ export default function ScheduleGrid({
 }) {
   const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
   const selectedTimeSlotId = selectedTimeSlot?.id;
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const { timeSlots, setTimeSlots } = useTimeSlotStore();
   const [dayList, setDayList] = useState<
     { day: string; timeSlotsOnDay: TimeSlot[] }[]
   >([]);

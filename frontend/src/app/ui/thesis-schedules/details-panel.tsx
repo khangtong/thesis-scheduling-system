@@ -7,9 +7,11 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export default function DetailsPanel() {
+  const timeSlots = useTimeSlotStore((state) => state.timeSlots);
   const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
   const theses = useThesisStore((state) => state.theses);
   const thesis = theses.find((t) => t?.timeSlot?.id === selectedTimeSlot?.id);
+  const unScheduledTheses = theses.filter((t) => !t?.timeSlot);
   const committeeMembers = useCommitteeMemberStore(
     (state) => state.committeeMembers
   );
@@ -17,8 +19,24 @@ export default function DetailsPanel() {
 
   if (!selectedTimeSlot) {
     return (
-      <div className="bg-white p-4 rounded-lg shadow-md h-full flex items-center justify-center">
-        <p className="text-gray-500">Chọn một buổi bảo vệ để xem chi tiết</p>
+      <div className="bg-white p-4 rounded-lg shadow-md h-full flex flex-col">
+        <h3 className="text-lg text-green-400 font-medium text-center">
+          Đã xếp lịch{' '}
+          {`${theses.filter((t) => t?.status === 'Đã xếp lịch').length}/${
+            theses.length
+          }`}{' '}
+          luận văn
+        </h3>
+        <div className="border-b pb-4 my-4">
+          <h3 className="text-lg font-medium text-yellow-400">Cảnh báo:</h3>
+        </div>
+        {unScheduledTheses.map((ut) => (
+          <div key={ut?.id} className="border-b pb-4 mb-4">
+            <span className="text-sm text-neutral-800">
+              Luận văn <strong>{ut?.title}</strong> chưa được xếp lịch
+            </span>
+          </div>
+        ))}
       </div>
     );
   }
@@ -78,12 +96,14 @@ export default function DetailsPanel() {
           ))}
         </ul>
       </div>
-      <button
-        onClick={handleUnscheduled}
-        className="flex items-center rounded-lg bg-red-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-      >
-        Gỡ xếp lịch
-      </button>
+      {thesis && (
+        <button
+          onClick={handleUnscheduled}
+          className="flex items-center rounded-lg bg-red-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        >
+          Gỡ xếp lịch
+        </button>
+      )}
 
       {/* Section: Kiểm tra Xung đột */}
       {/* <div>

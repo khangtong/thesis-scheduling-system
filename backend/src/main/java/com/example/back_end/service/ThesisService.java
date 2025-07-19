@@ -18,14 +18,16 @@ public class ThesisService {
     private LecturerRepository lecturerRepository;
     private TimeSlotRepository timeSlotRepository;
     private CommitteeMemberRepository committeeMemberRepository;
+    private DefensePeriodRepository defensePeriodRepository;
 
     @Autowired
-    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository, CommitteeMemberRepository committeeMemberRepository) {
+    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository, CommitteeMemberRepository committeeMemberRepository, DefensePeriodRepository defensePeriodRepository) {
         this.thesisRepository = thesisRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.committeeMemberRepository = committeeMemberRepository;
+        this.defensePeriodRepository = defensePeriodRepository;
     }
 
     @Transactional(readOnly = true)
@@ -166,7 +168,51 @@ public class ThesisService {
         if (thesis == null)
             throw new Error("Không tìm thấy luận văn");
         thesis.setTimeSlot(null);
+        thesis.setStatus("Chưa xếp lịch");
         return thesisRepository.save(thesis);
+    }
+
+    @Transactional
+    public List<Thesis> autoScheduling(int defensePeriodId) {
+        DefensePeriod defensePeriod = defensePeriodRepository.findById(defensePeriodId).orElse(null);
+        if (defensePeriod == null)
+            throw new Error("Không tìm thấy đợt bảo vệ");
+
+        List<Thesis> theses = thesisRepository.findByStatus("Chưa xếp lịch");
+        List<TimeSlot> timeSlots = timeSlotRepository.findAll();
+
+        for (Thesis thesis : theses) {
+            for (int i = timeSlots.size() - 1; i >= 0; i--) {
+                TimeSlot timeSlot = timeSlots.get(i);
+                // Check if the time slot is in the defense period
+                if (timeSlot.getDate().isBefore(defensePeriod.getStart().toLocalDate()) || timeSlot.getDate().isAfter(defensePeriod.getEnd().toLocalDate()))
+                    continue;
+
+                // Check if there is another thesis at this time slot
+                Thesis thesis1 = thesisRepository.findByTimeSlot(timeSlot);
+                if (thesis1 != null)
+                    continue;
+
+                // Check if there is a defense committee at this time slot
+                if (timeSlot.getDefenseCommittee() == null)
+                    continue;
+
+                List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(timeSlot.getDefenseCommittee());
+                for (CommitteeMember committeeMember : committeeMembers) {
+                    // Check if the thesis's advisor is also the secretary of this defense committee
+                    if (committeeMember.getCommitteeRole().getName().equals("Thư ký") && committeeMember.getLecturer().equals(thesis.getLecturer())) {
+                        // Assign the thesis to the time slot if all cases are passed
+                        thesis.setTimeSlot(timeSlot);
+                        // Set thesis's status to scheduled
+                        thesis.setStatus("Đã xếp lịch");
+                        // Remove the time slot from the list
+                        timeSlots.remove(i);
+                    }
+                }
+            }
+        }
+
+        return thesisRepository.saveAll(theses);
     }
 
     @Transactional

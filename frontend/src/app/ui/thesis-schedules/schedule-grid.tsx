@@ -20,7 +20,8 @@ export default function ScheduleGrid({
 }) {
   const selectedTimeSlot = useTimeSlotStore((state) => state.selectedTimeSlot);
   const selectedTimeSlotId = selectedTimeSlot?.id;
-  const { timeSlots, setTimeSlots } = useTimeSlotStore();
+  const [timeSlots, setTimeSlotsState] = useState<TimeSlot[]>([]);
+  const setTimeSlots = useTimeSlotStore((state) => state.setTimeSlots);
   const [dayList, setDayList] = useState<
     { day: string; timeSlotsOnDay: TimeSlot[] }[]
   >([]);
@@ -75,8 +76,11 @@ export default function ScheduleGrid({
           })
         );
 
+        // Set time slots' store
+        setTimeSlots(defensePeriod.timeSlots);
+
         // Remove duplicate time slots
-        setTimeSlots(
+        setTimeSlotsState(
           defensePeriod.timeSlots
             .filter(
               (tl) =>
@@ -90,7 +94,7 @@ export default function ScheduleGrid({
   }, [defensePeriodId]);
 
   return (
-    <div className="px-3 max-h-[650px] overflow-auto border-x-2 border-gray-300">
+    <div className="max-h-[650px] overflow-auto border-x-2 border-gray-300">
       <div
         className="grid"
         style={{

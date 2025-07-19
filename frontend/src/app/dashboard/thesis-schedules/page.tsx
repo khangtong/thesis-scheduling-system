@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import {
+  fetchCommitteeMembers,
   fetchCommitteeMembersByDefenseCommitteeId,
   fetchDefensePeriods,
   fetchFaculties,
@@ -29,6 +30,7 @@ export default async function Page(props: {
   const query = searchParams?.query || '';
 
   const authToken = (await cookies()).get('session')?.value;
+  const committeeMembers = await fetchCommitteeMembers(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
   const { data } = await searchTheses(authToken, query);
   let defensePeriodAndTimeSlots: {
@@ -70,6 +72,7 @@ export default async function Page(props: {
         defensePeriods={defensePeriods}
         theses={data}
         defensePeriodAndTimeSlots={defensePeriodAndTimeSlots}
+        committeeMembers={committeeMembers}
       />
     </div>
   );

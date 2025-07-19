@@ -19,7 +19,7 @@ export default function DetailsPanel() {
 
   if (!selectedTimeSlot) {
     return (
-      <div className="bg-white p-4 rounded-lg shadow-md h-full flex flex-col">
+      <div className="max-h-[650px] overflow-auto bg-white p-4 rounded-lg shadow-md flex flex-col">
         <h3 className="text-lg text-green-400 font-medium text-center">
           Đã xếp lịch{' '}
           {`${theses.filter((t) => t?.status === 'Đã xếp lịch').length}/${
@@ -33,10 +33,49 @@ export default function DetailsPanel() {
         {unScheduledTheses.map((ut) => (
           <div key={ut?.id} className="border-b pb-4 mb-4">
             <span className="text-sm text-neutral-800">
-              Luận văn <strong>{ut?.title}</strong> chưa được xếp lịch
+              Luận văn <strong>{ut?.title}</strong> chưa được xếp lịch.
             </span>
+            {!committeeMembers.some(
+              (cm) =>
+                cm?.lecturer?.id === ut?.lecturer?.id &&
+                cm?.committeeRole?.name === 'Thư ký'
+            ) && (
+              <span className="block mt-1 text-sm text-neutral-800">
+                Không có hội đồng nào có thư ký là giảng viên{' '}
+                <strong>{ut?.lecturer?.user?.fullname}</strong>.{' '}
+                <a
+                  href="/dashboard/defense-committees/create"
+                  className="text-blue-600 underline"
+                >
+                  Tạo hội đồng mới
+                </a>
+              </span>
+            )}
           </div>
         ))}
+        {timeSlots.map((ts) => {
+          if (
+            ts?.defenseCommittee &&
+            !theses.some((t) => t?.timeSlot?.id === ts.id)
+          )
+            return (
+              <div key={ts?.id} className="border-b pb-4 mb-4">
+                <span className="text-sm text-neutral-800">
+                  Khung giờ{' '}
+                  <strong>{`${ts?.start.slice(0, -3)}-${ts?.end.slice(
+                    0,
+                    -3
+                  )}`}</strong>{' '}
+                  ngày{' '}
+                  <strong>{`${(ts.date + '')
+                    .split('-')
+                    .reverse()
+                    .join('/')}`}</strong>{' '}
+                  vẫn còn trống
+                </span>
+              </div>
+            );
+        })}
       </div>
     );
   }

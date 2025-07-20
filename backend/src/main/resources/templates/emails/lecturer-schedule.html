@@ -29,7 +29,7 @@
     <div class="content-wrapper">
         <div class="header">
             <h1>Hệ thống Xếp lịch Luận văn Tốt nghiệp</h1>
-            <p>Trường Công nghệ Thông tin và Truyền thông - Trường Đại học Cần Thơ</p>
+            <p>Trường Công nghệ Thông tin và Truyền thông - Đại học Cần Thơ</p>
         </div>
 
         <div class="body-content">
@@ -43,15 +43,15 @@
                     <th>Thời gian</th>
                     <th>Địa điểm</th>
                     <th>Sinh viên</th>
-                    <th>Vai trò</th>
+                    <th>Vai trò hội đồng</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="session : ${scheduledSessions}">
-                    <td th:text="${session.sessionTime} + ' - ' + ${#dates.format(session.sessionDate, 'dd/MM/yyyy')}">08:30 - 20/06/2025</td>
-                    <td th:text="${session.locationName}">Phòng H.301</td>
-                    <td th:text="${session.studentName}">Trần Văn C</td>
-                    <td th:text="${session.committeeRoleName}">Chủ tịch Hội đồng</td>
+                    <td th:text="${session.getStart()} + ' - ' + ${session.getDate()}">08:30 - 20/06/2025</td>
+                    <td th:text="${session.getDefenseCommittee().getRoom().getName()}">Phòng H.301</td>
+                    <td th:text="${session.studentName()}">Trần Văn C</td>
+                    <td th:text="${session.committeeRoleName()}">Chủ tịch</td>
                 </tr>
                 </tbody>
             </table>

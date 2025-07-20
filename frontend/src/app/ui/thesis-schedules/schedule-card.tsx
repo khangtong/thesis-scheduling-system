@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { scheduling } from '@/app/lib/actions';
 import { useThesisStore } from '@/stores/thesisStore';
 import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
+import { useRouter } from 'next/navigation';
 
 interface ScheduleCardProps {
   isSelected: boolean;
@@ -28,6 +29,7 @@ export default function ScheduleCard({
   const setCommitteeMembers = useCommitteeMemberStore(
     (state) => state.setCommitteeMembers
   );
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -54,6 +56,9 @@ export default function ScheduleCard({
         success: 'Luận văn đã được xếp lịch thành công',
         error: (error) => error.message,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Error parsing dropped thesis data:', error);
     }

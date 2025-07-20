@@ -1,11 +1,14 @@
 package com.example.back_end.service;
 
 import com.example.back_end.dao.*;
+import com.example.back_end.dto.ScheduledSessionDTO;
 import com.example.back_end.dto.ThesisDTO;
 import com.example.back_end.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,15 +22,19 @@ public class ThesisService {
     private TimeSlotRepository timeSlotRepository;
     private CommitteeMemberRepository committeeMemberRepository;
     private DefensePeriodRepository defensePeriodRepository;
+    private NotificationRepository notificationRepository;
+    private TemplateEngine templateEngine;
 
     @Autowired
-    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository, CommitteeMemberRepository committeeMemberRepository, DefensePeriodRepository defensePeriodRepository) {
+    public ThesisService(ThesisRepository thesisRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, TimeSlotRepository timeSlotRepository, CommitteeMemberRepository committeeMemberRepository, DefensePeriodRepository defensePeriodRepository, NotificationRepository notificationRepository, TemplateEngine templateEngine) {
         this.thesisRepository = thesisRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
         this.timeSlotRepository = timeSlotRepository;
         this.committeeMemberRepository = committeeMemberRepository;
         this.defensePeriodRepository = defensePeriodRepository;
+        this.notificationRepository = notificationRepository;
+        this.templateEngine = templateEngine;
     }
 
     @Transactional(readOnly = true)
@@ -213,6 +220,98 @@ public class ThesisService {
         }
 
         return thesisRepository.saveAll(theses);
+    }
+
+    @Transactional
+    public List<Notification> publishSchedules(int defensePeriodId) {
+        DefensePeriod defensePeriod = defensePeriodRepository.findById(defensePeriodId).orElse(null);
+        if (defensePeriod == null)
+            throw new Error("Không tìm thấy đợt bảo vệ");
+
+        List<Thesis> theses = thesisRepository.findByStatus("Đã xếp lịch");
+        List<Notification> notifications = new ArrayList<>();
+        List<Lecturer> lecturers = lecturerRepository.findAll();
+
+        for (Lecturer lecturer : lecturers) {
+            List<ScheduledSessionDTO> scheduledSessions = new ArrayList<>();
+            List<CommitteeMember> committeeMembers = committeeMemberRepository.findByLecturer(lecturer);
+            // Check if the lecturer has not attended to any defense committees
+            if (committeeMembers.isEmpty())
+                continue;
+
+            for (CommitteeMember committeeMember : committeeMembers) {
+                DefenseCommittee defenseCommittee = committeeMember.getDefenseCommittee();
+                // Check if the defense committee is in this defense period
+                if (defenseCommittee.getDefensePeriod().equals(defensePeriod)) {
+                    List<TimeSlot> timeSlots = timeSlotRepository.findByDefenseCommittee(defenseCommittee);
+                    for (TimeSlot timeSlot : timeSlots) {
+                        Thesis thesis = thesisRepository.findByTimeSlot(timeSlot);
+                        // Check if the thesis does not exist
+                        if (thesis == null)
+                            continue;
+                        ScheduledSessionDTO scheduledSessionDTO = new ScheduledSessionDTO();
+                        scheduledSessionDTO.setDate(timeSlot.getDate());
+                        scheduledSessionDTO.setStart(timeSlot.getStart());
+                        scheduledSessionDTO.setDefenseCommittee(timeSlot.getDefenseCommittee());
+                        scheduledSessionDTO.setStudentName(thesis.getStudent().getUser().getFullname());
+                        scheduledSessionDTO.setCommitteeRoleName(committeeMember.getCommitteeRole().getName());
+                        scheduledSessions.add(scheduledSessionDTO);
+                    }
+                }
+            }
+
+            // Check if scheduled sessions array is not empty
+            if (!scheduledSessions.isEmpty()) {
+                // Create a notification for the lecturer
+                Notification notification = new Notification();
+                notification.setUser(lecturer.getUser());
+                notification.setTitle("Thông báo lịch tham gia hội đồng chấm LVTN cho đợt bảo vệ " + defensePeriod.getName());
+
+                Context context = new Context();
+                context.setVariable("lecturerFullName", lecturer.getUser().getFullname());
+                context.setVariable("scheduledSessions", scheduledSessions);
+
+                String htmlContent = templateEngine.process("emails/lecturer-schedule", context);
+                notification.setContent(htmlContent);
+                notification.setStatus("Đang xử lý");
+                notification.setCreatedAt(LocalDateTime.now());
+                notifications.add(notification);
+            }
+        }
+
+        for (Thesis thesis : theses) {
+            TimeSlot timeSlot = thesis.getTimeSlot();
+
+            // Check if the time slot is in the defense period
+            if (timeSlot.getDate().isBefore(defensePeriod.getStart().toLocalDate()) || timeSlot.getDate().isAfter(defensePeriod.getEnd().toLocalDate()))
+                continue;
+
+            // Check if there is a defense committee at this time slot
+            if (timeSlot.getDefenseCommittee() == null)
+                continue;
+
+            List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(timeSlot.getDefenseCommittee());
+            // Create a notification for the thesis's student
+            Notification notification1 = new Notification();
+            notification1.setUser(thesis.getStudent().getUser());
+            notification1.setTitle("Thông tin về buổi bảo vệ LVTN cho đề tài " + thesis.getTitle());
+
+            Context context1 = new Context();
+            context1.setVariable("studentFullName", thesis.getStudent().getUser().getFullname());
+            context1.setVariable("thesisTitle", thesis.getTitle());
+            context1.setVariable("sessionTime", timeSlot.getStart());
+            context1.setVariable("sessionDate", timeSlot.getDate());
+            context1.setVariable("locationName", timeSlot.getDefenseCommittee().getRoom().getName());
+            context1.setVariable("committeeMembers", committeeMembers);
+
+            String htmlContent1 = templateEngine.process("emails/student-schedule", context1);
+            notification1.setContent(htmlContent1);
+            notification1.setStatus("Đang xử lý");
+            notification1.setCreatedAt(LocalDateTime.now());
+            notifications.add(notification1);
+        }
+
+        return notificationRepository.saveAll(notifications);
     }
 
     @Transactional

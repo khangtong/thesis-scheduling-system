@@ -55,8 +55,9 @@ public class DefenseCommitteeService {
             throw new Error("Tên hội đồng không được là rỗng");
         defenseCommittee.setName(defenseCommitteeDTO.getName());
 
+        DefensePeriod defensePeriod;
         if (defenseCommitteeDTO.getDefensePeriodId() != null) {
-            DefensePeriod defensePeriod = defensePeriodRepository.findById(defenseCommitteeDTO.getDefensePeriodId()).orElse(null);
+            defensePeriod = defensePeriodRepository.findById(defenseCommitteeDTO.getDefensePeriodId()).orElse(null);
             if (defensePeriod == null)
                 throw new Error("Không tìm thấy đợt bảo vệ");
             defenseCommittee.setDefensePeriod(defensePeriod);
@@ -92,12 +93,22 @@ public class DefenseCommitteeService {
                         TimeSlot timeSlot = timeSlotRepository.findById(timeSlotId).orElse(null);
                         if (timeSlot == null)
                             throw new Error("Không tìm thấy khung giờ");
-                        for (PrioritySchedule prioritySchedule : prioritySchedules) {
-                            // Check if the lecturer is available at a time slot
-                            if (!prioritySchedule.getTimeSlot().equals(timeSlot)) {
-                                timeSlots.add(timeSlot);
-                            } else
-                                throw new Error("Giảng viên " + lecturer.getUser().getFullname() + " đã bận vào khung giờ " + timeSlot.getDate() + " (" + timeSlot.getStart() + " - " + timeSlot.getEnd() + ")");
+                        // Check if there is another defense committee at this time slot
+                        if (timeSlot.getDefenseCommittee() != null)
+                            throw new Error("Khung giờ " + timeSlot.getStart() + " - " + timeSlot.getEnd() + " ngày " + timeSlot.getDate() + " đã có một hội đồng khác");
+                        // Check if priority schedules is empty
+                        if (prioritySchedules.isEmpty()) {
+                            timeSlots.add(timeSlot);
+                        } else {
+                            for (PrioritySchedule prioritySchedule : prioritySchedules) {
+                                // Check if the lecturer is available at a time slot
+                                if (!prioritySchedule.getTimeSlot().equals(timeSlot)) {
+                                    // Check if the time slot is in the defense period
+                                    if (prioritySchedule.getTimeSlot().getDate().isBefore(defensePeriod.getStart().toLocalDate()) || prioritySchedule.getTimeSlot().getDate().isAfter(defensePeriod.getEnd().toLocalDate()))
+                                        timeSlots.add(timeSlot);
+                                } else
+                                    throw new Error("Giảng viên " + lecturer.getUser().getFullname() + " đã bận vào khung giờ " + timeSlot.getDate() + " (" + timeSlot.getStart() + " - " + timeSlot.getEnd() + ")");
+                            }
                         }
                     }
                     lecturers.add(lecturer);
@@ -148,8 +159,9 @@ public class DefenseCommitteeService {
             throw new Error("Tên hội đồng không được là rỗng");
         defenseCommittee.setName(defenseCommitteeDTO.getName());
 
+        DefensePeriod defensePeriod;
         if (defenseCommitteeDTO.getDefensePeriodId() != null) {
-            DefensePeriod defensePeriod = defensePeriodRepository.findById(defenseCommitteeDTO.getDefensePeriodId()).orElse(null);
+            defensePeriod = defensePeriodRepository.findById(defenseCommitteeDTO.getDefensePeriodId()).orElse(null);
             if (defensePeriod == null)
                 throw new Error("Không tìm thấy đợt bảo vệ");
             defenseCommittee.setDefensePeriod(defensePeriod);
@@ -182,12 +194,22 @@ public class DefenseCommitteeService {
                         TimeSlot timeSlot = timeSlotRepository.findById(timeSlotId).orElse(null);
                         if (timeSlot == null)
                             throw new Error("Không tìm thấy khung giờ");
-                        for (PrioritySchedule prioritySchedule : prioritySchedules) {
-                            // Check if the lecturer is available at a time slot
-                            if (!prioritySchedule.getTimeSlot().equals(timeSlot)) {
-                                timeSlots.add(timeSlot);
-                            } else
-                                throw new Error("Giảng viên " + lecturer.getUser().getFullname() + " đã bận vào khung giờ " + timeSlot.getDate() + " (" + timeSlot.getStart() + " - " + timeSlot.getEnd() + ")");
+                        // Check if there is another defense committee at this time slot
+                        if (timeSlot.getDefenseCommittee() != null)
+                            throw new Error("Khung giờ " + timeSlot.getStart() + " - " + timeSlot.getEnd() + " ngày " + timeSlot.getDate() + " đã có một hội đồng khác");
+                        // Check if priority schedules is empty
+                        if (prioritySchedules.isEmpty()) {
+                            timeSlots.add(timeSlot);
+                        } else {
+                            for (PrioritySchedule prioritySchedule : prioritySchedules) {
+                                // Check if the lecturer is available at a time slot
+                                if (!prioritySchedule.getTimeSlot().equals(timeSlot)) {
+                                    // Check if the time slot is in the defense period
+                                    if (prioritySchedule.getTimeSlot().getDate().isBefore(defensePeriod.getStart().toLocalDate()) || prioritySchedule.getTimeSlot().getDate().isAfter(defensePeriod.getEnd().toLocalDate()))
+                                        timeSlots.add(timeSlot);
+                                } else
+                                    throw new Error("Giảng viên " + lecturer.getUser().getFullname() + " đã bận vào khung giờ " + timeSlot.getDate() + " (" + timeSlot.getStart() + " - " + timeSlot.getEnd() + ")");
+                            }
                         }
                     }
                     lecturers.add(lecturer);

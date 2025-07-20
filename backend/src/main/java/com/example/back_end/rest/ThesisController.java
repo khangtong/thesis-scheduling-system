@@ -3,6 +3,7 @@ package com.example.back_end.rest;
 import com.example.back_end.dto.LecturerDTO;
 import com.example.back_end.dto.ThesisDTO;
 import com.example.back_end.entity.Lecturer;
+import com.example.back_end.entity.Notification;
 import com.example.back_end.entity.Thesis;
 import com.example.back_end.entity.User;
 import com.example.back_end.service.ThesisService;
@@ -177,6 +178,20 @@ public class ThesisController {
             }
         } catch (Error error) {
             return new SendError<List<Thesis>>().sendBadRequest(error.getMessage(), response);
+        }
+    }
+
+    @PostMapping("publish/{id}")
+    public ResponseEntity<List<Notification>> publish(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
+                List<Notification> notifications = thesisService.publishSchedules(id);
+                return ResponseEntity.ok(notifications);
+            } else {
+                return new SendError<List<Notification>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
+            }
+        } catch (Error error) {
+            return new SendError<List<Notification>>().sendBadRequest(error.getMessage(), response);
         }
     }
 

@@ -1,8 +1,10 @@
 'use client';
 
-import { autoScheduling } from '@/app/lib/actions';
+import { autoScheduling, publishSchedules } from '@/app/lib/actions';
 import { DefensePeriod } from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
+import { useThesisStore } from '@/stores/thesisStore';
+import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -18,6 +20,8 @@ export default function Toolbar({
   const setDefensePeriodId = useDefensePeriodIdStore(
     (state) => state.setDefensePeriodId
   );
+  const selectTimeSlot = useTimeSlotStore((state) => state.selectTimeSlot);
+  const theses = useThesisStore((state) => state.theses);
   const router = useRouter();
 
   function handleAutoScheduling() {
@@ -27,9 +31,36 @@ export default function Toolbar({
         success: 'Xếp lịch tự động thành công',
         error: (error) => error.message,
       });
-      router.push('/dashboard/thesis-schedules');
+      router.refresh();
     } else {
       toast.error('Phải chọn một đợt bảo vệ để xếp lịch tự động');
+    }
+  }
+
+  function handleCheckConflict() {
+    selectTimeSlot(null);
+  }
+
+  function handlePublish() {
+    if (theses.some((t) => t?.timeSlot == null)) {
+      toast.error('Vẫn còn luận văn chưa được xếp lịch');
+    } else {
+      toast(
+        'Hệ thống sẽ gửi email cho tất cả giảng viên tham gia đợt bảo vệ này. Bạn có chắc chắn muốn công bố lịch?',
+        {
+          action: {
+            label: 'Công bố',
+            onClick: () => {
+              toast.promise(publishSchedules(defensePeriodId), {
+                loading: 'Đang công bố lịch...',
+                success: 'Công bố lịch thành công',
+                error: (error) => error.message,
+              });
+              router.refresh();
+            },
+          },
+        }
+      );
     }
   }
 
@@ -61,10 +92,16 @@ export default function Toolbar({
       >
         Xếp lịch tự động
       </button>
-      <button className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-        Kiểm tra lại xung đột
+      <button
+        onClick={handleCheckConflict}
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+      >
+        Kiểm tra lại cảnh báo
       </button>
-      <button className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+      <button
+        onClick={handlePublish}
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+      >
         Công bố lịch
       </button>
       <button className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">

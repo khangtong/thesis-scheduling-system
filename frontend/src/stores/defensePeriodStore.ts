@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { DefensePeriod } from '@/app/lib/definitions';
+import { persist } from 'zustand/middleware';
 
 interface DefensePeriodIdState {
   defensePeriodId: string;
@@ -12,10 +13,13 @@ interface DefensePeriodState {
 }
 
 export const useDefensePeriodIdStore = create<DefensePeriodIdState>()(
-  (set) => ({
-    defensePeriodId: '',
-    setDefensePeriodId: (id: string) => set({ defensePeriodId: id }),
-  })
+  persist(
+    (set) => ({
+      defensePeriodId: '',
+      setDefensePeriodId: (id: string) => set({ defensePeriodId: id }),
+    }),
+    { name: 'defensePeriodId-storage' }
+  )
 );
 
 export const useDefensePeriodStore = create<DefensePeriodState>()((set) => ({

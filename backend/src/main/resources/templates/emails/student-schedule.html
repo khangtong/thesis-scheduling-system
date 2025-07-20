@@ -29,7 +29,7 @@
     <div class="content-wrapper">
         <div class="header">
             <h1>Hệ thống Xếp lịch Luận văn Tốt nghiệp</h1>
-            <p>Trường Công nghệ Thông tin và Truyền thông - Trường Đại học Cần Thơ</p>
+            <p>Trường Công nghệ Thông tin và Truyền thông - Đại học Cần Thơ</p>
         </div>
 
         <div class="body-content">
@@ -39,7 +39,7 @@
             </p>
             <ul>
                 <li><strong>Đề tài:</strong> <span th:text="${thesisTitle}">Xây dựng hệ thống A...</span></li>
-                <li><strong>Thời gian:</strong> <strong th:text="${sessionTime} + ' ngày ' + ${#dates.format(sessionDate, 'dd/MM/yyyy')}">09:15 ngày 20/06/2025</strong></li>
+                <li><strong>Thời gian:</strong> <strong th:text="${sessionTime} + ' ngày ' + ${sessionDate}">09:15 ngày 20/06/2025</strong></li>
                 <li><strong>Địa điểm:</strong> <strong th:text="${locationName}">Phòng H.301</strong></li>
             </ul>
             <p><strong>Danh sách Hội đồng chấm luận văn:</strong></p>
@@ -52,8 +52,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="member : ${committeeMembers}">
-                    <td th:text="${member.committeeRole.name}">Chủ tịch Hội đồng</td>
-                    <td th:text="${member.lecturer.user.fullname}">PGS.TS. Nguyễn Văn A</td>
+                    <td th:text="${member.getCommitteeRole().getName()}">Chủ tịch Hội đồng</td>
+                    <td th:text="${member.getLecturer().getUser().getFullname()}">PGS.TS. Nguyễn Văn A</td>
                 </tr>
                 </tbody>
             </table>

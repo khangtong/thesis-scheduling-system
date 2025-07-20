@@ -20,7 +20,7 @@ export default function DetailsPanel() {
   if (!selectedTimeSlot) {
     return (
       <div className="max-h-[650px] overflow-auto bg-white p-4 rounded-lg shadow-md flex flex-col">
-        <h3 className="text-lg text-green-400 font-medium text-center">
+        <h3 className="text-lg text-neutral-800 font-medium text-center">
           Đã xếp lịch{' '}
           {`${theses.filter((t) => t?.status === 'Đã xếp lịch').length}/${
             theses.length
@@ -86,7 +86,9 @@ export default function DetailsPanel() {
       success: 'Gỡ xếp lịch thành công',
       error: (error) => error.message,
     });
-    router.push('/dashboard/thesis-schedules');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   }
 
   return (
@@ -113,6 +115,16 @@ export default function DetailsPanel() {
               <span className="font-semibold">GVHD:</span>{' '}
               {thesis.lecturer?.user?.fullname}
             </p>
+            <p className="text-sm">
+              <span className="font-semibold">Khoa:</span>{' '}
+              {thesis.lecturer?.faculty?.name}
+            </p>
+            <a
+              href={`/dashboard/theses/${thesis.id}/edit`}
+              className="mt-2 flex items-center w-fit rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+            >
+              Cập nhật luận văn
+            </a>
           </div>
         ) : (
           <span className="text-sm">Chưa có luận văn</span>
@@ -134,6 +146,12 @@ export default function DetailsPanel() {
             </li>
           ))}
         </ul>
+        <a
+          href={`/dashboard/defense-committees/${selectedTimeSlot.defenseCommittee?.id}/edit`}
+          className="mt-2 flex items-center w-fit rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        >
+          Cập nhật hội đồng
+        </a>
       </div>
       {thesis && (
         <button
@@ -143,16 +161,6 @@ export default function DetailsPanel() {
           Gỡ xếp lịch
         </button>
       )}
-
-      {/* Section: Kiểm tra Xung đột */}
-      {/* <div>
-        <h3 className="font-bold text-lg text-gray-800">Kiểm tra Xung đột</h3>
-        <ul className="mt-2 divide-y divide-gray-200">
-          {selectedSession.conflicts.map((conflict) => (
-            <ConflictCheckItem key={conflict.resource} conflict={conflict} />
-          ))}
-        </ul>
-      </div> */}
     </div>
   );
 }

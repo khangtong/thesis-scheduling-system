@@ -2022,3 +2022,32 @@ export async function autoScheduling(defensePeriodId: string) {
     );
   }
 }
+
+export async function publishSchedules(defensePeriodId: string) {
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    const response = await axios.post(
+      `${process.env.API_URL}/theses/publish/${defensePeriodId}`,
+      JSON.stringify({}),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: 'Công bố lịch thành công',
+      };
+    } else {
+      return { success: false, message: 'Không thể công bố lịch' };
+    }
+  } catch (error: any) {
+    console.error('Publish schedules error:', error);
+    throw new Error(error?.response?.data?.message || 'Không thể công bố lịch');
+  }
+}

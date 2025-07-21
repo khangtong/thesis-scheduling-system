@@ -95,7 +95,7 @@ export type DefenseCommittee = {
 
 export type CommitteeMember = {
   id: number;
-  committee: DefenseCommittee;
+  defenseCommittee: DefenseCommittee;
   committeeRole: CommitteeRole;
   lecturer: Lecturer;
 } | null;

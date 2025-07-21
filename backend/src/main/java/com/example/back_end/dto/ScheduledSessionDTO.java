@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 public class ScheduledSessionDTO {
     private LocalTime start;
-    private LocalDate date;
+    private String date;
     private DefenseCommittee defenseCommittee;
     private String studentName;
     private String committeeRoleName;
@@ -22,11 +22,11 @@ public class ScheduledSessionDTO {
         this.start = start;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

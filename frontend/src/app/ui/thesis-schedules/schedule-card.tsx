@@ -14,8 +14,8 @@ interface ScheduleCardProps {
 
 const statusStyles = {
   OK: 'bg-green-100 border-green-400 hover:bg-green-200',
-  CONFLICT: 'bg-red-100 border-red-400 hover:bg-red-200',
-  WARNING: 'bg-yellow-100 border-yellow-400 hover:bg-yellow-200',
+  PUBLISHED: 'bg-blue-100 border-blue-400 hover:bg-blue-200',
+  DEFENDED: 'bg-red-100 border-red-400 hover:bg-red-200',
 };
 
 export default function ScheduleCard({
@@ -26,6 +26,7 @@ export default function ScheduleCard({
   const selectedStyle = isSelected ? 'ring-2 ring-blue-500' : '';
   const [isDragOver, setIsDragOver] = useState(false);
   const theses = useThesisStore((state) => state.theses);
+  const thesis = theses.find((t) => t?.timeSlot?.id === timeSlot.id);
   const setCommitteeMembers = useCommitteeMemberStore(
     (state) => state.setCommitteeMembers
   );
@@ -76,8 +77,13 @@ export default function ScheduleCard({
       className={`p-2 h-full rounded-md border cursor-pointer flex flex-col justify-center text-sm ${selectedStyle} ${
         isDragOver ? 'bg-blue-100! border-blue-400!' : ''
       } ${
-        theses.some((thesis) => thesis?.timeSlot?.id === timeSlot?.id) &&
-        statusStyles.OK
+        thesis && thesis.status === 'Đã xếp lịch'
+          ? statusStyles.OK
+          : thesis?.status === 'Đã công bố'
+          ? statusStyles.PUBLISHED
+          : thesis?.status === 'Đã bảo vệ'
+          ? statusStyles.DEFENDED
+          : ''
       }`}
     >
       <div>
@@ -87,11 +93,7 @@ export default function ScheduleCard({
         <p className="text-gray-600 truncate">
           Phòng: {timeSlot?.defenseCommittee?.room?.name}
         </p>
-        <p className="text-gray-600 truncate">
-          {theses.some((thesis) => thesis?.timeSlot?.id === timeSlot?.id)
-            ? 'Đã xếp lịch'
-            : 'Đang trống'}
-        </p>
+        <p className="text-gray-600 truncate">{thesis && thesis.status}</p>
       </div>
     </div>
   );

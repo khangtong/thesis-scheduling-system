@@ -50,8 +50,8 @@
                 <tr th:each="session : ${scheduledSessions}">
                     <td th:text="${session.getStart()} + ' - ' + ${session.getDate()}">08:30 - 20/06/2025</td>
                     <td th:text="${session.getDefenseCommittee().getRoom().getName()}">Phòng H.301</td>
-                    <td th:text="${session.studentName()}">Trần Văn C</td>
-                    <td th:text="${session.committeeRoleName()}">Chủ tịch</td>
+                    <td th:text="${session.getStudentName()}">Trần Văn C</td>
+                    <td th:text="${session.getCommitteeRoleName()}">Chủ tịch</td>
                 </tr>
                 </tbody>
             </table>

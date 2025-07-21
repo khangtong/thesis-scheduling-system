@@ -11,6 +11,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,7 +251,7 @@ public class ThesisService {
                         if (thesis == null)
                             continue;
                         ScheduledSessionDTO scheduledSessionDTO = new ScheduledSessionDTO();
-                        scheduledSessionDTO.setDate(timeSlot.getDate());
+                        scheduledSessionDTO.setDate(timeSlot.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                         scheduledSessionDTO.setStart(timeSlot.getStart());
                         scheduledSessionDTO.setDefenseCommittee(timeSlot.getDefenseCommittee());
                         scheduledSessionDTO.setStudentName(thesis.getStudent().getUser().getFullname());
@@ -300,7 +301,7 @@ public class ThesisService {
             context1.setVariable("studentFullName", thesis.getStudent().getUser().getFullname());
             context1.setVariable("thesisTitle", thesis.getTitle());
             context1.setVariable("sessionTime", timeSlot.getStart());
-            context1.setVariable("sessionDate", timeSlot.getDate());
+            context1.setVariable("sessionDate", timeSlot.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             context1.setVariable("locationName", timeSlot.getDefenseCommittee().getRoom().getName());
             context1.setVariable("committeeMembers", committeeMembers);
 
@@ -309,8 +310,12 @@ public class ThesisService {
             notification1.setStatus("Đang xử lý");
             notification1.setCreatedAt(LocalDateTime.now());
             notifications.add(notification1);
+
+            // Mark thesis is published
+            thesis.setStatus("Đã công bố");
         }
 
+        thesisRepository.saveAll(theses);
         return notificationRepository.saveAll(notifications);
     }
 

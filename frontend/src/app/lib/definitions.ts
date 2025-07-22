@@ -145,6 +145,24 @@ export const UserFormSchema = z
       .trim(),
     roleId: z.number({ message: 'Vai trò không hợp lệ.' }).int().positive(),
     active: z.boolean({ message: 'Trạng thái không hợp lệ.' }).optional(),
+    currentPassword: z
+      .string()
+      .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' })
+      .max(255)
+      .trim()
+      .nullable(),
+    newPassword: z
+      .string()
+      .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' })
+      .max(255)
+      .trim()
+      .nullable(),
+    confirmPassword: z
+      .string()
+      .min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' })
+      .max(255)
+      .trim()
+      .nullable(),
 
     // Optional lecturer fields
     lecturerCode: z

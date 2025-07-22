@@ -133,20 +133,6 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update-password/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable int id, @RequestBody UserDTO userDTO, HttpServletResponse response, HttpServletRequest request) {
-        try {
-            if (authController.authenticate(response, request) != null) {
-                User updatedUser = userService.updatePassword(id, userDTO);
-                return ResponseEntity.ok(updatedUser);
-            } else {
-                return new SendError<User>().sendUnauthorized("Bạn cần đăng nhập để sử dụng chức năng này", response);
-            }
-        } catch (Error error) {
-            return new SendError<User>().sendBadRequest(error.getMessage(), response);
-        }
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {

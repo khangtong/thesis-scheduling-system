@@ -58,7 +58,7 @@ public class LecturerExpertiseController {
     @GetMapping("/lecturer/{id}")
     public ResponseEntity<List<LecturerExpertise>> getLecturerExpertisesByLecturer(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<LecturerExpertise> lecturerExpertises = lecturerExpertiseService.getLecturerExpertisesByLecturer(id);
                 return ResponseEntity.ok(lecturerExpertises);
             } else {

@@ -121,43 +121,37 @@ public class UserService {
         if (user == null)
             throw new Error("Không tìm thấy người dùng");
 
-        if ("".equals(userDTO.getUsername()))
-            throw new Error("Tên tài khoản không được là rỗng");
-        user.setUsername(userDTO.getUsername());
+        if (user.getRole().getName().equals("ADMIN")) {
+            if ("".equals(userDTO.getUsername()))
+                throw new Error("Tên tài khoản không được là rỗng");
+            user.setUsername(userDTO.getUsername());
 
-        if ("".equals(userDTO.getEmail()) || !userDTO.getEmail().matches("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"))
-            throw new Error("Email không hợp lệ");
-        user.setEmail(userDTO.getEmail());
+            if ("".equals(userDTO.getEmail()) || !userDTO.getEmail().matches("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"))
+                throw new Error("Email không hợp lệ");
+            user.setEmail(userDTO.getEmail());
 
-        if ("".equals(userDTO.getFullname()))
-            throw new Error("Họ tên không được là rỗng");
-        user.setFullname(userDTO.getFullname());
+            if ("".equals(userDTO.getFullname()))
+                throw new Error("Họ tên không được là rỗng");
+            user.setFullname(userDTO.getFullname());
+        }
+
+        if (userDTO.getCurrentPassword() != null && passwordEncoder.matches(userDTO.getCurrentPassword(), user.getPassword())) {
+            if ("".equals(userDTO.getNewPassword()) || userDTO.getNewPassword().length() < 6)
+                throw new Error("Mật khẩu mới không hợp lệ");
+
+            if ("".equals(userDTO.getConfirmPassword()) || userDTO.getConfirmPassword().length() < 6)
+                throw new Error("Mật khẩu xác nhận không hợp lệ");
+
+            if (!userDTO.getNewPassword().equals(userDTO.getConfirmPassword()))
+                throw new Error("Mật khẩu mới và mật khẩu xác nhận không trùng khớp");
+
+            user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+        } else {
+            if (!user.getRole().getName().equals("ADMIN"))
+                throw new Error("Mật khẩu hiện tại không hợp lệ");
+        }
 
         user.setActive(userDTO.isActive());
-        user.setUpdatedAt(LocalDateTime.now());
-        return userRepository.save(user);
-    }
-
-    @Transactional
-    public User updatePassword(int id, UserDTO userDTO) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null)
-            throw new Error("Không tìm thấy người dùng");
-
-        if (userDTO.getCurrentPassword() == null || !passwordEncoder.matches(userDTO.getCurrentPassword(), user.getPassword()))
-            throw new Error("Mật khẩu không khớp với mật khẩu hiện tại");
-
-        if ("".equals(userDTO.getNewPassword()) || userDTO.getNewPassword().length() < 6)
-            throw new Error("Mật khẩu mới không hợp lệ");
-
-        if ("".equals(userDTO.getConfirmPassword()) || userDTO.getConfirmPassword().length() < 6)
-            throw new Error("Mật khẩu xác nhận không hợp lệ");
-
-        if (!userDTO.getNewPassword().equals(userDTO.getConfirmPassword()))
-            throw new Error("Mật khẩu mới và mật khẩu xác nhận không trùng khớp");
-
-        user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
-        user.setActive(true);
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }

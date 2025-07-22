@@ -58,7 +58,7 @@ public class StudentController {
     @GetMapping("/user/{id}")
     public ResponseEntity<Student> getStudentByUserId(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"GIANG_VIEN".equals(authController.authorize(response, request))) {
                 Student student = studentService.getStudentByUserId(id);
                 return ResponseEntity.ok(student);
             } else {

@@ -62,7 +62,7 @@ public class LecturerController {
     @GetMapping("/user/{id}")
     public ResponseEntity<Lecturer> getLecturerByUserId(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 Lecturer lecturer = lecturerService.getLecturerByUserId(id);
                 return ResponseEntity.ok(lecturer);
             } else {

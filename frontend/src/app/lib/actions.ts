@@ -471,6 +471,9 @@ export async function updateUser(
     fullname: formData.get('fullname'),
     roleId: Number(formData.get('roleId')),
     active: formData.get('active') === 'true' ? true : false,
+    currentPassword: null,
+    newPassword: null,
+    confirmPassword: null,
     // Lecturer fields
     lecturerCode: formData.get('lecturerCode') || '',
     facultyId: formData.get('facultyId')

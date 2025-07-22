@@ -17,63 +17,6 @@ import java.util.Map;
 
 @Service
 public class ExportService {
-
-    public ByteArrayOutputStream exportToPdf(List<Map<String, Object>> data, List<String> headers, String title) throws Exception {
-        Document document = new Document(PageSize.A4);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, outputStream);
-
-        document.open();
-
-        // Add title
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
-        Paragraph titleParagraph = new Paragraph(title != null ? title : "Data Export", titleFont);
-        titleParagraph.setAlignment(Element.ALIGN_CENTER);
-        titleParagraph.setSpacingAfter(20);
-        document.add(titleParagraph);
-
-        // Add export date
-        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.GRAY);
-        Paragraph dateParagraph = new Paragraph("Generated on: " +
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), dateFont);
-        dateParagraph.setAlignment(Element.ALIGN_RIGHT);
-        dateParagraph.setSpacingAfter(20);
-        document.add(dateParagraph);
-
-        if (data != null && !data.isEmpty() && headers != null && !headers.isEmpty()) {
-            // Create table
-            PdfPTable table = new PdfPTable(headers.size());
-            table.setWidthPercentage(100);
-
-            // Add headers
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setBackgroundColor(BaseColor.DARK_GRAY);
-                cell.setPadding(8);
-                table.addCell(cell);
-            }
-
-            // Add data rows
-            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.BLACK);
-            for (Map<String, Object> row : data) {
-                for (String header : headers) {
-                    Object value = row.get(header);
-                    PdfPCell cell = new PdfPCell(new Phrase(value != null ? value.toString() : "", cellFont));
-                    cell.setPadding(5);
-                    table.addCell(cell);
-                }
-            }
-
-            document.add(table);
-        } else {
-            document.add(new Paragraph("No data available"));
-        }
-
-        document.close();
-        return outputStream;
-    }
-
     public ByteArrayOutputStream exportToExcel(List<Map<String, Object>> data, List<String> headers, String title) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(title != null ? title : "Data Export");

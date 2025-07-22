@@ -18,27 +18,10 @@ import java.util.Map;
 @RequestMapping("/api/export")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ExportController {
-
     @Autowired
     private ExportService exportService;
 
-    @PostMapping("/pdf")
-    public ResponseEntity<byte[]> exportToPdf(@RequestBody ExportRequestDTO request) {
-        try {
-            ByteArrayOutputStream outputStream = exportService.exportToPdf(request.getData(), request.getHeaders(), request.getTitle());
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", request.getFilename() + ".pdf");
-            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-
-            return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/excel")
+    @PostMapping
     public ResponseEntity<byte[]> exportToExcel(@RequestBody ExportRequestDTO request) {
         try {
             ByteArrayOutputStream outputStream = exportService.exportToExcel(request.getData(), request.getHeaders(), request.getTitle());

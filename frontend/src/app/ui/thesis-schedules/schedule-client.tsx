@@ -48,7 +48,10 @@ export default function ScheduleClient({
 
   return (
     <>
-      <Toolbar defensePeriods={defensePeriods} />
+      <Toolbar
+        defensePeriods={defensePeriods}
+        committeeMembers={committeeMembers}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-13 gap-3 mt-3">
         <div className="lg:col-span-3">
           <Search placeholder="Tìm kiếm luận văn..." />

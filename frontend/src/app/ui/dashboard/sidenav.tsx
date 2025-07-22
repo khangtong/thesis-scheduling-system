@@ -3,7 +3,7 @@ import Link from 'next/link';
 import NavLinks from './nav-links';
 import Logo from '../logo';
 import LogoutButton from '../logout-button';
-import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { UserIcon } from '@heroicons/react/24/outline';
 import { User } from '@/app/lib/definitions';
 
 interface SideNavProps {
@@ -29,8 +29,8 @@ export default function SideNav({ user }: SideNavProps) {
         href="/settings"
         className="mb-2 cursor-pointer flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-100 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
       >
-        <Cog6ToothIcon className="w-6" />
-        <div>Cài đặt</div>
+        <UserIcon className="w-6" />
+        <div>{user?.fullname}</div>
       </Link>
       <LogoutButton />
     </div>

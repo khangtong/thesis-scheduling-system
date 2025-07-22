@@ -45,9 +45,11 @@ public class LecturerService {
     @Transactional(readOnly = true)
     public Lecturer getLecturerByUserId(int userId) {
         User user = userRepository.findById(userId).orElse(null);
+        System.out.println(user);
         if (user == null)
             throw new Error("Không tìm thấy người dùng");
         Lecturer lecturer = lecturerRepository.findByUser(user);
+        System.out.println(lecturer);
         if (lecturer == null)
             throw new Error("Không tìm thấy giảng viên");
         return lecturer;

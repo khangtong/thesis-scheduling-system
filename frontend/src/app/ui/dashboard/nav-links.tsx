@@ -8,12 +8,10 @@ import {
   BriefcaseIcon,
   DocumentTextIcon,
   CalendarDateRangeIcon,
-  CalendarDaysIcon,
   ClockIcon,
   BuildingOfficeIcon,
   UserGroupIcon,
   TagIcon,
-  ChartBarIcon,
   PencilSquareIcon,
   RectangleGroupIcon,
 } from '@heroicons/react/24/outline';
@@ -76,11 +74,6 @@ export default function NavLinks({ role }: NavLinksProps) {
         name: 'Phòng',
         href: '/dashboard/rooms',
         icon: BuildingOfficeIcon,
-      },
-      {
-        name: 'Thống kê',
-        href: '/dashboard/statistics',
-        icon: ChartBarIcon,
       },
     ];
   else if (role?.name === 'GIANG_VIEN')

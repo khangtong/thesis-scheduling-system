@@ -1,19 +1,19 @@
 'use client';
 
 import { autoScheduling, publishSchedules } from '@/app/lib/actions';
-import { DefensePeriod } from '@/app/lib/definitions';
-import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
+import { CommitteeMember, DefensePeriod } from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
 import { useThesisStore } from '@/stores/thesisStore';
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function Toolbar({
   defensePeriods,
+  committeeMembers,
 }: {
   defensePeriods: DefensePeriod[];
+  committeeMembers: CommitteeMember[];
 }) {
   const defensePeriodId = useDefensePeriodIdStore(
     (state) => state.defensePeriodId
@@ -23,9 +23,6 @@ export default function Toolbar({
   );
   const selectTimeSlot = useTimeSlotStore((state) => state.selectTimeSlot);
   const theses = useThesisStore((state) => state.theses);
-  const committeeMembers = useCommitteeMemberStore(
-    (state) => state.committeeMembers
-  );
   const router = useRouter();
 
   function handleAutoScheduling() {
@@ -72,13 +69,10 @@ export default function Toolbar({
     data: any,
     headers: any,
     title: string,
-    filename: string,
-    format: string
+    filename: string
   ) {
-    const endpoint = format === 'pdf' ? 'export/pdf' : 'export/excel';
-
     try {
-      const response = await fetch(`http://localhost:8080/api/${endpoint}`, {
+      const response = await fetch(`http://localhost:8080/api/export`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +93,7 @@ export default function Toolbar({
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${filename}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+      link.download = `${filename}.xlsx`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -110,7 +104,22 @@ export default function Toolbar({
     }
   }
 
-  function handleExport(format: string) {
+  function shortDegree(degree: string | undefined) {
+    switch (degree) {
+      case 'Tiến sĩ':
+        return 'TS';
+      case 'Thạc sĩ':
+        return 'ThS';
+      case 'Giáo sư':
+        return 'GS';
+      case 'Phó giáo sư':
+        return 'PGS';
+      default:
+        return degree;
+    }
+  }
+
+  function handleExport() {
     if (theses.every((t) => t?.status === 'Đã công bố')) {
       const headers = [
         'STT',
@@ -133,11 +142,17 @@ export default function Toolbar({
           'Họ tên SV': thesis?.student?.user?.fullname,
           'Tên đề tài': thesis?.title,
           'GVHD': thesis?.lecturer?.user?.fullname,
-          'Giờ': thesis?.timeSlot?.start.slice(0, -3),
-          'Hội đồng': thesisCommitteeMembers.reduce((acc, cm, i) => {
+          'Giờ': `${thesis?.timeSlot?.start.slice(0, -3).split(':')[0]}h${
+            thesis?.timeSlot?.start.slice(0, -3).split(':')[1]
+          }`,
+          'Hội đồng': thesisCommitteeMembers.reduce((acc, cm, i, arr) => {
             return (
               acc +
-              `${cm?.committeeRole?.id}. ${cm?.lecturer?.user?.fullname}\n`
+              `${cm?.committeeRole?.id}. ${shortDegree(
+                cm?.lecturer?.degree?.name
+              )}. ${cm?.lecturer?.user?.fullname}${
+                i + 1 < arr.length ? ', ' : ''
+              }`
             );
           }, ''),
         });
@@ -148,8 +163,7 @@ export default function Toolbar({
           data,
           headers,
           'bao_cao',
-          `${'bao_cao'}_${new Date().toISOString().split('T')[0]}`,
-          format
+          `${'bao_cao'}_${new Date().toISOString().split('T')[0]}`
         ),
         {
           loading: 'Đang xuất báo cáo...',
@@ -204,16 +218,10 @@ export default function Toolbar({
         Công bố lịch
       </button>
       <button
-        onClick={() => handleExport('pdf')}
+        onClick={() => handleExport()}
         className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
-        Xuất báo cáo PDF
-      </button>
-      <button
-        onClick={() => handleExport('excel')}
-        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-      >
-        Xuất báo cáo Excel
+        Xuất báo cáo
       </button>
     </div>
   );

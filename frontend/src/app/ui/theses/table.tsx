@@ -68,7 +68,7 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                 <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                   Tên đề tài
                 </th>
-                <th scope="col" className="px-3 py-3 font-medium">
+                <th scope="col" className="px-3 py-3 font-medium w-[150px]">
                   Trạng thái
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
@@ -80,8 +80,8 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                 <th scope="col" className="px-3 py-3 font-medium">
                   Sinh viên
                 </th>
-                <th scope="col" className="px-3 py-3 font-medium">
-                  Giảng viên hướng dẫn
+                <th scope="col" className="px-3 py-3 font-medium w-[150px]">
+                  GVHD
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
                   Khung giờ

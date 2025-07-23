@@ -59,7 +59,7 @@ public class CommitteeMemberController {
     @GetMapping("/defense-committee/{id}")
     public ResponseEntity<List<CommitteeMember>> getCommitteeMembersByDefenseCommittee(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<CommitteeMember> committeeMembers = committeeMemberService.getCommitteeMembersByDefenseCommittee(id);
                 return ResponseEntity.ok(committeeMembers);
             } else {

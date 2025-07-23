@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  EyeIcon,
   PencilIcon,
   PencilSquareIcon,
   PlusIcon,
@@ -45,6 +46,17 @@ export function Update({ id, path }: { id: number; path: string }) {
       className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
+    </Link>
+  );
+}
+
+export function View({ id, path }: { id: number; path: string }) {
+  return (
+    <Link
+      href={`/dashboard/${path}/${id}/view`}
+      className="rounded-md border border-gray-200 p-1 hover:bg-gray-100"
+    >
+      <EyeIcon className="w-5" />
     </Link>
   );
 }

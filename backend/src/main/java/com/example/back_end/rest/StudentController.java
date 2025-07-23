@@ -86,7 +86,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudentById(@PathVariable int id, @RequestBody StudentDTO studentDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"GIANG_VIEN".equals(authController.authorize(response, request))) {
                 Student updatedStudent = studentService.updateStudentById(id, studentDTO);
                 return ResponseEntity.ok(updatedStudent);
             } else {

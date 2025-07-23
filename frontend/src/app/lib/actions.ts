@@ -301,6 +301,9 @@ export async function createUser(state: any, formData: FormData) {
     password: formData.get('password'),
     fullname: formData.get('fullname'),
     roleId: Number(formData.get('roleId')),
+    currentPassword: null,
+    newPassword: null,
+    confirmPassword: null,
     // Lecturer fields
     lecturerCode: formData.get('lecturerCode') || '',
     facultyId: formData.get('facultyId')
@@ -615,6 +618,158 @@ export async function updateUser(
         message: error.response.data.message || 'Có lỗi không xác định xảy ra',
       };
     }
+  }
+}
+
+export async function updateMe(
+  lecturerId: number | undefined,
+  studentId: number | undefined,
+  state: any,
+  formData: FormData
+) {
+  // 1. Parse form data
+  const formDataObj = {
+    username: formData.get('username'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    fullname: formData.get('fullname'),
+    roleId: Number(formData.get('roleId')),
+    active: formData.get('active') === 'true' ? true : false,
+    currentPassword: formData.get('currentPassword') || null,
+    newPassword: formData.get('newPassword') || null,
+    confirmPassword: formData.get('confirmPassword') || null,
+    // Lecturer fields
+    lecturerCode: formData.get('lecturerCode') || '',
+    facultyId: formData.get('facultyId')
+      ? Number(formData.get('facultyId'))
+      : NaN,
+    degreeId: formData.get('degreeId') ? Number(formData.get('degreeId')) : NaN,
+    expertiseIds: formData.getAll('expertiseIds').map((id) => Number(id)),
+    // Student fields
+    studentCode: formData.get('studentCode') || '',
+    studentClass: formData.get('studentClass') || '',
+  };
+
+  // 2. Validate form fields
+  const validatedFields = UserFormSchema.safeParse(formDataObj);
+
+  // If any form fields are invalid, return early
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+  try {
+    const authToken = (await cookies()).get('session')?.value;
+
+    // 3. Create base user first
+    const baseUserData = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      fullname: data.fullname,
+      active: data.active,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+      confirmPassword: data.confirmPassword,
+    };
+
+    const userResponse = await axios.put(
+      `${process.env.API_URL}/users/me`,
+      JSON.stringify(baseUserData),
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (userResponse.status !== 200) {
+      throw new Error('Không thể cập nhật người dùng');
+    }
+
+    const updatedUser = userResponse.data;
+    const userId = updatedUser.id || updatedUser.user?.id;
+
+    if (!userId) {
+      throw new Error('Không tìm thấy ID người dùng trong phản hồi');
+    }
+
+    // 4. Create additional profile based on role
+    // Assuming roleId 2 is GIANG_VIEN and roleId 3 is SINH_VIEN
+    if (
+      data.roleId === 2 &&
+      data.lecturerCode &&
+      data.facultyId &&
+      data.degreeId
+    ) {
+      // Create lecturer profile
+      const lecturerData = {
+        userId: userId,
+        code: data.lecturerCode,
+        facultyId: data.facultyId,
+        degreeId: data.degreeId,
+        expertiseIds: data.expertiseIds || [],
+      };
+
+      const lecturerResponse = await axios.put(
+        `${process.env.API_URL}/lecturers/${lecturerId}`,
+        JSON.stringify(lecturerData),
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (lecturerResponse.status !== 200) {
+        throw new Error('Không thể cập nhật thông tin giảng viên');
+      }
+    } else if (data.roleId === 3 && data.studentCode && data.studentClass) {
+      // Create student profile
+      const studentData = {
+        userId: userId,
+        code: data.studentCode,
+        studentClass: data.studentClass,
+      };
+
+      const studentResponse = await axios.put(
+        `${process.env.API_URL}/students/${studentId}`,
+        JSON.stringify(studentData),
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (studentResponse.status !== 200) {
+        throw new Error('Không thể cập nhật thông tin sinh viên');
+      }
+    }
+
+    // Store user data (including role) in a separate cookie
+    const expiresAt = Date.now() + 90 * 24 * 60 * 60 * 1000;
+    const cookieStore = await cookies();
+    cookieStore.set('user', JSON.stringify(userResponse.data), {
+      httpOnly: true,
+      secure: true,
+      expires: expiresAt,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return { success: true, message: 'Cập nhật thông tin thành công' };
+  } catch (error: any) {
+    console.error('Update user error:', error);
+    return {
+      success: false,
+      message: error?.response?.data?.message || 'Có lỗi xảy ra',
+    };
   }
 }
 

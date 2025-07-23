@@ -149,6 +149,10 @@ public class UserService {
         } else {
             if (!user.getRole().getName().equals("ADMIN"))
                 throw new Error("Mật khẩu hiện tại không hợp lệ");
+            else {
+                if (userDTO.getCurrentPassword() != null)
+                    throw new Error("Mật khẩu hiện tại không hợp lệ");
+            }
         }
 
         user.setActive(userDTO.isActive());

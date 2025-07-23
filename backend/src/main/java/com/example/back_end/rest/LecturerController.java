@@ -90,7 +90,7 @@ public class LecturerController {
     @PutMapping("/{id}")
     public ResponseEntity<Lecturer> updateLecturerById(@PathVariable int id, @RequestBody LecturerDTO lecturerDTO, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<Integer> expertiseIds = lecturerDTO.getExpertiseIds();
                 if (expertiseIds != null && !expertiseIds.isEmpty()) {
                     List<LecturerExpertise> lecturerExpertises = lecturerExpertiseService.getLecturerExpertisesByLecturer(id);

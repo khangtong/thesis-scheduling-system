@@ -1,10 +1,12 @@
-import { Update, DeleteDefenseCommittee } from '../buttons';
-import { DefenseCommittee } from '@/app/lib/definitions';
+import { Update, DeleteDefenseCommittee, View } from '../buttons';
+import { DefenseCommittee, Role } from '@/app/lib/definitions';
 
 export default function Table({
   defenseCommittees = [],
+  role,
 }: {
   defenseCommittees: DefenseCommittee[];
+  role: Role;
 }) {
   return (
     <div className="mt-6 flow-root">
@@ -50,13 +52,22 @@ export default function Table({
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Update
-                      id={defenseCommittee?.id ? defenseCommittee.id : -1}
-                      path="defense-committees"
-                    />
-                    <DeleteDefenseCommittee
-                      id={defenseCommittee?.id ? defenseCommittee.id : -1}
-                    />
+                    {role?.name === 'ADMIN' ? (
+                      <>
+                        <Update
+                          id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                          path="defense-committees"
+                        />
+                        <DeleteDefenseCommittee
+                          id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                        />
+                      </>
+                    ) : (
+                      <View
+                        id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                        path="defense-committees"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -118,13 +129,22 @@ export default function Table({
                   </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <Update
-                        id={defenseCommittee?.id ? defenseCommittee.id : -1}
-                        path="defense-committees"
-                      />
-                      <DeleteDefenseCommittee
-                        id={defenseCommittee?.id ? defenseCommittee.id : -1}
-                      />
+                      {role?.name === 'ADMIN' ? (
+                        <>
+                          <Update
+                            id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                            path="defense-committees"
+                          />
+                          <DeleteDefenseCommittee
+                            id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                          />
+                        </>
+                      ) : (
+                        <View
+                          id={defenseCommittee?.id ? defenseCommittee.id : -1}
+                          path="defense-committees"
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>

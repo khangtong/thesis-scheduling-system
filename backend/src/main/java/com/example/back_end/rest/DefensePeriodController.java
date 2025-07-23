@@ -29,7 +29,7 @@ public class DefensePeriodController {
     @GetMapping
     public ResponseEntity<List<DefensePeriod>> getAllDefensePeriods(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<DefensePeriod> defensePeriods = defensePeriodService.getAllDefensePeriods();
                 return ResponseEntity.ok(defensePeriods);
             } else {

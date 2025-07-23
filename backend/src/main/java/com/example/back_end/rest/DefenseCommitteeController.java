@@ -4,6 +4,7 @@ import com.example.back_end.dto.DefenseCommitteeDTO;
 import com.example.back_end.entity.CommitteeRole;
 import com.example.back_end.entity.DefenseCommittee;
 import com.example.back_end.entity.Faculty;
+import com.example.back_end.entity.User;
 import com.example.back_end.service.CommitteeMemberService;
 import com.example.back_end.service.DefenseCommitteeService;
 import com.example.back_end.utils.SendError;
@@ -48,7 +49,7 @@ public class DefenseCommitteeController {
     @GetMapping("/{id}")
     public ResponseEntity<DefenseCommittee> getDefenseCommitteeById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 DefenseCommittee defenseCommittee = defenseCommitteeService.getDefenseCommitteeById(id);
                 return ResponseEntity.ok(defenseCommittee);
             } else {
@@ -62,13 +63,13 @@ public class DefenseCommitteeController {
     @GetMapping("/search")
     public ResponseEntity<List<DefenseCommittee>> searchDefenseCommittees(HttpServletResponse response, HttpServletRequest request) {
         try {
-            String role = authController.authorize(response, request);
-            if (!"SINH_VIEN".equals(role)) {
-                List<DefenseCommittee> defenseCommittees = defenseCommitteeService.getAllDefenseCommittees();
-//                if ("ADMIN".equals(role))
-//                    defenseCommittees = defenseCommitteeService.getAllDefenseCommittees();
-//                else
-//                    defenseCommittees = defenseCommitteeService.getDefenseCommitteesByLecturer();
+            User user = authController.authenticate(response, request);
+            if (!"SINH_VIEN".equals(user.getRole().getName())) {
+                List<DefenseCommittee> defenseCommittees;
+                if ("ADMIN".equals(user.getRole().getName()))
+                    defenseCommittees = defenseCommitteeService.getAllDefenseCommittees();
+                else
+                    defenseCommittees = defenseCommitteeService.getDefenseCommitteesByLecturer(user);
 
                 if (request.getParameterMap().get("name") != null) {
                     String name = request.getParameterMap().get("name")[0];

@@ -13,6 +13,7 @@ import {
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
 import SearchForm from '@/app/ui/defense-committees/search-form';
+import { getUser } from '@/app/lib/actions';
 
 export const metadata: Metadata = {
   title: 'Hội đồng',
@@ -55,6 +56,7 @@ export default async function Page(props: {
   const { data, totalPages } = await searchDefenseCommittees(authToken, query);
   const rooms = await fetchRooms(authToken);
   const defensePeriods = await fetchDefensePeriods(authToken);
+  const user = await getUser();
 
   // Paginate defense-committees based on ITEMS_PER_PAGE
   const a = [];
@@ -75,12 +77,14 @@ export default async function Page(props: {
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
         <SearchForm rooms={rooms} defensePeriods={defensePeriods} />
-        <div className="flex gap-2">
+        <div
+          className={`${user?.role?.name === 'ADMIN' || 'hidden'} flex gap-2`}
+        >
           <ImportDefenseCommitteesButton />
           <Create singular="hội đồng" path="defense-committees" />
         </div>
       </div>
-      <Table defenseCommittees={a[currentPage - 1]} />
+      <Table defenseCommittees={a[currentPage - 1]} role={user?.role} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

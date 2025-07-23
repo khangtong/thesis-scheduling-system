@@ -28,7 +28,7 @@ public class RoomController {
     @GetMapping
     public ResponseEntity<List<Room>> getAllRooms(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 List<Room> rooms = roomService.getAllRooms();
                 return ResponseEntity.ok(rooms);
             } else {

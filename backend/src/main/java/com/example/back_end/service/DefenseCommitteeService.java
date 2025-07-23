@@ -47,6 +47,20 @@ public class DefenseCommitteeService {
         return defenseCommittee;
     }
 
+    @Transactional(readOnly = true)
+    public List<DefenseCommittee> getDefenseCommitteesByLecturer(User user) {
+        Lecturer lecturer = lecturerRepository.findByUser(user);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
+
+        List<CommitteeMember> committeeMembers = committeeMemberRepository.findByLecturer(lecturer);
+        List<DefenseCommittee> defenseCommittees = new ArrayList<>();
+        for (CommitteeMember committeeMember : committeeMembers)
+            defenseCommittees.add(committeeMember.getDefenseCommittee());
+
+        return defenseCommittees;
+    }
+
     @Transactional
     public DefenseCommittee createDefenseCommittee(DefenseCommitteeDTO defenseCommitteeDTO) {
         // Create defense committee

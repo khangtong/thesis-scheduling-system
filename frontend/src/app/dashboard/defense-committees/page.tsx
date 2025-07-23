@@ -73,7 +73,9 @@ export default async function Page(props: {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lexend.className} text-2xl`}>Quản lý hội đồng</h1>
+        <h1 className={`${lexend.className} text-2xl`}>
+          {user?.role?.name === 'ADMIN' ? 'Quản lý' : 'Thông tin'} hội đồng
+        </h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
         <SearchForm rooms={rooms} defensePeriods={defensePeriods} />

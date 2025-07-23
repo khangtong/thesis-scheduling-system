@@ -1,7 +1,13 @@
-import { Update, DeleteThesis } from '../buttons';
-import { Thesis } from '@/app/lib/definitions';
+import { Update, DeleteThesis, View } from '../buttons';
+import { Role, Thesis } from '@/app/lib/definitions';
 
-export default function Table({ theses = [] }: { theses: Thesis[] }) {
+export default function Table({
+  theses = [],
+  role,
+}: {
+  theses: Thesis[];
+  role: Role;
+}) {
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block w-full align-middle">
@@ -55,8 +61,17 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                     </p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Update id={thesis?.id ? thesis.id : -1} path="theses" />
-                    <DeleteThesis id={thesis?.id ? thesis.id : -1} />
+                    {role?.name === 'ADMIN' ? (
+                      <>
+                        <Update
+                          id={thesis?.id ? thesis.id : -1}
+                          path="theses"
+                        />
+                        <DeleteThesis id={thesis?.id ? thesis.id : -1} />
+                      </>
+                    ) : (
+                      <View id={thesis?.id ? thesis.id : -1} path="theses" />
+                    )}
                   </div>
                 </div>
               </div>
@@ -132,8 +147,17 @@ export default function Table({ theses = [] }: { theses: Thesis[] }) {
                   </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <Update id={thesis?.id ? thesis.id : -1} path="theses" />
-                      <DeleteThesis id={thesis?.id ? thesis.id : -1} />
+                      {role?.name === 'ADMIN' ? (
+                        <>
+                          <Update
+                            id={thesis?.id ? thesis.id : -1}
+                            path="theses"
+                          />
+                          <DeleteThesis id={thesis?.id ? thesis.id : -1} />
+                        </>
+                      ) : (
+                        <View id={thesis?.id ? thesis.id : -1} path="theses" />
+                      )}
                     </div>
                   </td>
                 </tr>

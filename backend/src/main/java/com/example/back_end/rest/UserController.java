@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+            if ("ADMIN".equals(authController.authorize(response, request))) {
                 List<User> users = userService.getAllUsers();
                 return ResponseEntity.ok(users);
             } else {

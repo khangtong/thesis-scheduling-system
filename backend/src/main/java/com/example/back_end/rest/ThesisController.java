@@ -43,7 +43,7 @@ public class ThesisController {
     @GetMapping("/{id}")
     public ResponseEntity<Thesis> getThesisById(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if ("ADMIN".equals(authController.authorize(response, request))) {
+            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
                 Thesis thesis = thesisService.getThesisById(id);
                 return ResponseEntity.ok(thesis);
             } else {

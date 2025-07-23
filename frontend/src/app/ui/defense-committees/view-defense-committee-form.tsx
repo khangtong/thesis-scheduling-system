@@ -4,37 +4,19 @@ import {
   AtSymbolIcon,
   BuildingOfficeIcon,
   CalendarDateRangeIcon,
-  ClockIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { Button } from '@/app/ui/button';
-import { updateDefenseCommittee } from '@/app/lib/actions';
-import { useActionState, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import {
-  DefensePeriod,
-  DefenseCommittee,
-  Room,
-  TimeSlot,
-  PrioritySchedule,
-} from '@/app/lib/definitions';
-import { CommitteeMember, Lecturer } from '@/app/lib/definitions';
+import { DefenseCommittee, TimeSlot } from '@/app/lib/definitions';
+import { CommitteeMember } from '@/app/lib/definitions';
 
 export default function Form({
   defenseCommittee,
-  rooms,
   timeSlots,
-  defensePeriods,
   committeeMembers,
-  lecturers,
 }: {
   defenseCommittee: DefenseCommittee;
-  rooms: Room[];
   timeSlots: TimeSlot[];
-  defensePeriods: DefensePeriod[];
   committeeMembers: CommitteeMember[];
-  lecturers: Lecturer[];
 }) {
   const selectedTimeSlots =
     timeSlots
@@ -54,7 +36,7 @@ export default function Form({
             Tên hội đồng
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="pointer-events-none opacity-50 relative">
+            <div className="relative">
               <input
                 id="name"
                 name="name"
@@ -63,7 +45,7 @@ export default function Form({
                 className="peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                 aria-describedby="name-error"
                 defaultValue={defenseCommittee?.name || ''}
-                required
+                readOnly
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -71,33 +53,25 @@ export default function Form({
         </div>
         <div className="mb-4">
           <label
-            htmlFor="defensePeriodId"
+            htmlFor="defensePeriod"
             className="mb-2 block text-sm font-medium"
           >
             Đợt bảo vệ
           </label>
-          <div className="pointer-events-none opacity-50 relative">
-            <select
-              id="defensePeriodId"
-              name="defensePeriodId"
-              className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseCommittee?.defensePeriod?.id || ''}
-              aria-describedby="defensePeriodId-error"
-              required
-            >
-              <option value="" disabled>
-                Chọn đợt bảo vệ
-              </option>
-              {defensePeriods.map(
-                (defensePeriod) =>
-                  defensePeriod?.active && (
-                    <option key={defensePeriod?.id} value={defensePeriod?.id}>
-                      {defensePeriod?.name}
-                    </option>
-                  )
-              )}
-            </select>
-            <CalendarDateRangeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="defensePeriod"
+                name="defensePeriod"
+                type="text"
+                placeholder="Nhập đợt bảo vệ"
+                className=" peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                aria-describedby="defensePeriod-error"
+                defaultValue={defenseCommittee?.defensePeriod?.name}
+                readOnly
+              />
+              <CalendarDateRangeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
           </div>
         </div>
         <div className="mb-4">
@@ -107,7 +81,7 @@ export default function Form({
           >
             Thành viên hội đồng
           </label>
-          <div className="pointer-events-none opacity-50 relative">
+          <div className="pointer-events-none relative">
             <table className="w-full text-gray-900 border-collapse border border-gray-200">
               <thead className="text-sm font-normal bg-white">
                 <tr>
@@ -141,23 +115,21 @@ export default function Form({
                       />
                     </td>
                     <td className="border border-gray-200 px-3 py-1">
-                      <select
-                        id={`lecturerId-${committeeMember?.id}`}
-                        name="lecturerIds"
-                        className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-3 text-sm placeholder:text-gray-500"
-                        defaultValue={committeeMember?.lecturer?.id || ''}
-                        aria-describedby={`lecturerId-${committeeMember?.id}-error`}
-                        required
-                      >
-                        <option value="" disabled>
-                          Chọn giảng viên
-                        </option>
-                        {lecturers.map((lecturer) => (
-                          <option key={lecturer?.id} value={lecturer?.id}>
-                            {lecturer?.user?.fullname}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <input
+                          id={`lecturers-${committeeMember?.id}`}
+                          name="lecturers"
+                          type="text"
+                          placeholder="Nhập tên sinh viên"
+                          className=" peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                          aria-describedby="lecturers-error"
+                          defaultValue={
+                            committeeMember?.lecturer?.user?.fullname
+                          }
+                          readOnly
+                        />
+                        <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -169,7 +141,7 @@ export default function Form({
           <label className="mb-2 block text-sm font-medium">
             Chọn khung giờ
           </label>
-          <div className="pointer-events-none opacity-50 rounded-md border border-gray-200 bg-white p-3">
+          <div className="pointer-events-none rounded-md border border-gray-200 bg-white p-3">
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {filteredTimeSlots.map((timeSlot) => (
                 <div key={timeSlot?.id} className="flex items-center">
@@ -205,32 +177,24 @@ export default function Form({
             </div>
           )}
         </div>
-        <div className="mb-1">
-          <label htmlFor="roomId" className="mb-2 block text-sm font-medium">
+        <div>
+          <label htmlFor="room" className="mb-2 block text-sm font-medium">
             Phòng
           </label>
-          <div className="pointer-events-none opacity-50 relative">
-            <select
-              id="roomId"
-              name="roomId"
-              className="peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
-              defaultValue={defenseCommittee?.room?.id || ''}
-              aria-describedby="roomId-error"
-              required
-            >
-              <option value="" disabled>
-                Chọn phòng
-              </option>
-              {rooms.map(
-                (room) =>
-                  room?.active && (
-                    <option key={room?.id} value={room?.name}>
-                      {room?.name}
-                    </option>
-                  )
-              )}
-            </select>
-            <BuildingOfficeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="room"
+                name="room"
+                type="text"
+                placeholder="Nhập phòng"
+                className=" peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                aria-describedby="room-error"
+                defaultValue={defenseCommittee?.room?.name}
+                readOnly
+              />
+              <BuildingOfficeIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
           </div>
         </div>
       </div>

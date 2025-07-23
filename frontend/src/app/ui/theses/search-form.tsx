@@ -1,6 +1,6 @@
 'use client';
 
-import { Lecturer, TimeSlot } from '@/app/lib/definitions';
+import { Lecturer, Role, TimeSlot } from '@/app/lib/definitions';
 import { MagnifyingGlassIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -8,9 +8,11 @@ import { useState } from 'react';
 export default function SearchForm({
   lecturers,
   timeSlots,
+  role,
 }: {
   lecturers: Lecturer[];
   timeSlots: TimeSlot[];
+  role: Role;
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -122,7 +124,9 @@ export default function SearchForm({
         </select>
       </div>
 
-      <div className="flex flex-col">
+      <div
+        className={`${role?.name === 'GIANG_VIEN' && 'hidden'} flex flex-col`}
+      >
         <label htmlFor="lecturerId" className="text-sm text-gray-600 mb-1">
           Giảng viên hướng dẫn
         </label>

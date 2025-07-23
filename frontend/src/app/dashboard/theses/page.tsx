@@ -13,6 +13,7 @@ import {
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE, Lecturer } from '@/app/lib/definitions';
 import SearchForm from '@/app/ui/theses/search-form';
+import { getUser } from '@/app/lib/actions';
 
 export const metadata: Metadata = {
   title: 'Luận văn',
@@ -51,18 +52,21 @@ export default async function Page(props: {
     query = searchParams.query;
   }
 
+  const user = await getUser();
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchTheses(authToken, query);
   const timeSlots = await fetchTimeSlots(authToken);
-  const users = await fetchUsers(authToken);
   let lecturers: Lecturer[] = [];
-  for (let i = 0; i < users.length; i++) {
-    if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {
-      const lecturer = await fetchLecturerByUserId(
-        authToken,
-        users[i]?.id + ''
-      );
-      lecturers.push(lecturer);
+  if (user?.role?.name === 'ADMIN') {
+    const users = await fetchUsers(authToken);
+    for (let i = 0; i < users.length; i++) {
+      if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {
+        const lecturer = await fetchLecturerByUserId(
+          authToken,
+          users[i]?.id + ''
+        );
+        lecturers.push(lecturer);
+      }
     }
   }
 
@@ -81,16 +85,24 @@ export default async function Page(props: {
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lexend.className} text-2xl`}>Quản lý luận văn</h1>
+        <h1 className={`${lexend.className} text-2xl`}>
+          {user?.role?.name === 'ADMIN' ? 'Quản lý' : 'Thông tin'} luận văn
+        </h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 max-w-full">
-        <SearchForm lecturers={lecturers} timeSlots={timeSlots} />
-        <div className="flex gap-2">
+        <SearchForm
+          lecturers={lecturers}
+          timeSlots={timeSlots}
+          role={user?.role}
+        />
+        <div
+          className={`${user?.role?.name === 'ADMIN' || 'hidden'} flex gap-2`}
+        >
           <ImportThesesButton />
           <Create singular="luận văn" path="theses" />
         </div>
       </div>
-      <Table theses={a[currentPage - 1]} />
+      <Table theses={a[currentPage - 1]} role={user?.role} />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

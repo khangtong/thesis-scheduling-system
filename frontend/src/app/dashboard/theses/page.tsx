@@ -9,11 +9,15 @@ import {
   fetchTimeSlots,
   fetchUsers,
   fetchLecturerByUserId,
+  fetchStudentByUserId,
+  fetchTheses,
+  fetchCommitteeMembersByDefenseCommitteeId,
 } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE, Lecturer } from '@/app/lib/definitions';
 import SearchForm from '@/app/ui/theses/search-form';
 import { getUser } from '@/app/lib/actions';
+import Form from '@/app/ui/theses/view-thesis-form';
 
 export const metadata: Metadata = {
   title: 'Luận văn',
@@ -55,17 +59,26 @@ export default async function Page(props: {
   const user = await getUser();
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchTheses(authToken, query);
-  const timeSlots = await fetchTimeSlots(authToken);
   let lecturers: Lecturer[] = [];
-  if (user?.role?.name === 'ADMIN') {
-    const users = await fetchUsers(authToken);
-    for (let i = 0; i < users.length; i++) {
-      if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {
-        const lecturer = await fetchLecturerByUserId(
-          authToken,
-          users[i]?.id + ''
-        );
-        lecturers.push(lecturer);
+  let timeSlots = [];
+  let committeeMembers = [];
+  if (user?.role?.name === 'SINH_VIEN') {
+    committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
+      authToken,
+      data[0].timeSlot.defenseCommittee.id
+    );
+  } else {
+    timeSlots = await fetchTimeSlots(authToken);
+    if (user?.role?.name === 'ADMIN') {
+      const users = await fetchUsers(authToken);
+      for (let i = 0; i < users.length; i++) {
+        if (users[i]?.active && users[i]?.role?.name === 'GIANG_VIEN') {
+          const lecturer = await fetchLecturerByUserId(
+            authToken,
+            users[i]?.id + ''
+          );
+          lecturers.push(lecturer);
+        }
       }
     }
   }
@@ -82,7 +95,7 @@ export default async function Page(props: {
     a.push(b);
   }
 
-  return (
+  return user?.role?.name !== 'SINH_VIEN' ? (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lexend.className} text-2xl`}>
@@ -107,5 +120,7 @@ export default async function Page(props: {
         <Pagination totalPages={totalPages} />
       </div>
     </div>
+  ) : (
+    <Form thesis={data[0]} committeeMembers={committeeMembers} />
   );
 }

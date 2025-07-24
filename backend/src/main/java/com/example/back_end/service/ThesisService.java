@@ -43,10 +43,25 @@ public class ThesisService {
         List<Thesis> theses = new ArrayList<>();
 
         if ("GIANG_VIEN".equals(user.getRole().getName())) {
+            List<Thesis> allTheses = thesisRepository.findAll();
             Lecturer lecturer = lecturerRepository.findByUser(user);
             if (lecturer == null)
                 throw new Error("Không tìm thấy giảng viên");
-            theses = thesisRepository.findByLecturer(lecturer);
+
+            for (Thesis thesis : allTheses) {
+                if (thesis.getLecturer().equals(lecturer))
+                    theses.add(thesis);
+                else {
+                    DefenseCommittee defenseCommittee = thesis.getTimeSlot().getDefenseCommittee();
+                    List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
+                    for (CommitteeMember committeeMember : committeeMembers) {
+                        if (committeeMember.getLecturer().equals(lecturer)) {
+                            theses.add(thesis);
+                            break;
+                        }
+                    }
+                }
+            }
         } else if ("SINH_VIEN".equals(user.getRole().getName())) {
             Student student = studentRepository.findByUser(user);
             if (student == null)

@@ -75,7 +75,7 @@ export default function Form({
                   name="lecturerCode"
                   type="text"
                   placeholder="Nhập mã giảng viên"
-                  className="pointer-events-none opacity-50 peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                  className="pointer-events-none peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                   aria-describedby="lecturerCode-error"
                   defaultValue={lecturer?.code || ''}
                   required
@@ -101,7 +101,7 @@ export default function Form({
               <select
                 id="facultyId"
                 name="facultyId"
-                className="pointer-events-none opacity-50 peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                className="pointer-events-none peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                 defaultValue={lecturer?.faculty?.id || ''}
                 aria-describedby="facultyId-error"
                 required
@@ -136,7 +136,7 @@ export default function Form({
               <select
                 id="degreeId"
                 name="degreeId"
-                className="pointer-events-none opacity-50 peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                className="pointer-events-none peer block bg-white w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                 defaultValue={lecturer?.degree?.id || ''}
                 aria-describedby="degreeId-error"
                 required
@@ -158,7 +158,7 @@ export default function Form({
           </div>
           <div className="mb-2">
             <label className="mb-2 block text-sm font-medium">Chuyên môn</label>
-            <div className="pointer-events-none opacity-50 rounded-md border border-gray-200 bg-white p-3">
+            <div className="pointer-events-none rounded-md border border-gray-200 bg-white p-3">
               {lecturer.expertises.length > 0 ? (
                 <div className="space-y-2 max-h-40 overflow-y-auto">
                   {lecturer.expertises.map((expertise: any) => (
@@ -215,7 +215,7 @@ export default function Form({
                   name="studentCode"
                   type="text"
                   placeholder="Nhập mã sinh viên"
-                  className="pointer-events-none opacity-50 peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                  className="pointer-events-none peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                   aria-describedby="studentCode-error"
                   defaultValue={student?.code || ''}
                   required
@@ -243,7 +243,7 @@ export default function Form({
                   name="studentClass"
                   type="text"
                   placeholder="Nhập tên lớp"
-                  className="pointer-events-none opacity-50 peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+                  className="pointer-events-none peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
                   aria-describedby="studentClass-error"
                   defaultValue={student?.studentClass || ''}
                   required
@@ -279,8 +279,7 @@ export default function Form({
                 type="text"
                 placeholder="Nhập tên tài khoản"
                 className={`${
-                  user?.role?.name === 'ADMIN' ||
-                  'pointer-events-none opacity-50'
+                  user?.role?.name === 'ADMIN' || 'pointer-events-none'
                 } peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500`}
                 aria-describedby="username-error"
                 defaultValue={user?.username || ''}
@@ -327,8 +326,7 @@ export default function Form({
                 type="email"
                 placeholder="Nhập email"
                 className={`${
-                  user?.role?.name === 'ADMIN' ||
-                  'pointer-events-none opacity-50'
+                  user?.role?.name === 'ADMIN' || 'pointer-events-none'
                 } peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500`}
                 aria-describedby="email-error"
                 defaultValue={user?.email || ''}
@@ -355,8 +353,7 @@ export default function Form({
                 type="text"
                 placeholder="Nhập họ và tên"
                 className={`${
-                  user?.role?.name === 'ADMIN' ||
-                  'pointer-events-none opacity-50'
+                  user?.role?.name === 'ADMIN' || 'pointer-events-none'
                 } peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500`}
                 aria-describedby="fullname-error"
                 defaultValue={user?.fullname || ''}
@@ -379,7 +376,7 @@ export default function Form({
             <select
               id="roleId"
               name="roleId"
-              className="pointer-events-none opacity-50 peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
+              className="pointer-events-none peer block bg-white w-full rounded-md border border-gray-200 py-2 pl-10 text-sm placeholder:text-gray-500"
               aria-describedby="roleId-error"
               defaultValue={user?.role?.name}
               required
@@ -406,7 +403,7 @@ export default function Form({
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div
               className={`${
-                user?.role?.name === 'ADMIN' || 'pointer-events-none opacity-50'
+                user?.role?.name === 'ADMIN' || 'pointer-events-none'
               } flex gap-4`}
             >
               <div className="flex items-center">
@@ -524,10 +521,10 @@ export default function Form({
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/users"
+          href="/dashboard"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
-          Hủy
+          Trở về
         </Link>
         <Button type="submit">
           {user?.role?.name === 'ADMIN' ? 'Cập nhật thông tin' : 'Đổi mật khẩu'}

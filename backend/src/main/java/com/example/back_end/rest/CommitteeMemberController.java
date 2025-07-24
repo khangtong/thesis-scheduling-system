@@ -4,6 +4,7 @@ import com.example.back_end.dto.CommitteeMemberDTO;
 import com.example.back_end.dto.NotificationDTO;
 import com.example.back_end.entity.CommitteeMember;
 import com.example.back_end.entity.Faculty;
+import com.example.back_end.entity.User;
 import com.example.back_end.service.CommitteeMemberService;
 import com.example.back_end.service.NotificationService;
 import com.example.back_end.utils.SendError;
@@ -59,12 +60,9 @@ public class CommitteeMemberController {
     @GetMapping("/defense-committee/{id}")
     public ResponseEntity<List<CommitteeMember>> getCommitteeMembersByDefenseCommittee(@PathVariable int id, HttpServletResponse response, HttpServletRequest request) {
         try {
-            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
-                List<CommitteeMember> committeeMembers = committeeMemberService.getCommitteeMembersByDefenseCommittee(id);
-                return ResponseEntity.ok(committeeMembers);
-            } else {
-                return new SendError<List<CommitteeMember>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);
-            }
+            authController.authenticate(response, request);
+            List<CommitteeMember> committeeMembers = committeeMemberService.getCommitteeMembersByDefenseCommittee(id);
+            return ResponseEntity.ok(committeeMembers);
         } catch (Error error) {
             return new SendError<List<CommitteeMember>>().sendUnauthorized(error.getMessage(), response);
         }

@@ -1,6 +1,9 @@
 import Form from '@/app/ui/theses/view-thesis-form';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import { fetchThesisById } from '@/app/lib/data';
+import {
+  fetchCommitteeMembersByDefenseCommitteeId,
+  fetchThesisById,
+} from '@/app/lib/data';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
@@ -13,6 +16,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const id = params.id;
   const authToken = (await cookies()).get('session')?.value;
   const thesis = await fetchThesisById(authToken, id);
+  const committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
+    authToken,
+    thesis.timeSlot.defenseCommittee.id
+  );
 
   return (
     <main>
@@ -30,7 +37,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form thesis={thesis} />
+      <Form thesis={thesis} committeeMembers={committeeMembers} />
     </main>
   );
 }

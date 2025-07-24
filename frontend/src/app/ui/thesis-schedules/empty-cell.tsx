@@ -27,10 +27,7 @@ export default function EmptyCell({
     setIsDragOver(false);
 
     try {
-      const thesisData = JSON.parse(e.dataTransfer.getData('application/json'));
-      const thesis: Thesis = thesisData;
-
-      toast.info(
+      toast.error(
         `Khung giờ ${timeSlot?.start.slice(0, -3)}-${timeSlot?.end.slice(
           0,
           -3

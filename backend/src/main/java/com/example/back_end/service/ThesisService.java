@@ -52,12 +52,14 @@ public class ThesisService {
                 if (thesis.getLecturer().equals(lecturer))
                     theses.add(thesis);
                 else {
-                    DefenseCommittee defenseCommittee = thesis.getTimeSlot().getDefenseCommittee();
-                    List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
-                    for (CommitteeMember committeeMember : committeeMembers) {
-                        if (committeeMember.getLecturer().equals(lecturer)) {
-                            theses.add(thesis);
-                            break;
+                    if (thesis.getTimeSlot() != null) {
+                        DefenseCommittee defenseCommittee = thesis.getTimeSlot().getDefenseCommittee();
+                        List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
+                        for (CommitteeMember committeeMember : committeeMembers) {
+                            if (committeeMember.getLecturer().equals(lecturer)) {
+                                theses.add(thesis);
+                                break;
+                            }
                         }
                     }
                 }

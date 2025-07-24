@@ -4,12 +4,14 @@ import {
   fetchDefensePeriodsWithQuery,
   fetchNotifications,
   fetchPrioritySchedules,
+  fetchTheses,
   fetchTimeSlots,
   fetchTimeSlotsByDateRange,
 } from '@/app/lib/data';
 import {
   DefensePeriod,
   PrioritySchedule,
+  Thesis,
   TimeSlot,
 } from '@/app/lib/definitions';
 import Calendar from '@/app/ui/dashboard/calendar';
@@ -23,30 +25,29 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const user = await getUser();
   const authToken = (await cookies()).get('session')?.value;
-  let events = [];
-
-  if (user?.role?.name === 'ADMIN') {
-    const defensePeriods = await fetchDefensePeriods(authToken);
-    events = defensePeriods.map((defensePeriod: DefensePeriod) => {
-      // Add one day to the end date if it exists
-      let endDate = defensePeriod?.end;
-      if (endDate) {
-        const date = new Date(endDate);
-        date.setDate(date.getDate() + 1);
-        endDate = date;
-      }
-
+  const theses: Thesis[] = await fetchTheses(authToken);
+  let events: any = theses
+    .filter((t) => t?.status !== 'Chưa xếp lịch')
+    .map((thesis) => {
       return {
-        id: defensePeriod?.id,
-        title: defensePeriod?.name,
-        allDay: true,
-        start: defensePeriod?.start,
-        end: endDate,
-        backgroundColor: defensePeriod?.active ? '#00c951' : '#90a1b9',
-        borderColor: defensePeriod?.active ? '#00c951' : '#90a1b9',
+        id: thesis?.id,
+        title: thesis?.title,
+        start: `${thesis?.timeSlot?.date}T${thesis?.timeSlot?.start}`,
+        end: `${thesis?.timeSlot?.date}T${thesis?.timeSlot?.end}`,
+        backgroundColor:
+          thesis?.status === 'Đã xếp lịch'
+            ? '#05df72'
+            : thesis?.status === 'Đã công bố'
+            ? '#51a2ff'
+            : '#ff6467',
+        borderColor:
+          thesis?.status === 'Đã xếp lịch'
+            ? '#05df72'
+            : thesis?.status === 'Đã công bố'
+            ? '#51a2ff'
+            : '#ff6467',
       };
     });
-  }
 
   if (user?.role?.name === 'GIANG_VIEN') {
     // Get notifications that are not on deadline

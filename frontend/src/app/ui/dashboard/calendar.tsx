@@ -23,7 +23,7 @@ export default function Calendar({ events }: { events: any[] }) {
       events={events}
       eventClick={(info) => {
         if (info.event.title) {
-          router.push(`/dashboard/defense-periods/${info.event.id}/edit`);
+          router.push(`/dashboard/theses`);
         } else {
           router.push(`/dashboard/priority-schedules`);
         }

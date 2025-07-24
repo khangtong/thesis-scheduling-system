@@ -3,7 +3,6 @@ import { unscheduled } from '@/app/lib/actions';
 import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
 import { useThesisStore } from '@/stores/thesisStore';
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export default function DetailsPanel() {
@@ -15,7 +14,6 @@ export default function DetailsPanel() {
   const committeeMembers = useCommitteeMemberStore(
     (state) => state.committeeMembers
   );
-  const router = useRouter();
 
   if (!selectedTimeSlot) {
     return (

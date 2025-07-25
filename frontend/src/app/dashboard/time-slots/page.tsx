@@ -5,7 +5,6 @@ import { fetchDefenseCommittees, searchTimeSlots } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { Create } from '@/app/ui/buttons';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
-import { ImportTimeSlotsButton } from '@/app/ui/time-slots/import-time-slots-button';
 import SearchForm from '@/app/ui/time-slots/search-form';
 import { Metadata } from 'next';
 
@@ -69,7 +68,6 @@ export default async function Page(props: {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 max-w-full">
         <SearchForm defenseCommittees={defenseCommittees} />
         <div className="flex gap-2">
-          <ImportTimeSlotsButton />
           <Create path="time-slots" singular="khung giờ" />
         </div>
       </div>

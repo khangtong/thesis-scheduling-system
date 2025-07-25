@@ -337,7 +337,7 @@ export default function Form({
           </label>
           <div className="rounded-md border border-gray-200 bg-white p-3">
             {filteredTimeSlots.length > 0 ? (
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <div className="space-y-2 max-h-68 overflow-y-auto">
                 {filteredTimeSlots.map((timeSlot) => (
                   <div key={timeSlot?.id} className="flex items-center">
                     <input

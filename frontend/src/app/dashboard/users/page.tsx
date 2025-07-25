@@ -4,9 +4,14 @@ import Pagination from '@/app/ui/pagination';
 import Table from '@/app/ui/users/table';
 import { Create } from '@/app/ui/buttons';
 import { ImportUsersButton } from '@/app/ui/users/import-users-button';
-import { fetchRoles, searchUsers } from '@/app/lib/data';
+import {
+  fetchLecturerByUserId,
+  fetchRoles,
+  fetchStudentByUserId,
+  searchUsers,
+} from '@/app/lib/data';
 import { cookies } from 'next/headers';
-import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
+import { ITEMS_PER_PAGE, Lecturer, Student } from '@/app/lib/definitions';
 import SearchForm from '@/app/ui/users/search-form';
 
 export const metadata: Metadata = {
@@ -37,6 +42,18 @@ export default async function Page(props: {
   const authToken = (await cookies()).get('session')?.value;
   const { data, totalPages } = await searchUsers(authToken, query);
   const roles = await fetchRoles(authToken);
+  let lecturers: Lecturer[] = [];
+  let students: Student[] = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i]?.active && data[i]?.role?.name === 'GIANG_VIEN') {
+      const lecturer = await fetchLecturerByUserId(authToken, data[i]?.id + '');
+      lecturers.push(lecturer);
+    }
+    if (data[i]?.active && data[i]?.role?.name === 'SINH_VIEN') {
+      const student = await fetchStudentByUserId(authToken, data[i]?.id + '');
+      students.push(student);
+    }
+  }
 
   // Paginate users based on ITEMS_PER_PAGE
   const a = [];
@@ -62,7 +79,11 @@ export default async function Page(props: {
           <Create singular="người dùng" path="users" />
         </div>
       </div>
-      <Table users={a[currentPage - 1]} />
+      <Table
+        users={a[currentPage - 1]}
+        lecturers={lecturers}
+        students={students}
+      />
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>

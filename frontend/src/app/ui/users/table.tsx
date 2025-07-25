@@ -1,8 +1,23 @@
 import { Update, DeleteUser } from '../buttons';
-import { User } from '@/app/lib/definitions';
+import { Lecturer, Student, User } from '@/app/lib/definitions';
 import Status from '../status';
 
-export default function Table({ users = [] }: { users: User[] }) {
+export default function Table({
+  users = [],
+  lecturers,
+  students,
+}: {
+  users: User[];
+  lecturers: Lecturer[];
+  students: Student[];
+}) {
+  function getId(id: number | undefined, role: string | undefined) {
+    if (role === 'ADMIN') return id;
+    else if (role === 'GIANG_VIEN')
+      return lecturers.find((lecturer) => lecturer?.user?.id === id)?.id;
+    else return students.find((student) => student?.user?.id === id)?.id;
+  }
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block w-full align-middle">
@@ -57,6 +72,9 @@ export default function Table({ users = [] }: { users: User[] }) {
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                  ID
+                </th>
+                <th scope="col" className="px-3 py-3 font-medium">
                   Họ tên
                 </th>
                 <th scope="col" className="px-3 py-3 font-medium">
@@ -90,8 +108,11 @@ export default function Table({ users = [] }: { users: User[] }) {
                 >
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{user?.fullname}</p>
+                      <p>{getId(user?.id, user?.role?.name)}</p>
                     </div>
+                  </td>
+                  <td className="px-3 py-1">
+                    <p>{user?.fullname}</p>
                   </td>
                   <td className="text-nowrap overflow-hidden text-ellipsis max-w-[200px] px-3 py-1">
                     {user?.email}

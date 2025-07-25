@@ -3,12 +3,10 @@ import { lexend } from '@/app/ui/fonts';
 import Pagination from '@/app/ui/pagination';
 import Table from '@/app/ui/defense-committees/table';
 import { Create } from '@/app/ui/buttons';
-import { ImportDefenseCommitteesButton } from '@/app/ui/defense-committees/import-defense-committees-button';
 import {
   fetchDefensePeriods,
   searchDefenseCommittees,
   fetchRooms,
-  fetchTimeSlots,
 } from '@/app/lib/data';
 import { cookies } from 'next/headers';
 import { ITEMS_PER_PAGE } from '@/app/lib/definitions';
@@ -82,7 +80,6 @@ export default async function Page(props: {
         <div
           className={`${user?.role?.name === 'ADMIN' || 'hidden'} flex gap-2`}
         >
-          <ImportDefenseCommitteesButton />
           <Create singular="hội đồng" path="defense-committees" />
         </div>
       </div>

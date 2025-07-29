@@ -649,38 +649,59 @@ export async function fetchDefensePeriodById(
   }
 }
 
-export async function fetchDefensePeriodsWithQuery(
+export async function searchDefensePeriods(
   token: string | undefined,
   query: string
 ) {
-  let defensePeriods: DefensePeriod[] = [];
-  let totalPages = 1;
-
   try {
-    const response = await fetch(
-      `${process.env.API_URL}/defense-periods/search?query=${query}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Parse the query string to extract name, start, and end parameters if present
+    let url = `${process.env.API_URL}/defense-periods/search`;
+    const params = new URLSearchParams();
+
+    // Check if query is a complex query with name, start, and end parameters
+    if (
+      query.includes('name=') ||
+      query.includes('start=') ||
+      query.includes('end=')
+    ) {
+      // Parse the query string
+      const queryParams = new URLSearchParams(query);
+
+      // Add each parameter to the URL params if it exists
+      if (queryParams.has('name'))
+        params.append('name', queryParams.get('name')!);
+      if (queryParams.has('start'))
+        params.append('start', queryParams.get('start')!);
+      if (queryParams.has('end')) params.append('end', queryParams.get('end')!);
+    } else if (query) {
+      // If it's a simple query string, use it as is
+      params.append('query', query);
+    }
+
+    // Append the parameters to the URL
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch defense periods with query.');
+      throw new Error('Failed to fetch defense periods.');
     }
 
     const data = await response.json();
-    defensePeriods = data;
-    totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    return { data, totalPages };
   } catch (error) {
-    console.error('Error fetching defense periods with query:', error);
-    throw new Error('Failed to fetch defense periods with query.');
+    console.error('Error fetching defense periods:', error);
+    throw new Error('Failed to fetch defense periods.');
   }
-
-  return { defensePeriods, totalPages };
 }
 
 export async function fetchTimeSlots(token: string | undefined) {

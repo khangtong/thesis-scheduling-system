@@ -1,7 +1,7 @@
 import { getUser } from '@/app/lib/actions';
 import {
   fetchDefensePeriods,
-  fetchDefensePeriodsWithQuery,
+  searchDefensePeriods,
   fetchNotifications,
   fetchPrioritySchedules,
   fetchTheses,
@@ -72,16 +72,12 @@ export default async function DashboardPage() {
         activeNotis[i].content.indexOf('<span>') + '<span>'.length,
         activeNotis[i].content.indexOf('</span>')
       );
-      const { defensePeriods, totalPages } = await fetchDefensePeriodsWithQuery(
+      const { data, totalPages } = await searchDefensePeriods(
         authToken,
         defensePeriodName
       );
-      if (
-        !activeDefensePeriods.find(
-          (dp: any) => dp?.id === defensePeriods[0]?.id
-        )
-      ) {
-        activeDefensePeriods.push(defensePeriods[0]);
+      if (!activeDefensePeriods.find((dp: any) => dp?.id === data[0]?.id)) {
+        activeDefensePeriods.push(data[0]);
       }
     }
 

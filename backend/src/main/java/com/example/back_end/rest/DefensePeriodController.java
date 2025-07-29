@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -58,7 +59,35 @@ public class DefensePeriodController {
     public ResponseEntity<List<DefensePeriod>> searchDefensePeriods(HttpServletResponse response, HttpServletRequest request) {
         try {
             if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
-                List<DefensePeriod> defensePeriods = defensePeriodService.searchDefensePeriods(request.getParameterMap().get("query")[0]);
+                List<DefensePeriod> defensePeriods = defensePeriodService.getAllDefensePeriods();
+
+                if (request.getParameterMap().get("name") != null) {
+                    String name = request.getParameterMap().get("name")[0];
+                    for (int i = defensePeriods.size() - 1; i >= 0; i--) {
+                        DefensePeriod defensePeriod = defensePeriods.get(i);
+                        if (!defensePeriod.getName().contains(name))
+                            defensePeriods.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("start") != null) {
+                    LocalDateTime start = LocalDateTime.parse(request.getParameterMap().get("start")[0] + "T00:00:00");
+                    for (int i = defensePeriods.size() - 1; i >= 0; i--) {
+                        DefensePeriod defensePeriod = defensePeriods.get(i);
+                        if (!defensePeriod.getStart().isEqual(start))
+                            defensePeriods.remove(i);
+                    }
+                }
+
+                if (request.getParameterMap().get("end") != null) {
+                    LocalDateTime end = LocalDateTime.parse(request.getParameterMap().get("end")[0] + "T00:00:00");
+                    for (int i = defensePeriods.size() - 1; i >= 0; i--) {
+                        DefensePeriod defensePeriod = defensePeriods.get(i);
+                        if (!defensePeriod.getEnd().isEqual(end))
+                            defensePeriods.remove(i);
+                    }
+                }
+
                 return ResponseEntity.ok(defensePeriods);
             } else {
                 return new SendError<List<DefensePeriod>>().sendUnauthorized("Bạn không có quyền sử dụng chức năng này", response);

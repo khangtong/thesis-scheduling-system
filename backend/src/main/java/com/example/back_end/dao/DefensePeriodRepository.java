@@ -9,6 +9,4 @@ import java.util.List;
 
 @Repository
 public interface DefensePeriodRepository extends JpaRepository<DefensePeriod, Integer> {
-    @Query("SELECT d FROM DefensePeriod d WHERE d.name ILIKE %?1%")
-    List<DefensePeriod> searchDefensePeriods(String query);
 }

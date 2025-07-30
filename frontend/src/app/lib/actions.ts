@@ -1622,7 +1622,6 @@ export async function updateTimeSlot(
     date: new Date(formData.get('date') + ''),
     start: formData.get('start'),
     end: formData.get('end'),
-    defenseCommitteeId: Number(formData.get('defenseCommitteeId')) || null,
   });
 
   if (!validatedFields.success) {

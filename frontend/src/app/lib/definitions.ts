@@ -336,11 +336,6 @@ export const TimeSlotFormSchema = z
     date: z.date({ message: 'Ngày không hợp lệ.' }),
     start: z.string().min(1, { message: 'Giờ bắt đầu không hợp lệ.' }).trim(),
     end: z.string().min(1, { message: 'Giờ kết thúc không hợp lệ.' }).trim(),
-    defenseCommitteeId: z
-      .number({ message: 'Hội đồng không hợp lệ' })
-      .int()
-      .positive()
-      .nullable(),
   })
   .refine((data) => data.start < data.end, {
     message: 'Giờ bắt đầu phải trước giờ kết thúc.',

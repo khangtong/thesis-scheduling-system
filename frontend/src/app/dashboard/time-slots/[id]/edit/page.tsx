@@ -1,6 +1,6 @@
 import Form from '@/app/ui/time-slots/edit-time-slot-form';
 import Breadcrumbs from '@/app/ui/breadcrumbs';
-import { fetchDefenseCommittees, fetchTimeSlotById } from '@/app/lib/data';
+import { fetchTimeSlotById } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
@@ -13,7 +13,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const id = params.id;
   const authToken = (await cookies()).get('session')?.value;
   const timeSlot = await fetchTimeSlotById(authToken, id);
-  const defenseCommittees = await fetchDefenseCommittees(authToken);
 
   return (
     <main>
@@ -31,7 +30,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form timeSlot={timeSlot} defenseCommittees={defenseCommittees} />
+      <Form timeSlot={timeSlot} />
     </main>
   );
 }

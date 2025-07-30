@@ -114,22 +114,6 @@ public class TimeSlotService {
         dbTimeSlot.setStart(timeSlotDTO.getStart());
         dbTimeSlot.setEnd(timeSlotDTO.getEnd());
 
-        if (timeSlotDTO.getDefenseCommitteeId() != null) {
-            DefenseCommittee defenseCommittee = defenseCommitteeRepository.findById(timeSlotDTO.getDefenseCommitteeId()).orElse(null);
-
-            // Check if all committee members are available at this time slot
-            List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(defenseCommittee);
-            for (CommitteeMember committeeMember : committeeMembers) {
-                List<PrioritySchedule> prioritySchedules = priorityScheduleRepository.findByLecturer(committeeMember.getLecturer());
-                for (PrioritySchedule prioritySchedule : prioritySchedules) {
-                    if (prioritySchedule.getTimeSlot().equals(dbTimeSlot))
-                        throw new Error("Giảng viên " + committeeMember.getLecturer().getUser().getFullname() + " đã có lịch bận trong khung giờ này");
-                }
-            }
-
-            dbTimeSlot.setDefenseCommittee(defenseCommittee);
-        }
-
         return timeSlotRepository.save(dbTimeSlot);
     }
 

@@ -17,7 +17,7 @@ export default function DetailsPanel() {
 
   if (!selectedTimeSlot) {
     return (
-      <div className="max-h-[650px] overflow-auto bg-white p-4 rounded-lg shadow-md flex flex-col">
+      <div className="2xl:max-h-[650px] xl:max-h-[710px] overflow-auto bg-white p-4 rounded-lg shadow-md flex flex-col">
         <h3 className="text-lg text-neutral-800 font-medium text-center">
           Đã xếp lịch{' '}
           {`${theses.filter((t) => t?.status !== 'Chưa xếp lịch').length}/${

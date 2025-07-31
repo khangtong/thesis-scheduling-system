@@ -94,7 +94,7 @@ export default function ScheduleGrid({
   }, [defensePeriodId]);
 
   return (
-    <div className="max-h-[650px] overflow-auto border-x-2 border-gray-300">
+    <div className="2xl:max-h-[650px] xl:max-h-[710px] overflow-auto border-x-2 border-gray-300">
       <div
         className="grid"
         style={{

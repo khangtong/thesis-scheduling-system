@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTimeSlotStore } from '@/stores/timeSlotStore'; // Import store
 import ScheduleGrid from './schedule-grid';
 import DetailsPanel from './details-panel';
-import { ScheduledSession } from './mock-data';
 import {
   CommitteeMember,
   DefensePeriod,
@@ -53,7 +51,7 @@ export default function ScheduleClient({
         committeeMembers={committeeMembers}
       />
       <div className="grid grid-cols-1 lg:grid-cols-13 gap-3 mt-3">
-        <div className="max-h-[650px] overflow-auto lg:col-span-3">
+        <div className="2xl:max-h-[650px] xl:max-h-[710px] overflow-auto lg:col-span-3">
           <Search placeholder="Tìm kiếm luận văn..." />
           <ThesisList theses={theses} />
         </div>

@@ -2,7 +2,7 @@ import Pagination from '@/app/ui/pagination';
 import Table from '@/app/ui/priority-schedules/table';
 import { lexend } from '@/app/ui/fonts';
 import {
-  fetchDefensePeriodsWithQuery,
+  searchDefensePeriods,
   fetchNotifications,
   fetchPrioritySchedules,
   fetchTimeSlotsByDateRange,
@@ -66,14 +66,9 @@ export default async function Page(props: {
       activeNotis[i].content.indexOf('<span>') + '<span>'.length,
       activeNotis[i].content.indexOf('</span>')
     );
-    const { defensePeriods, totalPages } = await fetchDefensePeriodsWithQuery(
-      authToken,
-      defensePeriodName
-    );
-    if (
-      !activeDefensePeriods.find((dp: any) => dp?.id === defensePeriods[0]?.id)
-    ) {
-      activeDefensePeriods.push(defensePeriods[0]);
+    const { data } = await searchDefensePeriods(authToken, defensePeriodName);
+    if (!activeDefensePeriods.find((dp: any) => dp?.id === data[0]?.id)) {
+      activeDefensePeriods.push(data[0]);
     }
   }
 

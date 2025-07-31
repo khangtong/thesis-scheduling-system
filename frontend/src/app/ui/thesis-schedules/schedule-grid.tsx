@@ -1,14 +1,10 @@
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
 import ScheduleCard from './schedule-card';
-import {
-  TimeSlot,
-  DefensePeriod,
-  CommitteeMember,
-} from '@/app/lib/definitions';
+import { TimeSlot, DefensePeriod } from '@/app/lib/definitions';
 import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
 import { useEffect, useState } from 'react';
 import EmptyCell from './empty-cell';
-import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
+import useWindowDimension from '@/app/hooks/useWindowDimension';
 
 export default function ScheduleGrid({
   defensePeriodAndTimeSlots,
@@ -93,12 +89,25 @@ export default function ScheduleGrid({
     }
   }, [defensePeriodId]);
 
+  const { width, isMounted } = useWindowDimension();
+
+  // Show a loading state or default view until component is mounted
+  if (!isMounted) {
+    return (
+      <div className="w-full h-[680px] bg-gray-50 rounded-lg flex items-center justify-center">
+        <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="2xl:max-h-[650px] xl:max-h-[710px] overflow-auto border-x-2 border-gray-300">
       <div
         className="grid"
         style={{
-          gridTemplateColumns: `auto repeat(${dayList.length}, minmax(180px, 1fr))`,
+          gridTemplateColumns: `auto repeat(${dayList.length}, minmax(${
+            width > 1024 ? '180px' : '140px'
+          }, 1fr))`,
         }}
       >
         {/* Header Row */}
@@ -133,7 +142,7 @@ export default function ScheduleGrid({
                 return (
                   <div
                     key={`day-${i}`}
-                    className="min-w-[180px] h-24 p-1 border-r border-gray-200 bg-gray-50"
+                    className="xl:min-w-[180px] min-w-[140px] h-24 p-1 border-r border-gray-200 bg-gray-50"
                   >
                     {matchTimeSlot?.defenseCommittee ? (
                       <ScheduleCard

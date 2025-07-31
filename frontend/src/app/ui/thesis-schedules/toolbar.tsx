@@ -178,7 +178,7 @@ export default function Toolbar({
   }
 
   return (
-    <div className="flex items-end gap-3 pb-3 border-b-2 border-gray-300">
+    <div className="flex flex-wrap md:flex-nowrap items-end gap-2 md:gap-3 pb-3 border-b-2 border-gray-300">
       <select
         id="defensePeriodId"
         name="defensePeriodId"
@@ -201,25 +201,25 @@ export default function Toolbar({
       </select>
       <button
         onClick={handleAutoScheduling}
-        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 lg:px-4 text-xs lg:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
         Xếp lịch tự động
       </button>
       <button
         onClick={handleCheckConflict}
-        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 lg:px-4 text-xs lg:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
         Kiểm tra lại cảnh báo
       </button>
       <button
         onClick={handlePublish}
-        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 lg:px-4 text-xs lg:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
         Công bố lịch
       </button>
       <button
         onClick={() => handleExport()}
-        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 sm:px-4 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+        className="flex items-center rounded-lg bg-blue-600 py-2 px-2 lg:px-4 text-xs lg:text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
       >
         Xuất báo cáo
       </button>

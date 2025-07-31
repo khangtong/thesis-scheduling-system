@@ -1,11 +1,10 @@
 import { useTimeSlotStore } from '@/stores/timeSlotStore';
-import { DefenseCommittee, Thesis } from '@/app/lib/definitions';
+import { Thesis } from '@/app/lib/definitions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { scheduling } from '@/app/lib/actions';
 import { useThesisStore } from '@/stores/thesisStore';
 import { useCommitteeMemberStore } from '@/stores/committeeMemberStore';
-import { useRouter } from 'next/navigation';
 
 interface ScheduleCardProps {
   isSelected: boolean;
@@ -30,7 +29,6 @@ export default function ScheduleCard({
   const setCommitteeMembers = useCommitteeMemberStore(
     (state) => state.setCommitteeMembers
   );
-  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -74,7 +72,7 @@ export default function ScheduleCard({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`p-2 h-full rounded-md border cursor-pointer flex flex-col justify-center text-sm ${selectedStyle} ${
+      className={`p-2 h-full rounded-md border cursor-pointer flex flex-col justify-center lg:text-sm text-xs ${selectedStyle} ${
         isDragOver ? 'bg-blue-100! border-blue-400!' : ''
       } ${
         thesis && thesis.status === 'Đã xếp lịch'

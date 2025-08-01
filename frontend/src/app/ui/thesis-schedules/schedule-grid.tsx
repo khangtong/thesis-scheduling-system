@@ -95,7 +95,7 @@ export default function ScheduleGrid({
   if (!isMounted) {
     return (
       <div className="w-full h-[680px] bg-gray-50 rounded-lg flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">Đang tải...</div>
       </div>
     );
   }

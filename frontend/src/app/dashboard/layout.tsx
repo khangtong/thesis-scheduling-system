@@ -2,6 +2,8 @@ import SideNav from '../ui/dashboard/sidenav';
 import { getUser } from '../lib/actions';
 import { User } from '../lib/definitions';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 export default async function Layout({
   children,
@@ -20,7 +22,9 @@ export default async function Layout({
       <div className="w-full flex-none md:w-64">
         <SideNav user={user} />
       </div>
-      <main className="flex-grow p-3 xl:overflow-y-auto">{children}</main>
+      <Suspense fallback={<Loading />}>
+        <main className="flex-grow p-3 xl:overflow-y-auto">{children}</main>
+      </Suspense>
     </div>
   );
 }

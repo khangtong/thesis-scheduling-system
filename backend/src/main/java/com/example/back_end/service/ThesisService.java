@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -204,13 +205,23 @@ public class ThesisService {
             throw new Error("Không tìm thấy đợt bảo vệ");
 
         List<Thesis> theses = thesisRepository.findByStatus("Chưa xếp lịch");
-        List<TimeSlot> timeSlots = timeSlotRepository.findAll();
+
+        // Find all time slots in the defense period
+        LocalDate startDate = defensePeriod.getStart().toLocalDate();
+        LocalDate endDate = defensePeriod.getEnd().toLocalDate();
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        while (!startDate.isAfter(endDate)) {
+            List<TimeSlot> timeSlots1 = timeSlotRepository.findByDate(startDate);
+            timeSlots.addAll(timeSlots1);
+            startDate = startDate.plusDays(1);
+        }
 
         for (Thesis thesis : theses) {
             for (int i = timeSlots.size() - 1; i >= 0; i--) {
                 TimeSlot timeSlot = timeSlots.get(i);
-                // Check if the time slot is in the defense period
-                if (timeSlot.getDate().isBefore(defensePeriod.getStart().toLocalDate()) || timeSlot.getDate().isAfter(defensePeriod.getEnd().toLocalDate()))
+
+                // Check if there is a defense committee at this time slot
+                if (timeSlot.getDefenseCommittee() == null)
                     continue;
 
                 // Check if there is another thesis at this time slot
@@ -218,20 +229,14 @@ public class ThesisService {
                 if (thesis1 != null)
                     continue;
 
-                // Check if there is a defense committee at this time slot
-                if (timeSlot.getDefenseCommittee() == null)
-                    continue;
-
                 List<CommitteeMember> committeeMembers = committeeMemberRepository.findByDefenseCommittee(timeSlot.getDefenseCommittee());
                 for (CommitteeMember committeeMember : committeeMembers) {
                     // Check if the thesis's advisor is also the secretary of this defense committee
                     if (committeeMember.getCommitteeRole().getName().equals("Thư ký") && committeeMember.getLecturer().equals(thesis.getLecturer())) {
-                        // Assign the thesis to the time slot if all cases are passed
+                        // Assign the time slot to the thesis if all cases are passed
                         thesis.setTimeSlot(timeSlot);
                         // Set thesis's status to scheduled
                         thesis.setStatus("Đã xếp lịch");
-                        // Remove the time slot from the list
-                        timeSlots.remove(i);
                     }
                 }
             }

@@ -211,7 +211,7 @@ public class ThesisService {
         LocalDate endDate = defensePeriod.getEnd().toLocalDate();
         List<TimeSlot> timeSlots = new ArrayList<>();
         while (!startDate.isAfter(endDate)) {
-            List<TimeSlot> timeSlots1 = timeSlotRepository.findByDate(startDate);
+            List<TimeSlot> timeSlots1 = timeSlotRepository.findByDateOrderByIdAsc(startDate);
             timeSlots.addAll(timeSlots1);
             startDate = startDate.plusDays(1);
         }

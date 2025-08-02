@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateDefensePeriod } from '@/app/lib/actions';
+import { useDefensePeriodIdStore } from '@/stores/defensePeriodStore';
 
 export default function Form({
   defensePeriod,
@@ -27,6 +28,9 @@ export default function Form({
     undefined
   );
   const router = useRouter();
+  const setDefensePeriodId = useDefensePeriodIdStore(
+    (state) => state.setDefensePeriodId
+  );
 
   useEffect(() => {
     if (isPending) {
@@ -125,6 +129,7 @@ export default function Form({
                   defaultChecked={!defensePeriod?.active}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600"
                   aria-describedby="active-error"
+                  onChange={() => setDefensePeriodId('')}
                 />
                 <label
                   htmlFor="inactive"

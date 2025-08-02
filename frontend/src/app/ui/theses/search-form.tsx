@@ -114,13 +114,11 @@ export default function SearchForm({
           <option value="" disabled>
             Chọn trạng thái
           </option>
-          {['Chưa xếp lịch', 'Đã xếp lịch', 'Đã công bố', 'Đã bảo vệ'].map(
-            (status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            )
-          )}
+          {['Chưa xếp lịch', 'Đã xếp lịch', 'Đã công bố'].map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
         </select>
       </div>
 

@@ -14,7 +14,6 @@ interface ScheduleCardProps {
 const statusStyles = {
   OK: 'bg-green-100 border-green-400 hover:bg-green-200',
   PUBLISHED: 'bg-blue-100 border-blue-400 hover:bg-blue-200',
-  DEFENDED: 'bg-red-100 border-red-400 hover:bg-red-200',
 };
 
 export default function ScheduleCard({
@@ -79,8 +78,6 @@ export default function ScheduleCard({
           ? statusStyles.OK
           : thesis?.status === 'Đã công bố'
           ? statusStyles.PUBLISHED
-          : thesis?.status === 'Đã bảo vệ'
-          ? statusStyles.DEFENDED
           : ''
       }`}
     >

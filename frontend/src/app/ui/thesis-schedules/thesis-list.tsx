@@ -24,9 +24,7 @@ export default function ThesisList({ theses }: { theses: Thesis[] }) {
                 ? 'text-green-400'
                 : thesis?.status === 'Chưa xếp lịch'
                 ? 'text-yellow-400'
-                : thesis?.status === 'Đã công bố'
-                ? 'text-blue-400'
-                : 'text-red-400'
+                : 'text-blue-400'
             } text-xs`}
           >
             {thesis?.status}

@@ -16,4 +16,5 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot, Integer> {
     List<TimeSlot> findAllByOrderByIdAsc();
     List<TimeSlot> findByDate(LocalDate date);
     List<TimeSlot> findByDefenseCommittee(DefenseCommittee defenseCommittee);
+    List<TimeSlot> findByDateOrderByIdAsc(LocalDate date);
 }

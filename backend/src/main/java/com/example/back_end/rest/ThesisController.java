@@ -100,7 +100,7 @@ public class ThesisController {
                 String query = request.getParameterMap().get("query")[0];
                 for (int i = theses.size() - 1; i >= 0; i--) {
                     Thesis thesis = theses.get(i);
-                    if (!thesis.getTitle().contains(query) && !thesis.getStudent().getUser().getFullname().contains(query) && !thesis.getLecturer().getUser().getFullname().contains(query) && !thesis.getLecturer().getFaculty().getName().contains(query))
+                    if (!thesis.getTitle().contains(query) && !thesis.getStatus().contains(query) && !thesis.getStudent().getUser().getFullname().contains(query) && !thesis.getLecturer().getUser().getFullname().contains(query) && !thesis.getLecturer().getFaculty().getName().contains(query))
                         theses.remove(i);
                 }
             }

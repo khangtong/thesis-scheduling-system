@@ -25,8 +25,8 @@ export async function fetchUsers(token: string | undefined) {
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
+  } catch (error: any) {
+    console.error(error?.response?.data?.message || 'Có lỗi xảy ra');
   }
 }
 
@@ -69,9 +69,9 @@ export async function searchUsers(token: string | undefined, query: string) {
     const data = await response.json();
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
     return { data, totalPages };
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users.');
+  } catch (error: any) {
+    console.error(error?.response?.data?.message || 'Có lỗi xảy ra');
+    throw new Error(error?.response?.data?.message || 'Có lỗi xảy ra');
   }
 }
 

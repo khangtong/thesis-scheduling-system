@@ -19,8 +19,7 @@ export default function LogoutButton() {
 
       if (result.success) {
         toast.success('Đăng xuất thành công!');
-        router.push('/login');
-        router.refresh(); // Refresh to clear any cached data
+        window.location.href = '/login';
       } else {
         toast.error('Có lỗi xảy ra khi đăng xuất');
       }

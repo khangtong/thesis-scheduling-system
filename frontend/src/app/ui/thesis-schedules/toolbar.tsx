@@ -29,10 +29,12 @@ export default function Toolbar({
     if (defensePeriodId) {
       toast.promise(autoScheduling(defensePeriodId), {
         loading: 'Đang xếp lịch tự động...',
-        success: 'Xếp lịch tự động thành công',
+        success: () => {
+          window.location.reload();
+          return 'Xếp lịch tự động thành công';
+        },
         error: (error) => error.message,
       });
-      router.refresh();
     } else {
       toast.error('Phải chọn một đợt bảo vệ để xếp lịch tự động');
     }
@@ -54,10 +56,12 @@ export default function Toolbar({
             onClick: () => {
               toast.promise(publishSchedules(defensePeriodId), {
                 loading: 'Đang công bố lịch...',
-                success: 'Công bố lịch thành công',
+                success: () => {
+                  window.location.reload();
+                  return 'Công bố lịch thành công';
+                },
                 error: (error) => error.message,
               });
-              router.refresh();
             },
           },
         }
@@ -167,11 +171,13 @@ export default function Toolbar({
         ),
         {
           loading: 'Đang xuất báo cáo...',
-          success: 'Xuất báo cáo thành công',
+          success: () => {
+            window.location.reload();
+            return 'Xuất báo cáo thành công';
+          },
           error: (error) => error.message,
         }
       );
-      router.refresh();
     } else {
       toast.error('Vẫn còn luận văn chưa được công bố');
     }

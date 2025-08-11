@@ -81,12 +81,12 @@ export default function DetailsPanel() {
   function handleUnscheduled() {
     toast.promise(unscheduled(thesis?.id), {
       loading: 'Đang gỡ xếp lịch...',
-      success: 'Gỡ xếp lịch thành công',
+      success: () => {
+        window.location.reload();
+        return 'Gỡ xếp lịch thành công';
+      },
       error: (error) => error.message,
     });
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
   }
 
   return (

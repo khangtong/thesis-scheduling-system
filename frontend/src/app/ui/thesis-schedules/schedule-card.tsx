@@ -51,12 +51,12 @@ export default function ScheduleCard({
       // Assign defense committee to the thesis
       toast.promise(scheduling(thesis?.id, timeSlot?.id), {
         loading: 'Đang xếp lịch...',
-        success: 'Luận văn đã được xếp lịch thành công',
+        success: () => {
+          window.location.reload();
+          return 'Luận văn đã được xếp lịch thành công';
+        },
         error: (error) => error.message,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error('Error parsing dropped thesis data:', error);
     }

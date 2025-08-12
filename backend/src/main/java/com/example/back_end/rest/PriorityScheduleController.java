@@ -30,7 +30,7 @@ public class PriorityScheduleController {
     @GetMapping
     public ResponseEntity<List<PrioritySchedule>> getAllPrioritySchedules(HttpServletResponse response, HttpServletRequest request) {
         try {
-            if (!"SINH_VIEN".equals(authController.authorize(response, request))) {
+            if ("GIANG_VIEN".equals(authController.authorize(response, request))) {
                 User user = authController.authenticate(response, request);
                 List<PrioritySchedule> prioritySchedules = priorityScheduleService.getAllPrioritySchedules(user);
                 return ResponseEntity.ok(prioritySchedules);

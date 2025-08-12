@@ -27,14 +27,10 @@ public class PriorityScheduleService {
 
     @Transactional(readOnly = true)
     public List<PrioritySchedule> getAllPrioritySchedules(User user) {
-        if ("ADMIN".equals(user.getRole().getName()))
-            return priorityScheduleRepository.findAll();
-        else {
-            Lecturer lecturer = lecturerRepository.findByUser(user);
-            if (lecturer == null)
-                throw new Error("Không tìm thấy giảng viên");
-            return priorityScheduleRepository.findByLecturer(lecturer);
-        }
+        Lecturer lecturer = lecturerRepository.findByUser(user);
+        if (lecturer == null)
+            throw new Error("Không tìm thấy giảng viên");
+        return priorityScheduleRepository.findByLecturer(lecturer);
     }
 
     @Transactional(readOnly = true)

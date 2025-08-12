@@ -67,20 +67,27 @@ export default async function Page(props: {
       activeNotis[i].content.indexOf('</span>')
     );
     const { data } = await searchDefensePeriods(authToken, defensePeriodName);
-    if (!activeDefensePeriods.find((dp: any) => dp?.id === data[0]?.id)) {
-      activeDefensePeriods.push(data[0]);
-    }
+    activeDefensePeriods.push(
+      data.find((d: any) => d.name === defensePeriodName)
+    );
   }
 
   // Get time slots from those defense periods
   let timeSlots = [];
   for (let j = 0; j < activeDefensePeriods.length; j++) {
-    timeSlots = await fetchTimeSlotsByDateRange(
-      authToken,
-      activeDefensePeriods[j].start.split('T')[0],
-      activeDefensePeriods[j].end.split('T')[0]
+    timeSlots.push(
+      await fetchTimeSlotsByDateRange(
+        authToken,
+        activeDefensePeriods[j].start.split('T')[0],
+        activeDefensePeriods[j].end.split('T')[0]
+      )
     );
   }
+  timeSlots = timeSlots.flat();
+  timeSlots.sort((a: any, b: any) => {
+    if (!a?.date || !b?.date) return 0;
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
 
   // Filter time slots based on search parameters
   let filteredTimeSlots = [...timeSlots];

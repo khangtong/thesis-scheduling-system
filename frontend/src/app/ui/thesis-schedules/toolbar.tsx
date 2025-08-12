@@ -131,7 +131,8 @@ export default function Toolbar({
         'Họ tên SV',
         'Tên đề tài',
         'GVHD',
-        'Giờ',
+        'Thời gian',
+        'Phòng',
         'Hội đồng',
       ];
       const data: any = [];
@@ -146,9 +147,13 @@ export default function Toolbar({
           'Họ tên SV': thesis?.student?.user?.fullname,
           'Tên đề tài': thesis?.title,
           'GVHD': thesis?.lecturer?.user?.fullname,
-          'Giờ': `${thesis?.timeSlot?.start.slice(0, -3).split(':')[0]}h${
+          'Thời gian': `${thesis?.timeSlot?.start.slice(0, -3).split(':')[0]}h${
             thesis?.timeSlot?.start.slice(0, -3).split(':')[1]
-          }`,
+          } ngày ${(thesis?.timeSlot?.date + '')
+            .split('-')
+            .reverse()
+            .join('/')}`,
+          'Phòng': thesis?.timeSlot?.defenseCommittee?.room?.name,
           'Hội đồng': thesisCommitteeMembers.reduce((acc, cm, i, arr) => {
             return (
               acc +

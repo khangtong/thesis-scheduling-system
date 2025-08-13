@@ -18,10 +18,11 @@ export default function Table({
               >
                 <div className="flex items-center justify-between border-b border-gray-200 pb-4">
                   <div>
-                    <div className="mb-2 flex items-center">
+                    <div className="flex items-center">
                       <p>{expertise?.name}</p>
                     </div>
                   </div>
+                  <p>ID: {expertise?.id}</p>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
@@ -44,9 +45,12 @@ export default function Table({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                  ID
+                </th>
+                <th scope="col" className="px-3 py-3 font-medium">
                   Tên chuyên môn
                 </th>
-                <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                <th scope="col" className="px-3 py-3 font-medium">
                   Mô tả chuyên môn
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -61,9 +65,10 @@ export default function Table({
                   className="w-full border-b border-gray-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="py-1 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <p>{expertise?.name}</p>
-                    </div>
+                    <p>{expertise?.id}</p>
+                  </td>
+                  <td className="px-3 py-1">
+                    <p>{expertise?.name}</p>
                   </td>
                   <td className="text-nowrap overflow-hidden text-ellipsis max-w-[200px] px-3 py-1">
                     {expertise?.description}

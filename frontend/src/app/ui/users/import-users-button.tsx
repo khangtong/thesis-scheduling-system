@@ -46,6 +46,9 @@ export function ImportUsersButton() {
               lecturerCode: row.lecturerCode || '',
               facultyId: Number(row.facultyId),
               degreeId: Number(row.degreeId),
+              expertiseIds:
+                row.expertiseIds?.split(',').map((e: string) => Number(e)) ||
+                [],
               studentCode: row.studentCode || '',
               studentClass: row.studentClass || '',
               currentPassword: null,
@@ -104,9 +107,9 @@ export function ImportUsersButton() {
       loading: 'Đang tải...',
       success: (message) => `${message}`,
       error: (error) => error.message,
-      finally: () => {
-        window.location.reload();
-      },
+      // finally: () => {
+      //   window.location.reload();
+      // },
     });
   };
 

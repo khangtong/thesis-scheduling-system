@@ -138,9 +138,7 @@ export default function Form({
           </div>
         </div>
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium">
-            Chọn khung giờ
-          </label>
+          <label className="mb-2 block text-sm font-medium">Khung giờ</label>
           <div className="pointer-events-none rounded-md border border-gray-200 bg-white p-3">
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {filteredTimeSlots.map((timeSlot) => (

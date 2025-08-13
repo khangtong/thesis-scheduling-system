@@ -294,6 +294,7 @@ export async function resetPassword(prevState: any, formData: FormData) {
 }
 
 export async function createUser(state: any, formData: FormData) {
+  console.log(formData.getAll('expertiseIds'));
   // 1. Parse form data
   const formDataObj = {
     username: formData.get('username'),
@@ -310,11 +311,17 @@ export async function createUser(state: any, formData: FormData) {
       ? Number(formData.get('facultyId'))
       : NaN,
     degreeId: formData.get('degreeId') ? Number(formData.get('degreeId')) : NaN,
-    expertiseIds: formData.getAll('expertiseIds').map((id) => Number(id)),
+    expertiseIds:
+      formData.getAll('expertiseIds').length === 1
+        ? (formData.get('expertiseIds') + '')
+            .split(',')
+            .map((id: string) => Number(id))
+        : formData.getAll('expertiseIds').map((id) => Number(id)),
     // Student fields
     studentCode: formData.get('studentCode') || '',
     studentClass: formData.get('studentClass') || '',
   };
+  console.log(formDataObj);
 
   // 2. Validate form fields
   const validatedFields = UserFormSchema.safeParse(formDataObj);

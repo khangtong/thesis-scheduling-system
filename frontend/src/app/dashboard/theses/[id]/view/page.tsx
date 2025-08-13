@@ -16,11 +16,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const id = params.id;
   const authToken = (await cookies()).get('session')?.value;
   const thesis = await fetchThesisById(authToken, id);
-  const committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
-    authToken,
-    thesis.timeSlot.defenseCommittee.id
-  );
-
+  let committeeMembers: any = [];
+  if (thesis?.timeSlot) {
+    committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
+      authToken,
+      thesis.timeSlot.defenseCommittee.id
+    );
+  }
   return (
     <main>
       <Breadcrumbs

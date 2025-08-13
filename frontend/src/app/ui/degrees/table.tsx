@@ -14,10 +14,11 @@ export default function Table({ degrees = [] }: { degrees: Degree[] }) {
               >
                 <div className="flex items-center justify-between border-b border-gray-200 pb-4">
                   <div>
-                    <div className="mb-2 flex items-center">
+                    <div className="flex items-center">
                       <p>{degree?.name}</p>
                     </div>
                   </div>
+                  <p>ID: {degree?.id}</p>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div className="flex justify-end gap-2">
@@ -32,6 +33,9 @@ export default function Table({ degrees = [] }: { degrees: Degree[] }) {
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                  ID
+                </th>
+                <th scope="col" className="px-3 py-3 font-medium">
                   Tên học vị
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -46,9 +50,10 @@ export default function Table({ degrees = [] }: { degrees: Degree[] }) {
                   className="w-full border-b border-gray-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="py-1 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <p>{degree?.name}</p>
-                    </div>
+                    <p>{degree?.id}</p>
+                  </td>
+                  <td className="px-3 py-1">
+                    <p>{degree?.name}</p>
                   </td>
                   <td className="py-1 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

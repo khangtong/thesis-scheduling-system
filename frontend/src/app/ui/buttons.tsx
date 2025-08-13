@@ -74,10 +74,12 @@ export function DeleteUser({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteUserWithId(), {
             loading: 'Đang xóa người dùng...',
-            success: 'Xóa người dùng thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa người dùng thành công';
+            },
             error: (error) => error.message,
           });
-          router.push('/dashboard/users');
         },
       },
     });
@@ -109,10 +111,12 @@ export function DeleteFaculty({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteFacultyWithId(), {
             loading: 'Đang xóa khoa...',
-            success: 'Xóa khoa thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa khoa thành công';
+            },
             error: (error) => error.message,
           });
-          router.push('/dashboard/faculties');
         },
       },
     });
@@ -144,10 +148,12 @@ export function DeleteDegree({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteDegreeWithId(), {
             loading: 'Đang xóa học vị...',
-            success: 'Xóa học vị thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa học vị thành công';
+            },
             error: (error) => error.message,
           });
-          router.push('/dashboard/degrees');
         },
       },
     });
@@ -179,10 +185,12 @@ export function DeleteRoom({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteRoomWithId(), {
             loading: 'Đang xóa phòng...',
-            success: 'Xóa phòng thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa phòng thành công';
+            },
             error: (error) => error.message,
           });
-          router.push('/dashboard/rooms');
         },
       },
     });
@@ -214,10 +222,12 @@ export function DeleteCommitteeRole({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteCommitteeRoleWithId(), {
             loading: 'Đang xóa vai trò hội đồng...',
-            success: 'Xóa vai trò hội đồng thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa vai trò hội đồng thành công';
+            },
             error: (error) => error.message,
           });
-          router.push('/dashboard/committee-roles');
         },
       },
     });
@@ -249,7 +259,10 @@ export function DeleteExpertise({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteExpertiseWithId(), {
             loading: 'Đang xóa chuyên môn...',
-            success: 'Xóa chuyên môn thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa chuyên môn thành công';
+            },
             error: (error) => error.message,
           });
           router.push('/dashboard/expertises');
@@ -284,7 +297,10 @@ export function DeleteDefensePeriod({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteDefensePeriodWithId(), {
             loading: 'Đang xóa đợt bảo vệ...',
-            success: 'Xóa đợt bảo vệ thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa đợt bảo vệ thành công';
+            },
             error: (error) => error.message,
           });
           router.push('/dashboard/defense-periods');
@@ -319,7 +335,10 @@ export function DeleteTimeSlot({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteTimeSlotWithId(), {
             loading: 'Đang xóa khung giờ...',
-            success: 'Xóa khung giờ thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa khung giờ thành công';
+            },
             error: (error) => error.message,
           });
           router.push('/dashboard/time-slots');
@@ -421,7 +440,10 @@ export function DeleteDefenseCommittee({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteDefenseCommitteeWithId(), {
             loading: 'Đang xóa hội đồng...',
-            success: 'Xóa hội đồng thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa hội đồng thành công';
+            },
             error: (error) => error.message,
           });
           router.push('/dashboard/defense-committees');
@@ -456,7 +478,10 @@ export function DeleteThesis({ id }: { id: number }) {
         onClick: () => {
           toast.promise(deleteThesisWithId(), {
             loading: 'Đang xóa luận văn...',
-            success: 'Xóa luận văn thành công',
+            success: () => {
+              window.location.reload();
+              return 'Xóa luận văn thành công';
+            },
             error: (error) => error.message,
           });
           router.push('/dashboard/theses');

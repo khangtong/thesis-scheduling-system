@@ -91,6 +91,9 @@ export function ImportRoomsButton() {
       loading: 'Đang tải...',
       success: (message) => `${message}`,
       error: (error) => error.message,
+      finally: () => {
+        window.location.reload();
+      },
     });
   };
 

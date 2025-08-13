@@ -103,6 +103,9 @@ export function ImportDefensePeriodsButton() {
       loading: 'Đang tải...',
       success: (message) => `${message}`,
       error: (error) => error.message,
+      finally: () => {
+        window.location.reload();
+      },
     });
   };
 

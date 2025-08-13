@@ -42,6 +42,9 @@ export default function Table({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xs sm:text-sm text-gray-500">
+                      ID: {getId(user?.id, user?.role?.name)}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500">
                       {user?.fullname || 'N/A'}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">

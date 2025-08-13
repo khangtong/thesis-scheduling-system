@@ -48,6 +48,9 @@ export function ImportUsersButton() {
               degreeId: Number(row.degreeId),
               studentCode: row.studentCode || '',
               studentClass: row.studentClass || '',
+              currentPassword: null,
+              newPassword: null,
+              confirmPassword: null,
             });
             if (validatedFields.success) {
               const formData = new FormData();
@@ -101,6 +104,9 @@ export function ImportUsersButton() {
       loading: 'Đang tải...',
       success: (message) => `${message}`,
       error: (error) => error.message,
+      finally: () => {
+        window.location.reload();
+      },
     });
   };
 

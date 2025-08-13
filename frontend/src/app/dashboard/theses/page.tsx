@@ -63,10 +63,12 @@ export default async function Page(props: {
   let timeSlots = [];
   let committeeMembers = [];
   if (user?.role?.name === 'SINH_VIEN') {
-    committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
-      authToken,
-      data[0].timeSlot.defenseCommittee.id
-    );
+    if (data.length > 0 && data[0]?.timeSlot) {
+      committeeMembers = await fetchCommitteeMembersByDefenseCommitteeId(
+        authToken,
+        data[0].timeSlot.defenseCommittee.id
+      );
+    }
   } else {
     timeSlots = await fetchTimeSlots(authToken);
     if (user?.role?.name === 'ADMIN') {

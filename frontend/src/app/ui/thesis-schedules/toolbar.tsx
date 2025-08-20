@@ -26,6 +26,10 @@ export default function Toolbar({
   const router = useRouter();
 
   function handleAutoScheduling() {
+    if (theses.every((t) => t?.status !== 'Chưa xếp lịch')) {
+      toast.error('Tất cả luận văn đã được xếp lịch');
+      return;
+    }
     if (defensePeriodId) {
       toast.promise(autoScheduling(defensePeriodId), {
         loading: 'Đang xếp lịch tự động...',

@@ -257,6 +257,8 @@ public class ThesisService {
 
         for (Lecturer lecturer : lecturers) {
             List<ScheduledSessionDTO> scheduledSessions = new ArrayList<>();
+            if (!lecturer.getUser().isActive())
+                continue;
             List<CommitteeMember> committeeMembers = committeeMemberRepository.findByLecturer(lecturer);
             // Check if the lecturer has not attended to any defense committees
             if (committeeMembers.isEmpty())

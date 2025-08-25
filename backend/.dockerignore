@@ -1,0 +1,24 @@
+# Ignore build artifacts
+target/
+*.jar
+*.war
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore Git
+.git/
+.gitignore
+
+# Ignore documentation
+README.md
+docs/
+
+# Ignore test files (nếu không cần chạy test trong Docker)
+src/test/
